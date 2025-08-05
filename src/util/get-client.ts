@@ -1,7 +1,7 @@
 import type {JsonObj, RequestResult} from '../result.js'
 
 import {APICommand} from '../index.js'
-import {Client} from '../prefab-common/src/api/client.js'
+import {Client} from '../reforge-common/src/api/client.js'
 import jsonMaybe from '../util/json-maybe.js'
 import version from '../version.js'
 
@@ -12,8 +12,8 @@ const getClient = (command: APICommand, apiKey: string) => {
 
   clientInstance = new Client({
     apiKey,
-    apiUrl: process.env.PREFAB_API_URL,
-    clientIdentifier: `prefab-cli-${version}`,
+    apiUrl: process.env.REFORGE_API_URL,
+    clientIdentifier: `cli-${version}`,
     log: command.verboseLog,
   })
 

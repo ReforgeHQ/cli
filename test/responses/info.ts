@@ -13,7 +13,7 @@ const noEvaluationsResponse = (key: string) => ({end: 1_700_059_396_635, key, st
 export const rawSecret = `875247386844c18c58a97c--b307b97a8288ac9da3ce0cf2--7ab0c32e044869e355586ed653a435de`
 
 const rawConfigResponseForKeyWithEvaluations = {
-  changedBy: {apiKeyId: '', email: 'jeffrey.chupp@prefab.cloud', userId: '0'},
+  changedBy: {apiKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
   configType: 'CONFIG',
   key: keyWithEvaluations,
   projectId: '124',
@@ -28,7 +28,7 @@ const rawSecretConfigResponse = {
   id: '17017173800583163',
   key: secretKey,
   projectId: '124',
-  rows: [{values: [{value: {decryptWith: 'prefab.secrets.encryption.key', string: rawSecret}}]}],
+  rows: [{values: [{value: {decryptWith: 'reforge.secrets.encryption.key', string: rawSecret}}]}],
   valueType: 'STRING',
 }
 
@@ -63,7 +63,7 @@ const rawEvaluationResponse = {
 }
 
 const rawConfigResponseForKeyWithNoEvaluations = {
-  changedBy: {apiKeyId: '', email: 'jeffrey.chupp@prefab.cloud', userId: '0'},
+  changedBy: {apiKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
   configType: 'CONFIG',
   key: 'jeffreys.test.key',
   projectId: '124',
@@ -75,7 +75,7 @@ const rawConfigResponseForKeyWithNoEvaluations = {
           criteria: [
             {
               operator: 'PROP_IS_ONE_OF',
-              propertyName: 'prefab-api-key.user-id',
+              propertyName: 'reforge-api-key.user-id',
               valueToMatch: {stringList: {values: ['4']}},
             },
           ],

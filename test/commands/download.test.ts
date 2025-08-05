@@ -4,7 +4,7 @@ import * as path from 'node:path'
 
 import {downloadStub, server} from '../responses/download.js'
 
-const expectedFileName = 'prefab.test.588.config.json'
+const expectedFileName = 'reforge.test.588.config.json'
 
 const savedContent = () => JSON.parse(fs.readFileSync(expectedFileName).toString())
 

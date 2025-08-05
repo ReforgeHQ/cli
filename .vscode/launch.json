@@ -4,7 +4,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Execute Prefab Command (dev)",
+      "name": "Execute Reforge Command (dev)",
       "program": "${workspaceFolder}/bin/dev.js",
       "runtimeArgs": ["--loader=ts-node/esm", "--no-warnings=ExperimentalWarning"],
       "skipFiles": ["<node_internals>/**"],
@@ -18,7 +18,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Execute Prefab 'serve' Command (dev)",
+      "name": "Execute Reforge 'serve' Command (dev)",
       "program": "${workspaceFolder}/bin/dev.js",
       "runtimeArgs": ["--loader=ts-node/esm", "--no-warnings=ExperimentalWarning"],
       "skipFiles": ["<node_internals>/**"],

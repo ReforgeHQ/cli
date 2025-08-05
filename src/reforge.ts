@@ -1,6 +1,6 @@
-import {Prefab} from '@prefab-cloud/prefab-cloud-node'
+import {Reforge} from '@reforge-com/node'
 
-import type {ConfigValue} from './prefab-common/src/types.js'
+import type {ConfigValue} from './reforge-common/src/types.js'
 
 import {CommandLike} from './ui/get-key.js'
 
@@ -10,12 +10,12 @@ type Flags = {
 
 type FlagsOrDatafile = Flags | string
 
-let prefab: Prefab
+let reforge: Reforge
 
-const DEFAULT_CONTEXT_USER_ID_NAMESPACE = 'prefab-api-key'
+const DEFAULT_CONTEXT_USER_ID_NAMESPACE = 'reforge-api-key'
 const DEFAULT_CONTEXT_USER_ID = 'user-id'
 
-export const initPrefab = async (_ctx: CommandLike, flagsOrDatafile: FlagsOrDatafile) => {
+export const initReforge = async (_ctx: CommandLike, flagsOrDatafile: FlagsOrDatafile) => {
   let apiKey = 'NO_API_KEY'
   let datafile
 
@@ -29,7 +29,7 @@ export const initPrefab = async (_ctx: CommandLike, flagsOrDatafile: FlagsOrData
     apiKey = flagsOrDatafile['api-key']
   }
 
-  const options: ConstructorParameters<typeof Prefab>[0] = {
+  const options: ConstructorParameters<typeof Reforge>[0] = {
     apiKey,
     collectEvaluationSummaries: false,
     collectLoggerCounts: false,
@@ -38,22 +38,22 @@ export const initPrefab = async (_ctx: CommandLike, flagsOrDatafile: FlagsOrData
     enableSSE: false,
   }
 
-  options.sources = process.env.PREFAB_API_URL ? [process.env.PREFAB_API_URL] : ['https://api.prefab.cloud']
+  options.sources = process.env.REFORGE_API_URL ? [process.env.REFORGE_API_URL] : ['https://api.prefab.cloud']
 
-  prefab = new Prefab(options)
+  reforge = new Reforge(options)
 
-  await prefab.init()
+  await reforge.init()
 
-  return prefab
+  return reforge
 }
 
 const getUserId = (): string =>
-  prefab.defaultContext()?.get(DEFAULT_CONTEXT_USER_ID_NAMESPACE)?.get(DEFAULT_CONTEXT_USER_ID) as string
+  reforge.defaultContext()?.get(DEFAULT_CONTEXT_USER_ID_NAMESPACE)?.get(DEFAULT_CONTEXT_USER_ID) as string
 
 const getRowInEnvironment = ({desiredEnvId, key}: {desiredEnvId: string; key: string}) => {
   const envId = desiredEnvId
 
-  const config = prefab.raw(key)
+  const config = reforge.raw(key)
 
   if (!config) {
     return

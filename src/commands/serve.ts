@@ -1,17 +1,17 @@
 import {Args, Flags} from '@oclif/core'
-import {ConfigType, Prefab} from '@prefab-cloud/prefab-cloud-node'
+import {ConfigType, Reforge} from '@reforge-com/node'
 import * as fs from 'node:fs'
 import http, {IncomingMessage, ServerResponse} from 'node:http'
 
 import {BaseCommand} from '../index.js'
-import {initPrefab} from '../prefab.js'
-import {valueTypeStringForConfig} from '../prefab-common/src/valueType.js'
+import {initReforge} from '../reforge.js'
+import {valueTypeStringForConfig} from '../reforge-common/src/valueType.js'
 import {javaScriptClientFormattedContextToContext} from '../util/context.js'
 
 const allowCORSPreflight = (res: ServerResponse) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-prefabcloud-client-version, authorization')
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-reforge-client-version, authorization')
 }
 
 const ALWAYS_SEND_CONFIG_TYPES = new Set([ConfigType.FEATURE_FLAG, ConfigType.LOG_LEVEL])
@@ -35,7 +35,7 @@ export default class Serve extends BaseCommand {
   e.g. \`endpoints: ["http://localhost:3099"],\`
 `
 
-  static examples = ['<%= config.bin %> <%= command.id %> ./prefab.test.588.config.json --port=3099 ']
+  static examples = ['<%= config.bin %> <%= command.id %> ./reforge.test.588.config.json --port=3099 ']
 
   static flags = {
     port: Flags.integer({default: 3099, description: 'port to serve on'}),
@@ -50,13 +50,13 @@ export default class Serve extends BaseCommand {
       return this.error(`File not found: ${file}`)
     }
 
-    let prefab: Prefab | void
+    let reforge: Reforge | void
 
     try {
-      prefab = await initPrefab(this, file)
+      reforge = await initReforge(this, file)
 
-      if (!prefab) {
-        throw new Error('Prefab not initialized')
+      if (!reforge) {
+        throw new Error('Reforge not initialized')
       }
     } catch (error_) {
       const error = error_ as Error
@@ -72,7 +72,7 @@ export default class Serve extends BaseCommand {
 
     const {port} = flags
 
-    const server = http.createServer(this.requestHandler(prefab))
+    const server = http.createServer(this.requestHandler(reforge))
 
     server.listen(port, (err?: Error) => {
       if (err) {
@@ -83,7 +83,7 @@ export default class Serve extends BaseCommand {
     })
   }
 
-  private requestHandler(prefab: Prefab) {
+  private requestHandler(reforge: Reforge) {
     return (req: IncomingMessage, res: ServerResponse) => {
       allowCORSPreflight(res)
 
@@ -109,13 +109,13 @@ export default class Serve extends BaseCommand {
 
         const config: Record<string, Record<string, unknown>> = {}
 
-        for (const key of prefab.keys()) {
-          const raw = prefab.raw(key)
+        for (const key of reforge.keys()) {
+          const raw = reforge.raw(key)
 
           if (raw && (ALWAYS_SEND_CONFIG_TYPES.has(raw.configType) || raw.sendToClientSdk)) {
             const valueType = valueTypeStringForConfig(raw) ?? '?'
 
-            config[key] = {value: {[valueType]: prefab.get(key, context)}}
+            config[key] = {value: {[valueType]: reforge.get(key, context)}}
           }
         }
 

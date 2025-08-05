@@ -13,7 +13,7 @@ import {createFileManager} from '../util/file-manager.js'
 export default class Generate extends APICommand {
   static aliases = ['gen']
 
-  static description = 'Generate type definitions for your Prefab configuration'
+  static description = 'Generate type definitions for your Reforge configuration'
 
   static examples = [
     '<%= config.bin %> <%= command.id %> --target node-ts',
@@ -38,7 +38,7 @@ export default class Generate extends APICommand {
     this.verboseLog('=== GENERATE COMMAND START ===')
     this.verboseLog('API Key:', this.rawApiClient ? 'Set (hidden)' : 'Not set')
     this.verboseLog('Environment:', this.currentEnvironment)
-    this.verboseLog('Base API URL:', process.env.PREFAB_API_URL || 'Default')
+    this.verboseLog('Base API URL:', process.env.REFORGE_API_URL || 'Default')
     this.verboseLog('Language:', flags.target)
     this.verboseLog('Output directory:', flags['output-dir'])
 

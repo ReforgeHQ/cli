@@ -1,16 +1,16 @@
 import {Flags} from '@oclif/core'
 
-import type {Config} from '../prefab-common/src/types.js'
+import type {Config} from '../reforge-common/src/types.js'
 
 import {DEFAULT_ENVIRONMENT_NAME, INHERIT} from '../constants.js'
 import {APICommand} from '../index.js'
-import {overrideFor} from '../prefab.js'
-import {getConfigFromApi} from '../prefab-common/src/api/getConfigFromApi.js'
-import {Environment, getEnvironmentsFromApi} from '../prefab-common/src/api/getEnvironmentsFromApi.js'
-import {configValuesInEnvironments} from '../prefab-common/src/configValuesInEnvironments.js'
-import {EvaluationStats, getEvaluationStats} from '../prefab-common/src/evaluations/stats.js'
-import {urlFor} from '../prefab-common/src/urlFor.js'
-import {valueOf, valueOfToString} from '../prefab-common/src/valueOf.js'
+import {overrideFor} from '../reforge.js'
+import {getConfigFromApi} from '../reforge-common/src/api/getConfigFromApi.js'
+import {Environment, getEnvironmentsFromApi} from '../reforge-common/src/api/getEnvironmentsFromApi.js'
+import {configValuesInEnvironments} from '../reforge-common/src/configValuesInEnvironments.js'
+import {EvaluationStats, getEvaluationStats} from '../reforge-common/src/evaluations/stats.js'
+import {urlFor} from '../reforge-common/src/urlFor.js'
+import {valueOf, valueOfToString} from '../reforge-common/src/valueOf.js'
 import {JsonObj} from '../result.js'
 import getKey from '../ui/get-key.js'
 import nameArg from '../util/name-arg.js'
@@ -29,15 +29,15 @@ export default class Info extends APICommand {
   public async run(): Promise<JsonObj | void> {
     const {args, flags} = await this.parse(Info)
 
-    const {key, prefab} = await getKey({args, command: this, flags, message: 'Which item would you like to see?'})
+    const {key, reforge} = await getKey({args, command: this, flags, message: 'Which item would you like to see?'})
 
-    if (key && prefab) {
-      const config = prefab.raw(key)
+    if (key && reforge) {
+      const config = reforge.raw(key)
       if (!config) {
         return this.err(`Key ${key} not found`)
       }
 
-      const url = urlFor(process.env.PREFAB_API_URL, config)
+      const url = urlFor(process.env.REFORGE_API_URL, config)
 
       this.log(url)
       this.log('')

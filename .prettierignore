@@ -1,4 +1,4 @@
-src/prefab-common/
+src/reforge-common/
 .eslintignore
 .prettierignore
 package.json

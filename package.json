@@ -1,5 +1,5 @@
 {
-  "name": "@prefab-cloud/prefab",
+  "name": "@reforge-com/cli",
   "version": "0.0.0-pre.0",
   "author": "Jeffrey Chupp @semanticart",
   "bugs": {
@@ -14,13 +14,13 @@
     "oclif"
   ],
   "bin": {
-    "prefab": "./bin/run.js"
+    "reforge": "./bin/run.js"
   },
   "dependencies": {
     "@oclif/core": "^3.18.2",
     "@oclif/plugin-help": "^6",
     "@oclif/plugin-plugins": "^4",
-    "@prefab-cloud/prefab-cloud-node": "^0.4.5",
+    "@reforge-com/node": "^0.0.0-pre.2",
     "acorn": "^8.10.0",
     "acorn-walk": "^8.2.0",
     "chalk": "^5.4.1",
@@ -31,7 +31,7 @@
     "mustache": "^4.2.0",
     "zod": "^3.22.4"
   },
-  "description": "Prefab CLI",
+  "description": "Reforge CLI",
   "devDependencies": {
     "@oclif/prettier-config": "^0.2.1",
     "@oclif/test": "^3",
@@ -67,8 +67,8 @@
   "license": "MIT",
   "main": "",
   "oclif": {
-    "bin": "prefab",
-    "dirname": "prefab",
+    "bin": "reforge",
+    "dirname": "reforge",
     "commands": "./dist/commands",
     "plugins": [],
     "topicSeparator": " ",
@@ -85,7 +85,7 @@
     "prepack": "yarn build && oclif manifest && oclif readme",
     "test": "mocha \"test/**/*.test.ts\" --exit",
     "test:ci": "mocha --forbid-only \"test/**/*.test.ts\" --exit",
-    "update-submodule": "git submodule update --remote src/prefab-common",
+    "update-submodule": "git submodule update --remote src/reforge-common",
     "version": "yarn build && oclif readme && git add README.md && cat package.json | jq .version | awk '{print \"// NOTE: This file is generated\\nexport default \"$1}' > src/version.ts && git add src/version.ts"
   },
   "types": "dist/index.d.ts",

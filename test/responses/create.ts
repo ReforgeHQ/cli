@@ -158,7 +158,7 @@ const cannedResponses: CannedResponses = {
                 criteria: [],
                 value: {
                   confidential: true,
-                  decryptWith: 'prefab.secrets.encryption.key',
+                  decryptWith: 'reforge.secrets.encryption.key',
                   string: SECRET_VALUE,
                 },
               },
@@ -173,15 +173,15 @@ const cannedResponses: CannedResponses = {
 
   'https://api.staging-prefab.cloud/api/v1/config/key/missing.secret.key': [[{}, {}, 404]],
 
-  'https://api.staging-prefab.cloud/api/v1/config/key/prefab.secrets.encryption.key': [
+  'https://api.staging-prefab.cloud/api/v1/config/key/reforge.secrets.encryption.key': [
     [
       {},
       {
-        changedBy: {apiKeyId: '', email: 'jeffrey.chupp@prefab.cloud', userId: '0'},
+        changedBy: {apiKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
         configType: 'CONFIG',
         draftId: '497',
         id: '17018809595519854',
-        key: 'prefab.secrets.encryption.key',
+        key: 'reforge.secrets.encryption.key',
         projectId: '100',
         rows: [
           {values: [{value: {provided: {lookup: 'FAKE_PROD_SECRET', source: 'ENV_VAR'}}}]},

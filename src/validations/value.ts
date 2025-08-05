@@ -1,10 +1,10 @@
-import {Prefab} from '@prefab-cloud/prefab-cloud-node'
+import {Reforge} from '@reforge-com/node'
 
-import {valueOfToString} from '../prefab-common/src/valueOf.js'
+import {valueOfToString} from '../reforge-common/src/valueOf.js'
 import {Result, failure, success} from '../result.js'
 
-const validateValue = (prefab: Prefab, key: string, value: string): Result<string> => {
-  const config = prefab.raw(key)
+const validateValue = (reforge: Reforge, key: string, value: string): Result<string> => {
+  const config = reforge.raw(key)
 
   if (!config) {
     return failure(`Could not find config named ${key}`)
