@@ -14,12 +14,9 @@ jobs:
   unit-tests:
     env:
       REFORGE_API_KEY: ${{ secrets.REFORGE_API_KEY }}
-      REFORGE_CDN_URL: ${{ secrets.REFORGE_CDN_URL }}
       REFORGE_API_URL: ${{ secrets.REFORGE_API_URL }}
-      REFORGE_ENCRYPTION_KEY_DEVELOPMENT: ${{ secrets.REFORGE_ENCRYPTION_KEY_DEVELOPMENT }}
-      REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY: ${{ secrets.REFORGE_ENCRYPTION_KEY_DEVELOPMENT }}
+      REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY: ${{ secrets.REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY }}
       FAKE_PROD_SECRET: ${{ secrets.FAKE_PROD_SECRET }}
-      FAKE_DEFAULT_SECRET: ${{ secrets.FAKE_DEFAULT_SECRET }}
     strategy:
       matrix:
         os: ['ubuntu-latest', 'windows-latest']

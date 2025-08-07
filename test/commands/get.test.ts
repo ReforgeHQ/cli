@@ -1,7 +1,7 @@
 import {expect, test} from '@oclif/test'
 
 const validKey = 'my-string-list-key'
-const secretKey = 'a.secret.config'
+const secretKey = 'a.secret.config.reforge'
 
 describe('get', () => {
   test

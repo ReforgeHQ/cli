@@ -78,6 +78,16 @@ const cannedResponses: CannedResponses = {
                 criteria: [
                   {
                     operator: 'PROP_IS_ONE_OF',
+                    propertyName: 'prefab-api-key.user-id',
+                    valueToMatch: {stringList: {values: ['4']}},
+                  },
+                ],
+                value: {string: 'my.override'},
+              },
+              {
+                criteria: [
+                  {
+                    operator: 'PROP_IS_ONE_OF',
                     propertyName: 'reforge-api-key.user-id',
                     valueToMatch: {stringList: {values: ['4']}},
                   },
