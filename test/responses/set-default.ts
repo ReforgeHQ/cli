@@ -58,15 +58,15 @@ const cannedResponses: CannedResponses = {
     ],
   ],
 
-  'https://api.staging-prefab.cloud/api/v1/config/key/jeffreys.test.key': [
+  'https://api.staging-prefab.cloud/api/v1/config/key/jeffreys.test.key.reforge': [
     [
       {},
       {
-        changedBy: {apiKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
+        changedBy: {apiKeyId: '', email: 'mark.faga@reforge.com', userId: '0'},
         configType: 'CONFIG',
         draftId: '531',
         id: '17005955334851003',
-        key: 'jeffreys.test.key',
+        key: 'jeffreys.test.key.reforge',
         projectId: '124',
         rows: [
           {projectEnvId: '588', values: [{value: {string: 'default'}}]},
@@ -78,18 +78,8 @@ const cannedResponses: CannedResponses = {
                 criteria: [
                   {
                     operator: 'PROP_IS_ONE_OF',
-                    propertyName: 'prefab-api-key.user-id',
-                    valueToMatch: {stringList: {values: ['4']}},
-                  },
-                ],
-                value: {string: 'my.override'},
-              },
-              {
-                criteria: [
-                  {
-                    operator: 'PROP_IS_ONE_OF',
                     propertyName: 'reforge-api-key.user-id',
-                    valueToMatch: {stringList: {values: ['4']}},
+                    valueToMatch: {stringList: {values: ['112']}},
                   },
                 ],
                 value: {string: 'my.override'},
@@ -196,7 +186,7 @@ const cannedResponses: CannedResponses = {
 
     [
       {
-        configKey: 'jeffreys.test.key',
+        configKey: 'jeffreys.test.key.reforge',
         currentVersionId: ANY,
         value: {string: 'hello default world'},
       },
@@ -206,7 +196,7 @@ const cannedResponses: CannedResponses = {
 
     [
       {
-        configKey: 'jeffreys.test.key',
+        configKey: 'jeffreys.test.key.reforge',
         currentVersionId: ANY,
         environmentId: '6',
         value: {provided: {lookup: 'GREETING', source: 1}},
@@ -217,7 +207,7 @@ const cannedResponses: CannedResponses = {
 
     [
       {
-        configKey: 'jeffreys.test.key',
+        configKey: 'jeffreys.test.key.reforge',
         currentVersionId: ANY,
         environmentId: '6',
         value: {

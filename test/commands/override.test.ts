@@ -53,7 +53,7 @@ describe('override', () => {
 
   test
     .stdout()
-    .command(['override', 'jeffreys.test.key', '--remove'])
+    .command(['override', 'jeffreys.test.key.reforge', '--remove'])
     .it('removes an override successfully', (ctx) => {
       expect(ctx.stdout).to.contain(`Override removed`)
     })

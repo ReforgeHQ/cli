@@ -4,7 +4,7 @@ import {setupServer} from 'msw/node'
 import {CannedResponses, getCannedResponse} from '../test-helper.js'
 
 export const keyWithEvaluations = 'my-string-list-key'
-export const keyWithNoEvaluations = 'jeffreys.test.key'
+export const keyWithNoEvaluations = 'jeffreys.test.key.reforge'
 export const secretKey = 'a.secret.config'
 export const confidentialKey = 'a.confidential.config'
 
@@ -63,9 +63,9 @@ const rawEvaluationResponse = {
 }
 
 const rawConfigResponseForKeyWithNoEvaluations = {
-  changedBy: {apiKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
+  changedBy: {apiKeyId: '', email: 'mark.faga@reforge.com', userId: '0'},
   configType: 'CONFIG',
-  key: 'jeffreys.test.key',
+  key: 'jeffreys.test.key.reforge',
   projectId: '124',
   rows: [
     {
@@ -76,7 +76,7 @@ const rawConfigResponseForKeyWithNoEvaluations = {
             {
               operator: 'PROP_IS_ONE_OF',
               propertyName: 'reforge-api-key.user-id',
-              valueToMatch: {stringList: {values: ['4']}},
+              valueToMatch: {stringList: {values: ['112']}},
             },
           ],
           value: {string: 'my.override'},

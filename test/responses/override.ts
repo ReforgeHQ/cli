@@ -40,8 +40,8 @@ const cannedResponses: CannedResponses = {
   ],
   'https://api.staging-prefab.cloud/api/v1/config/remove-variant': [
     [
-      {configKey: 'jeffreys.test.key', variant: {string: 'my.override'}},
-      {message: '', newId: '17001604601640547'},
+      {configKey: 'jeffreys.test.key.reforge', variant: {string: 'my.override'}},
+      {message: '', newId: '17545727831235982'},
       200,
     ],
   ],
