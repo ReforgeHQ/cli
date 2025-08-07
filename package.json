@@ -77,6 +77,7 @@
   },
   "scripts": {
     "build": "shx rm -rf dist && tsc -b",
+    "test:debug:single": "node --inspect-brk --loader ts-node/esm --no-warnings=ExperimentalWarning ./node_modules/.bin/mocha --exit",
     "lint": "eslint --cache=true \"**/*.{ts,md,json}\"",
     "lint:fix": "eslint --cache=true --fix \"**/*.{ts,md,json}\"",
     "format": "prettier -l \"**/*.{ts,md,json}\"",
