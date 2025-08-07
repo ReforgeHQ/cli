@@ -12,7 +12,7 @@ type FlagsOrDatafile = Flags | string
 
 let reforge: Reforge
 
-const DEFAULT_CONTEXT_USER_ID_NAMESPACE = 'reforge-api-key'
+const DEFAULT_CONTEXT_USER_ID_NAMESPACE = 'prefab-api-key'
 const DEFAULT_CONTEXT_USER_ID = 'user-id'
 
 export const initReforge = async (_ctx: CommandLike, flagsOrDatafile: FlagsOrDatafile) => {

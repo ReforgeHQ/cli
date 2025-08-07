@@ -25,7 +25,7 @@ const cannedResponses: CannedResponses = {
                 criteria: [
                   {
                     operator: 'PROP_IS_ONE_OF',
-                    propertyName: 'reforge-api-key.user-id',
+                    propertyName: 'prefab-api-key.user-id',
                     valueToMatch: {stringList: {values: ['4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4']}},
                   },
                 ],
@@ -78,7 +78,7 @@ const cannedResponses: CannedResponses = {
                 criteria: [
                   {
                     operator: 'PROP_IS_ONE_OF',
-                    propertyName: 'reforge-api-key.user-id',
+                    propertyName: 'prefab-api-key.user-id',
                     valueToMatch: {stringList: {values: ['112']}},
                   },
                 ],
