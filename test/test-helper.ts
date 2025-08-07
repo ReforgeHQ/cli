@@ -104,7 +104,7 @@ const deepCompare = (obj1: unknown, obj2: unknown): boolean => {
 export const getCannedResponse = async (
   request: StrictRequest<DefaultBodyType>,
   cannedResponses: CannedResponses,
-): Promise<HttpResponse> => {
+): Promise<HttpResponse<DefaultBodyType>> => {
   let body: DefaultBodyType = {}
 
   if (request.method === 'POST') {
