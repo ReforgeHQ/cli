@@ -1,26 +1,43 @@
 {
+  "name": "@reforge-com/cli",
+  "version": "0.0.0-pre.0",
   "author": "Jeffrey Chupp @semanticart",
+  "bugs": {
+    "url": "https://github.com/ReforgeHQ/cli/issues"
+  },
+  "homepage": "https://github.com/ReforgeHQ/cli#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ReforgeHQ/cli.git"
+  },
+  "keywords": [
+    "oclif"
+  ],
   "bin": {
-    "prefab": "./bin/run.js"
+    "reforge": "./bin/run.js"
   },
   "dependencies": {
     "@oclif/core": "^3.18.2",
     "@oclif/plugin-help": "^6",
     "@oclif/plugin-plugins": "^4",
-    "@prefab-cloud/prefab-cloud-node": "^0.4.5",
+    "@reforge-com/node": "^0.0.0-pre.2",
     "acorn": "^8.10.0",
     "acorn-walk": "^8.2.0",
-    "change-case": "^4.1.2",
+    "chalk": "^5.4.1",
+    "common-tags": "^1.8.2",
     "fuzzy": "^0.1.3",
     "inquirer-autocomplete-standalone": "^0.8.1",
+    "lodash.camelcase": "^4.3.0",
     "mustache": "^4.2.0",
     "zod": "^3.22.4"
   },
-  "description": "Prefab CLI",
+  "description": "Reforge CLI",
   "devDependencies": {
     "@oclif/prettier-config": "^0.2.1",
     "@oclif/test": "^3",
     "@types/chai": "^4",
+    "@types/common-tags": "^1.8.4",
+    "@types/lodash.camelcase": "^4.3.9",
     "@types/mocha": "^10",
     "@types/mustache": "^4.2.5",
     "@types/node": "^18",
@@ -29,11 +46,12 @@
     "eslint-config-oclif": "^5",
     "eslint-config-oclif-typescript": "^3",
     "eslint-config-prettier": "^9.0.0",
-    "husky": "^9.1.7",
-    "lint-staged": "^15.5.0",
+    "eslint-plugin-markdown": "^5.1.0",
+    "eslint-plugin-only-error": "^1.0.2",
     "mocha": "^10",
     "msw": "^2.0.6",
     "oclif": "^4.0.3",
+    "prettier": "^3.6.2",
     "shx": "^0.3.4",
     "ts-node": "^10.9.1",
     "tsx": "^4.19.3",
@@ -45,40 +63,33 @@
   "files": [
     "/bin",
     "/dist",
-    "/src/codegen/templates",
     "/oclif.manifest.json"
   ],
-  "homepage": "https://github.com/prefab-cloud/prefab-cli",
   "license": "MIT",
   "main": "",
-  "name": "@prefab-cloud/prefab",
   "oclif": {
-    "bin": "prefab",
-    "dirname": "prefab",
+    "bin": "reforge",
+    "dirname": "reforge",
     "commands": "./dist/commands",
     "plugins": [],
     "topicSeparator": " ",
     "helpClass": "./dist/help"
   },
-  "repository": "prefab-cloud/prefab-cli",
   "scripts": {
-    "build": "shx rm -rf dist && tsc -b && shx cp -r src/codegen/templates dist/codegen/",
-    "lint": "eslint . --cache --ext .ts",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "build": "shx rm -rf dist && tsc -b",
+    "test:debug:single": "node --inspect-brk --loader ts-node/esm --no-warnings=ExperimentalWarning ./node_modules/.bin/mocha --exit",
+    "lint": "eslint --cache=true \"**/*.{ts,md,json}\"",
+    "lint:fix": "eslint --cache=true --fix \"**/*.{ts,md,json}\"",
+    "format": "prettier -l \"**/*.{ts,md,json}\"",
+    "format:fix": "prettier --write \"**/*.{ts,md,json}\"",
     "postpack": "shx rm -f oclif.manifest.json",
     "posttest": "yarn lint",
     "prepack": "yarn build && oclif manifest && oclif readme",
-    "prepare": "yarn build && husky",
     "test": "mocha \"test/**/*.test.ts\" --exit",
     "test:ci": "mocha --forbid-only \"test/**/*.test.ts\" --exit",
-    "update-submodule": "git submodule update --remote src/prefab-common",
+    "update-submodule": "git submodule update --remote src/reforge-common",
     "version": "yarn build && oclif readme && git add README.md && cat package.json | jq .version | awk '{print \"// NOTE: This file is generated\\nexport default \"$1}' > src/version.ts && git add src/version.ts"
   },
-  "version": "0.5.2",
-  "bugs": "https://github.com/prefab-cloud/prefab-cli/issues",
-  "keywords": [
-    "oclif"
-  ],
   "types": "dist/index.d.ts",
   "exports": "./lib/index.js",
   "type": "module"

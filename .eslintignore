@@ -1,3 +1,9 @@
 /dist
 /tmp
-src/prefab-common/
+src/reforge-common/
+package.json
+yarn.lock
+generated-sources/
+.vscode/
+reforge.*.config.json
+test/fixtures

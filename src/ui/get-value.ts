@@ -1,10 +1,10 @@
-import {Prefab} from '@prefab-cloud/prefab-cloud-node'
+import {Reforge} from '@reforge-com/node'
 
-import type {Environment} from '../prefab-common/src/api/getEnvironmentsFromApi.js'
-import type {Config, ConfigValue} from '../prefab-common/src/types.js'
+import type {Environment} from '../reforge-common/src/api/getEnvironmentsFromApi.js'
+import type {Config, ConfigValue} from '../reforge-common/src/types.js'
 
-import {defaultValueFor} from '../prefab.js'
-import {valueOfToString} from '../prefab-common/src/valueOf.js'
+import {defaultValueFor} from '../reforge.js'
+import {valueOfToString} from '../reforge-common/src/valueOf.js'
 import {Result, failure, noop, success} from '../result.js'
 import autocomplete from '../util/autocomplete.js'
 import validateValue from '../validations/value.js'
@@ -17,7 +17,7 @@ const getValue = async ({
   flags,
   key,
   message,
-  prefab,
+  reforge,
 }: {
   allowBlank?: boolean
   desiredValue: string | undefined
@@ -25,7 +25,7 @@ const getValue = async ({
   flags: {interactive: boolean}
   key?: string
   message: string
-  prefab: Prefab
+  reforge: Reforge
 }): Promise<Result<string>> => {
   if (desiredValue === undefined && !flags.interactive) {
     return failure(`No value provided for ${key}`)
@@ -34,7 +34,7 @@ const getValue = async ({
   if (!key) {
     const value = desiredValue ?? (await promptForValue({allowBlank, message}))
 
-    if (value === undefined) {
+    if (value === undefined || value === null) {
       return noop()
     }
 
@@ -43,7 +43,7 @@ const getValue = async ({
 
   const currentDefault = environment ? defaultValueFor(environment.id, key) : undefined
 
-  const config = prefab.raw(key)
+  const config = reforge.raw(key)
 
   if (!config) {
     return failure(`Could not find config named ${key}`)
@@ -51,7 +51,7 @@ const getValue = async ({
 
   const selectedValue = desiredValue ?? (await promptForValue({allowBlank, config, currentDefault, message}))
 
-  if (selectedValue === undefined) {
+  if (selectedValue === undefined || selectedValue === null) {
     return noop()
   }
 
@@ -59,7 +59,7 @@ const getValue = async ({
     return noop(`The default is already \`${selectedValue}\``)
   }
 
-  return validateValue(prefab, key, selectedValue)
+  return validateValue(reforge, key, selectedValue)
 }
 
 const promptForValue = async ({

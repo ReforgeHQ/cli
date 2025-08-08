@@ -69,14 +69,14 @@ commands.push(
   },
   {
     command: Create,
-    description: 'Create a new item in Prefab with --secret',
+    description: 'Create a new item in Reforge with --secret',
     displayCommandName: 'create --secret',
     id: 'create',
     implicitFlags: ['secret'],
   },
   {
     command: Create,
-    description: 'Create an ENV Var provided item in Prefab with --env-var',
+    description: 'Create an ENV Var provided item in Reforge with --env-var',
     displayCommandName: 'create --env-var',
     id: 'create',
     implicitFlags: ['env-var'],
@@ -214,7 +214,7 @@ export const interactivePrompt = async (config: Config) => {
       return
     }
 
-    let apiKey = process.env.PREFAB_API_KEY
+    let apiKey = process.env.REFORGE_API_KEY
 
     const cliArgs = process.argv.slice(2).filter((arg) => {
       if (arg.startsWith('--api-key=') && !Object.keys(chosenCommand.command.baseFlags ?? {}).includes('api-key')) {
@@ -227,7 +227,7 @@ export const interactivePrompt = async (config: Config) => {
 
     if (Object.keys(chosenCommand.command.baseFlags ?? {}).includes('api-key') && !apiKey) {
       throw new Error(
-        'You must provide an API Key via --api-key=XYZ or by setting the PREFAB_API_KEY environment variable.',
+        'You must provide an API Key via --api-key=XYZ or by setting the REFORGE_API_KEY environment variable.',
       )
     }
 

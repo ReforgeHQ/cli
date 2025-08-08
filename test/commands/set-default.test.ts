@@ -41,7 +41,7 @@ describe('set-default', () => {
       .stdout()
       .command([
         'set-default',
-        'jeffreys.test.key',
+        'jeffreys.test.key.reforge',
         '--environment=[default]',
         '--value=hello default world',
         '--confirm',
@@ -54,7 +54,7 @@ describe('set-default', () => {
       .stdout()
       .command([
         'set-default',
-        'jeffreys.test.key',
+        'jeffreys.test.key.reforge',
         '--environment=[default]',
         '--confirm',
         '--value=hello default world',
@@ -66,7 +66,7 @@ describe('set-default', () => {
             id: '',
             name: '[Default]',
           },
-          key: 'jeffreys.test.key',
+          key: 'jeffreys.test.key.reforge',
           success: true,
           value: 'hello default world',
         })
@@ -74,14 +74,21 @@ describe('set-default', () => {
 
     test
       .stdout()
-      .command(['set-default', 'jeffreys.test.key', '--environment=Staging', '--confirm', '--env-var=GREETING'])
+      .command(['set-default', 'jeffreys.test.key.reforge', '--environment=Staging', '--confirm', '--env-var=GREETING'])
       .it('can create a string provided by an env var', (ctx) => {
         expect(ctx.stdout).to.contain(`Successfully changed default to be provided by \`GREETING\``)
       })
 
     test
       .stdout()
-      .command(['set-default', 'jeffreys.test.key', '--environment=Staging', '--confirm', '--secret', '--value=hello'])
+      .command([
+        'set-default',
+        'jeffreys.test.key.reforge',
+        '--environment=Staging',
+        '--confirm',
+        '--secret',
+        '--value=hello',
+      ])
       .it('can create a secret string', (ctx) => {
         expect(ctx.stdout).to.contain(`Successfully changed default to \`hello\` (encrypted)`)
       })
@@ -146,7 +153,7 @@ describe('set-default', () => {
       .stderr()
       .command([
         'set-default',
-        'jeffreys.test.key',
+        'jeffreys.test.key.reforge',
         '--environment=Staging',
         '--confirm',
         '--env-var=GREETING',

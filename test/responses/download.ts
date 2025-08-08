@@ -14,7 +14,7 @@ const environmentResponse = {
 export const downloadStub: JsonObj = {
   configs: [
     {
-      changedBy: {apiKeyId: '', email: 'jdwyer@prefab.cloud', userId: '0'},
+      changedBy: {apiKeyId: '', email: 'jdwyer@reforge.com', userId: '0'},
       configType: 'CONFIG',
       draftid: '2',
       id: '16777738077090689',

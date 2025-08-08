@@ -1,8 +1,8 @@
 export {run} from '@oclif/core'
 import {Command, Flags} from '@oclif/core'
 
-import {Client} from './prefab-common/src/api/client.js'
-import {ProjectEnvId, getProjectEnvFromApiKey} from './prefab-common/src/getProjectEnvFromApiKey.js'
+import {Client} from './reforge-common/src/api/client.js'
+import {ProjectEnvId, getProjectEnvFromApiKey} from './reforge-common/src/getProjectEnvFromApiKey.js'
 import {JsonObj, Result} from './result.js'
 import rawGetClient, {unwrapRequest} from './util/get-client.js'
 
@@ -66,6 +66,8 @@ export abstract class BaseCommand extends Command {
       this.log(result.message)
       return result.json ?? result.message
     }
+
+    return null
   }
 
   public verboseLog = (category: string | unknown, message?: unknown): void => {
@@ -91,8 +93,8 @@ export abstract class APICommand extends BaseCommand {
   static baseFlags = {
     ...globalFlags,
     'api-key': Flags.string({
-      description: 'Prefab API KEY (defaults to ENV var PREFAB_API_KEY)',
-      env: 'PREFAB_API_KEY',
+      description: 'Reforge API KEY (defaults to ENV var REFORGE_API_KEY)',
+      env: 'REFORGE_API_KEY',
       helpGroup: 'GLOBAL',
       required: true,
     }),

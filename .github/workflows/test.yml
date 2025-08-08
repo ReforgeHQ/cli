@@ -13,16 +13,13 @@ on:
 jobs:
   unit-tests:
     env:
-      PREFAB_API_KEY: ${{ secrets.PREFAB_API_KEY }}
-      PREFAB_CDN_URL: ${{ secrets.PREFAB_CDN_URL }}
-      PREFAB_API_URL: ${{ secrets.PREFAB_API_URL }}
-      PREFAB_ENCRYPTION_KEY_DEVELOPMENT: ${{ secrets.PREFAB_ENCRYPTION_KEY_DEVELOPMENT }}
-      PREFAB_INTEGRATION_TEST_ENCRYPTION_KEY: ${{ secrets.PREFAB_ENCRYPTION_KEY_DEVELOPMENT }}
+      REFORGE_API_KEY: ${{ secrets.REFORGE_API_KEY }}
+      REFORGE_API_URL: ${{ secrets.REFORGE_API_URL }}
+      REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY: ${{ secrets.REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY }}
       FAKE_PROD_SECRET: ${{ secrets.FAKE_PROD_SECRET }}
-      FAKE_DEFAULT_SECRET: ${{ secrets.FAKE_DEFAULT_SECRET }}
     strategy:
       matrix:
-        os: ["ubuntu-latest", "windows-latest"]
+        os: ['ubuntu-latest', 'windows-latest']
         node_version: [lts/-1, lts/*, latest]
       fail-fast: false
     runs-on: ${{ matrix.os }}
@@ -34,6 +31,8 @@ jobs:
         with:
           node-version: ${{ matrix.node_version }}
           cache: yarn
-      - run: yarn install --network-timeout 600000
+      - run: yarn install --immutable --network-timeout 600000
+      - run: yarn format
+      - run: yarn lint
       - run: yarn build
       - run: yarn test:ci

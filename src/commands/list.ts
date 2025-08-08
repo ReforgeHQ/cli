@@ -1,8 +1,8 @@
 import {Flags} from '@oclif/core'
-import {ConfigType} from '@prefab-cloud/prefab-cloud-node'
+import {ConfigType} from '@reforge-com/node'
 
 import {APICommand} from '../index.js'
-import {initPrefab} from '../prefab.js'
+import {initReforge} from '../reforge.js'
 
 export default class List extends APICommand {
   static description = `Show keys for your config/feature flags/etc.
@@ -21,9 +21,9 @@ export default class List extends APICommand {
   public async run() {
     const {flags} = await this.parse(List)
 
-    const prefab = await initPrefab(this, flags)
+    const reforge = await initReforge(this, flags)
 
-    let keys = prefab.keys()
+    let keys = reforge.keys()
 
     const types: ConfigType[] = []
 
@@ -44,7 +44,7 @@ export default class List extends APICommand {
     }
 
     if (types.length > 0) {
-      keys = keys.filter((key) => types.includes(prefab.raw(key)!.configType))
+      keys = keys.filter((key) => types.includes(reforge.raw(key)!.configType))
     }
 
     return this.ok(keys.join('\n'), {keys})

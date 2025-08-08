@@ -1,15 +1,15 @@
 import {Flags} from '@oclif/core'
-import {encryption} from '@prefab-cloud/prefab-cloud-node'
+import {encryption} from '@reforge-com/node'
 
 import {APICommand} from '../index.js'
-import {getConfigFromApi} from '../prefab-common/src/api/getConfigFromApi.js'
-import {ConfigValue} from '../prefab-common/src/types.js'
+import {getConfigFromApi} from '../reforge-common/src/api/getConfigFromApi.js'
+import {ConfigValue} from '../reforge-common/src/types.js'
 import {Result, failure, success} from '../result.js'
 
 const secretFlags = (secretDescription: string) => ({
   secret: Flags.boolean({default: false, description: secretDescription}),
   'secret-key-name': Flags.string({
-    default: 'prefab.secrets.encryption.key',
+    default: 'reforge.secrets.encryption.key',
     description: 'name of the secret key to use for encryption/decryption',
   }),
 })

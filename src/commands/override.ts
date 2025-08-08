@@ -1,10 +1,10 @@
 import {Flags} from '@oclif/core'
 
-import type {Config} from '../prefab-common/src/types.js'
+import type {Config} from '../reforge-common/src/types.js'
 
 import {APICommand} from '../index.js'
-import {overrideFor} from '../prefab.js'
-import {valueTypeStringForConfig} from '../prefab-common/src/valueType.js'
+import {overrideFor} from '../reforge.js'
+import {valueTypeStringForConfig} from '../reforge-common/src/valueType.js'
 import {JsonObj} from '../result.js'
 import getKey from '../ui/get-key.js'
 import getValue from '../ui/get-value.js'
@@ -35,14 +35,14 @@ export default class Override extends APICommand {
       this.err('remove and value flags are mutually exclusive')
     }
 
-    const {key, prefab} = await getKey({
+    const {key, reforge} = await getKey({
       args,
       command: this,
       flags,
       message: 'Which item would you like to override?',
     })
 
-    if (!key || !prefab) {
+    if (!key || !reforge) {
       return
     }
 
@@ -50,13 +50,13 @@ export default class Override extends APICommand {
       return this.removeOverride(key)
     }
 
-    const config = prefab.raw(key)
+    const config = reforge.raw(key)
 
     if (!config) {
       return this.err(`Could not find config named ${key}`)
     }
 
-    const value = await getValue({desiredValue: flags.value, flags, key, message: 'Override value', prefab})
+    const value = await getValue({desiredValue: flags.value, flags, key, message: 'Override value', reforge})
 
     if (value.ok) {
       return this.setOverride(config, value.value)

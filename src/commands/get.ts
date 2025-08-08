@@ -1,4 +1,4 @@
-import type {GetValue} from '../prefab-common/src/types.js'
+import type {GetValue} from '../reforge-common/src/types.js'
 
 import {APICommand} from '../index.js'
 import {JsonObj} from '../result.js'
@@ -17,17 +17,17 @@ export default class Get extends APICommand {
   public async run(): Response {
     const {args, flags} = await this.parse(Get)
 
-    const {key, prefab} = await getKey({args, command: this, flags, message: 'Which item would you like to get?'})
+    const {key, reforge} = await getKey({args, command: this, flags, message: 'Which item would you like to get?'})
 
-    if (!key || !prefab) {
+    if (!key || !reforge) {
       return this.err('Key is required')
     }
 
-    if (!prefab.keys().includes(key)) {
+    if (!reforge.keys().includes(key)) {
       return this.err(`${key} does not exist`)
     }
 
-    const value = prefab.get(key)
+    const value = reforge.get(key)
 
     return this.ok(this.toSuccessJson(value), {[key]: value})
   }

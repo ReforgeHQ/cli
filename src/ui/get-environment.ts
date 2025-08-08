@@ -1,8 +1,8 @@
-import type {Client} from '../prefab-common/src/api/client.js'
-import type {Environment} from '../prefab-common/src/api/getEnvironmentsFromApi.js'
+import type {Client} from '../reforge-common/src/api/client.js'
+import type {Environment} from '../reforge-common/src/api/getEnvironmentsFromApi.js'
 
 import {APICommand} from '../index.js'
-import {getEnvironmentsFromApi} from '../prefab-common/src/api/getEnvironmentsFromApi.js'
+import {getEnvironmentsFromApi} from '../reforge-common/src/api/getEnvironmentsFromApi.js'
 import {JsonObj} from '../result.js'
 import autocomplete from '../util/autocomplete.js'
 import isInteractive from '../util/is-interactive.js'

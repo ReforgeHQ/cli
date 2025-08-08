@@ -1,4 +1,4 @@
-import {encryption} from '@prefab-cloud/prefab-cloud-node'
+import {encryption} from '@reforge-com/node'
 
 import {BaseCommand} from '../index.js'
 import {JsonObj} from '../result.js'

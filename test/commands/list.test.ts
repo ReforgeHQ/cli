@@ -1,7 +1,7 @@
 import {expect, test} from '@oclif/test'
 
 const exampleFF = 'feature-flag.integer'
-const exampleLL = 'log-level.prefab.views.index'
+const exampleLL = 'log-level.reforge.views.index'
 const exampleSegment = 'segment-with-and-conditions'
 const exampleConfig = 'my-string-list-key'
 

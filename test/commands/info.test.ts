@@ -96,8 +96,8 @@ Development: 7
 https://app.staging-prefab.cloud/account/projects/124/configs/${keyWithNoEvaluations}
 
 - Default: abc
-- jeffrey: [see rules] https://app.staging-prefab.cloud/account/projects/124/configs/jeffreys.test.key?environment=588
-- Production: [override] \`my.override\` https://app.staging-prefab.cloud/account/projects/124/configs/jeffreys.test.key?environment=143
+- jeffrey: [see rules] https://app.staging-prefab.cloud/account/projects/124/configs/jeffreys.test.key.reforge?environment=588
+- Production: [override] \`my.override\` https://app.staging-prefab.cloud/account/projects/124/configs/jeffreys.test.key.reforge?environment=143
 
 No evaluations in the past 24 hours
 `.trim(),
@@ -118,17 +118,17 @@ No evaluations in the past 24 hours
 
             values: {
               Default: {
-                url: 'https://app.staging-prefab.cloud/account/projects/124/configs/jeffreys.test.key?environment=undefined',
+                url: 'https://app.staging-prefab.cloud/account/projects/124/configs/jeffreys.test.key.reforge?environment=undefined',
                 value: 'abc',
               },
               Production: {
                 override: 'my.override',
-                url: 'https://app.staging-prefab.cloud/account/projects/124/configs/jeffreys.test.key?environment=143',
+                url: 'https://app.staging-prefab.cloud/account/projects/124/configs/jeffreys.test.key.reforge?environment=143',
                 value: '[see rules]',
               },
 
               jeffrey: {
-                url: 'https://app.staging-prefab.cloud/account/projects/124/configs/jeffreys.test.key?environment=588',
+                url: 'https://app.staging-prefab.cloud/account/projects/124/configs/jeffreys.test.key.reforge?environment=588',
                 value: '[see rules]',
               },
             },

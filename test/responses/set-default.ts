@@ -45,7 +45,7 @@ const cannedResponses: CannedResponses = {
     [
       {},
       {
-        changedBy: {apiKeyId: '', email: 'jeffrey.chupp@prefab.cloud', userId: '0'},
+        changedBy: {apiKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
         configType: 'CONFIG',
         draftId: '531',
         id: '17005955334851009',
@@ -58,15 +58,15 @@ const cannedResponses: CannedResponses = {
     ],
   ],
 
-  'https://api.staging-prefab.cloud/api/v1/config/key/jeffreys.test.key': [
+  'https://api.staging-prefab.cloud/api/v1/config/key/jeffreys.test.key.reforge': [
     [
       {},
       {
-        changedBy: {apiKeyId: '', email: 'jeffrey.chupp@prefab.cloud', userId: '0'},
+        changedBy: {apiKeyId: '', email: 'mark.faga@reforge.com', userId: '0'},
         configType: 'CONFIG',
         draftId: '531',
         id: '17005955334851003',
-        key: 'jeffreys.test.key',
+        key: 'jeffreys.test.key.reforge',
         projectId: '124',
         rows: [
           {projectEnvId: '588', values: [{value: {string: 'default'}}]},
@@ -79,7 +79,7 @@ const cannedResponses: CannedResponses = {
                   {
                     operator: 'PROP_IS_ONE_OF',
                     propertyName: 'prefab-api-key.user-id',
-                    valueToMatch: {stringList: {values: ['4']}},
+                    valueToMatch: {stringList: {values: ['112']}},
                   },
                 ],
                 value: {string: 'my.override'},
@@ -94,15 +94,15 @@ const cannedResponses: CannedResponses = {
     ],
   ],
 
-  'https://api.staging-prefab.cloud/api/v1/config/key/prefab.secrets.encryption.key': [
+  'https://api.staging-prefab.cloud/api/v1/config/key/reforge.secrets.encryption.key': [
     [
       {},
       {
-        changedBy: {apiKeyId: '', email: 'jeffrey.chupp@prefab.cloud', userId: '0'},
+        changedBy: {apiKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
         configType: 'CONFIG',
         draftId: '497',
         id: '17018809595519854',
-        key: 'prefab.secrets.encryption.key',
+        key: 'reforge.secrets.encryption.key',
         projectId: '100',
         rows: [
           {values: [{value: {provided: {lookup: 'FAKE_PROD_SECRET', source: 'ENV_VAR'}}}]},
@@ -130,7 +130,7 @@ const cannedResponses: CannedResponses = {
               {
                 value: {
                   confidential: true,
-                  decryptWith: 'prefab.secrets.encryption.key',
+                  decryptWith: 'reforge.secrets.encryption.key',
                   string: 'ff6351432e--76813f77392fb3dd15f5ca1b--87f6c7691570d277ae1a9a302646f906',
                 },
               },
@@ -147,7 +147,7 @@ const cannedResponses: CannedResponses = {
     [
       {},
       {
-        changedBy: {apiKeyId: '', email: 'jeffrey.chupp@prefab.cloud', userId: '0'},
+        changedBy: {apiKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
         configType: 'CONFIG',
         draftId: '533',
         id: '17005955334851012',
@@ -186,7 +186,7 @@ const cannedResponses: CannedResponses = {
 
     [
       {
-        configKey: 'jeffreys.test.key',
+        configKey: 'jeffreys.test.key.reforge',
         currentVersionId: ANY,
         value: {string: 'hello default world'},
       },
@@ -196,7 +196,7 @@ const cannedResponses: CannedResponses = {
 
     [
       {
-        configKey: 'jeffreys.test.key',
+        configKey: 'jeffreys.test.key.reforge',
         currentVersionId: ANY,
         environmentId: '6',
         value: {provided: {lookup: 'GREETING', source: 1}},
@@ -207,12 +207,12 @@ const cannedResponses: CannedResponses = {
 
     [
       {
-        configKey: 'jeffreys.test.key',
+        configKey: 'jeffreys.test.key.reforge',
         currentVersionId: ANY,
         environmentId: '6',
         value: {
           confidential: true,
-          decryptWith: 'prefab.secrets.encryption.key',
+          decryptWith: 'reforge.secrets.encryption.key',
           string: SECRET_VALUE,
         },
       },
@@ -225,7 +225,7 @@ const cannedResponses: CannedResponses = {
         configKey: 'robocop-secret',
         currentVersionId: ANY,
         environmentId: '6',
-        value: {confidential: true, decryptWith: 'prefab.secrets.encryption.key', string: ANY},
+        value: {confidential: true, decryptWith: 'reforge.secrets.encryption.key', string: ANY},
       },
       createdResponse,
       200,

@@ -4,7 +4,7 @@ import {setupServer} from 'msw/node'
 import {CannedResponses, getCannedResponse} from '../test-helper.js'
 
 export const keyWithEvaluations = 'my-string-list-key'
-export const keyWithNoEvaluations = 'jeffreys.test.key'
+export const keyWithNoEvaluations = 'jeffreys.test.key.reforge'
 export const secretKey = 'a.secret.config'
 export const confidentialKey = 'a.confidential.config'
 
@@ -13,7 +13,7 @@ const noEvaluationsResponse = (key: string) => ({end: 1_700_059_396_635, key, st
 export const rawSecret = `875247386844c18c58a97c--b307b97a8288ac9da3ce0cf2--7ab0c32e044869e355586ed653a435de`
 
 const rawConfigResponseForKeyWithEvaluations = {
-  changedBy: {apiKeyId: '', email: 'jeffrey.chupp@prefab.cloud', userId: '0'},
+  changedBy: {apiKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
   configType: 'CONFIG',
   key: keyWithEvaluations,
   projectId: '124',
@@ -28,7 +28,7 @@ const rawSecretConfigResponse = {
   id: '17017173800583163',
   key: secretKey,
   projectId: '124',
-  rows: [{values: [{value: {decryptWith: 'prefab.secrets.encryption.key', string: rawSecret}}]}],
+  rows: [{values: [{value: {decryptWith: 'reforge.secrets.encryption.key', string: rawSecret}}]}],
   valueType: 'STRING',
 }
 
@@ -63,9 +63,9 @@ const rawEvaluationResponse = {
 }
 
 const rawConfigResponseForKeyWithNoEvaluations = {
-  changedBy: {apiKeyId: '', email: 'jeffrey.chupp@prefab.cloud', userId: '0'},
+  changedBy: {apiKeyId: '', email: 'mark.faga@reforge.com', userId: '0'},
   configType: 'CONFIG',
-  key: 'jeffreys.test.key',
+  key: 'jeffreys.test.key.reforge',
   projectId: '124',
   rows: [
     {
@@ -76,7 +76,7 @@ const rawConfigResponseForKeyWithNoEvaluations = {
             {
               operator: 'PROP_IS_ONE_OF',
               propertyName: 'prefab-api-key.user-id',
-              valueToMatch: {stringList: {values: ['4']}},
+              valueToMatch: {stringList: {values: ['112']}},
             },
           ],
           value: {string: 'my.override'},

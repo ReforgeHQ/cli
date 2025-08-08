@@ -1,7 +1,7 @@
 // eslint-disable-next-line n/no-extraneous-import
 import type Long from 'long'
 
-import {ConfigValue, ConfigValueType} from '../prefab-common/src/types.js'
+import {ConfigValue, ConfigValueType} from '../reforge-common/src/types.js'
 
 const TRUE_VALUES = new Set(['true', '1', 't'])
 const BOOLEAN_VALUES = new Set([...TRUE_VALUES, 'false', '0', 'f'])

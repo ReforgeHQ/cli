@@ -4,8 +4,8 @@ import type Long from 'long'
 import {Args, Flags} from '@oclif/core'
 
 import {APICommand} from '../index.js'
-import {initPrefab} from '../prefab.js'
-import {ConfigType, ConfigValue, ConfigValueType, NewConfig} from '../prefab-common/src/types.js'
+import {initReforge} from '../reforge.js'
+import {ConfigType, ConfigValue, ConfigValueType, NewConfig} from '../reforge-common/src/types.js'
 import {JsonObj} from '../result.js'
 import getValue from '../ui/get-value.js'
 import {TYPE_MAPPING, coerceBool, coerceIntoType} from '../util/coerce.js'
@@ -17,7 +17,7 @@ export default class Create extends APICommand {
     name: Args.string({description: 'name for your new item (e.g. my.new.flag)', required: true}),
   }
 
-  static description = 'Create a new item in Prefab'
+  static description = 'Create a new item in Reforge'
 
   static examples = [
     '<%= config.bin %> <%= command.id %> my.new.flag --type boolean-flag',
@@ -48,7 +48,7 @@ export default class Create extends APICommand {
 
     const key = args.name
 
-    const prefab = await initPrefab(this, flags)
+    const reforge = await initReforge(this, flags)
 
     const secret = parsedSecretFlags(flags)
 
@@ -79,7 +79,7 @@ export default class Create extends APICommand {
         },
       }
     } else {
-      const valueInput = await getValue({desiredValue: flags.value, flags, message: 'Default value', prefab})
+      const valueInput = await getValue({desiredValue: flags.value, flags, message: 'Default value', reforge})
 
       if (valueInput.ok) {
         const rawValue = valueInput.value

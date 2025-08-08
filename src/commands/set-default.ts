@@ -1,11 +1,11 @@
 import {Flags} from '@oclif/core'
-import {ConfigType, Prefab} from '@prefab-cloud/prefab-cloud-node'
+import {ConfigType, Reforge} from '@reforge-com/node'
 
-import type {Environment} from '../prefab-common/src/api/getEnvironmentsFromApi.js'
-import type {ConfigValue} from '../prefab-common/src/types.js'
+import type {Environment} from '../reforge-common/src/api/getEnvironmentsFromApi.js'
+import type {ConfigValue} from '../reforge-common/src/types.js'
 
 import {APICommand} from '../index.js'
-import {valueTypeStringForConfig} from '../prefab-common/src/valueType.js'
+import {valueTypeStringForConfig} from '../reforge-common/src/valueType.js'
 import {JsonObj} from '../result.js'
 import getConfirmation, {confirmFlag} from '../ui/get-confirmation.js'
 import getEnvironment from '../ui/get-environment.js'
@@ -44,14 +44,14 @@ export default class SetDefault extends APICommand {
 
     const secret = parsedSecretFlags(flags)
 
-    const {key, prefab} = await getKey({
+    const {key, reforge} = await getKey({
       args,
       command: this,
       flags,
       message: 'Which item would you like to change the default for?',
     })
 
-    if (!key || !prefab) {
+    if (!key || !reforge) {
       return
     }
 
@@ -74,7 +74,7 @@ export default class SetDefault extends APICommand {
       console.warn("Note: --confidential is implied when using --secret, so you don't need to specify both.")
     }
 
-    const config = prefab.raw(key)
+    const config = reforge.raw(key)
 
     if (!config) {
       return this.err(`Could not find config named ${key}`)
@@ -107,10 +107,17 @@ export default class SetDefault extends APICommand {
         return
       }
 
-      return this.submitChange({confidential, envVar: flags['env-var'], environment, key, prefab, secret})
+      return this.submitChange({confidential, envVar: flags['env-var'], environment, key, reforge, secret})
     }
 
-    const value = await getValue({desiredValue: flags.value, environment, flags, key, message: 'Default value', prefab})
+    const value = await getValue({
+      desiredValue: flags.value,
+      environment,
+      flags,
+      key,
+      message: 'Default value',
+      reforge,
+    })
 
     if (value.ok) {
       const secretMaybe = secret.selected ? ' (encrypted)' : ''
@@ -120,7 +127,7 @@ export default class SetDefault extends APICommand {
         return
       }
 
-      return this.submitChange({confidential, environment, key, prefab, secret, value: value.value})
+      return this.submitChange({confidential, environment, key, reforge, secret, value: value.value})
     }
 
     this.resultMessage(value)
@@ -131,17 +138,17 @@ export default class SetDefault extends APICommand {
     envVar,
     environment,
     key,
-    prefab,
+    reforge,
     secret,
     value,
   }: {
     confidential: boolean
     environment: Environment
     key: string
-    prefab: Prefab
+    reforge: Reforge
     secret: Secret
   } & ValueOrEnvVar) {
-    const config = prefab.raw(key)
+    const config = reforge.raw(key)
 
     if (!config) {
       return this.err(`no config found for ${key}`)
@@ -213,6 +220,6 @@ export default class SetDefault extends APICommand {
 
     this.verboseLog(request.error)
 
-    this.err(`Failed to change default: ${request.status}`, {key, serverError: request.error})
+    return this.err(`Failed to change default: ${request.status}`, {key, serverError: request.error})
   }
 }

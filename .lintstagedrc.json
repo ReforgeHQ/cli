@@ -1,4 +1,0 @@
-{
-  "src/**/*.ts": ["prettier --write"],
-  "test/**/*.ts": ["prettier --write"]
-}

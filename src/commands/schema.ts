@@ -4,12 +4,12 @@ import type Long from 'long'
 import {Args, Flags} from '@oclif/core'
 
 import {APICommand} from '../index.js'
-import {ConfigType, ConfigValue} from '../prefab-common/src/types.js'
-// import { Schema_SchemaType } from '@prefab-cloud/prefab-cloud-node'
+import {ConfigType, ConfigValue} from '../reforge-common/src/types.js'
+// import { Schema_SchemaType } from '@reforge-com/node'
 import {JsonObj} from '../result.js'
 import {checkmark} from '../util/color.js'
 
-// TODO this is a temporary fix for the schema type
+// TODO: this is a temporary fix for the schema type
 export enum Schema_SchemaType {
   JSON_SCHEMA = 2,
   UNKNOWN = 0,
@@ -34,7 +34,7 @@ export default class Schema extends APICommand {
     name: Args.string({description: 'name of the schema', required: true}),
   }
 
-  static description = 'Manage schemas for Prefab configs'
+  static description = 'Manage schemas for Reforge configs'
 
   static examples = [
     '<%= config.bin %> <%= command.id %> my-schema --set-zod="z.object({url: z.string()})"',

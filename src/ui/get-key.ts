@@ -1,6 +1,6 @@
-import {Prefab} from '@prefab-cloud/prefab-cloud-node'
+import {Reforge} from '@reforge-com/node'
 
-import {initPrefab} from '../prefab.js'
+import {initReforge} from '../reforge.js'
 import autocomplete from '../util/autocomplete.js'
 import isInteractive from '../util/is-interactive.js'
 
@@ -24,20 +24,20 @@ const getKey = async ({
   command: CommandLike
   flags: Flags
   message: string
-}): Promise<{key: string | undefined; prefab: Prefab | undefined}> => {
+}): Promise<{key: null | string | undefined; reforge: Reforge | undefined}> => {
   if (!args.name && !isInteractive(flags)) {
     command.err("'name' argument is required when interactive mode isn't available.")
   }
 
-  const prefab = await initPrefab(command, flags)
+  const reforge = await initReforge(command, flags)
 
-  let key = args.name
+  let key: null | string | undefined = args.name
 
   if (!key) {
-    key = await autocomplete({message, source: () => prefab.keys()})
+    key = await autocomplete({message, source: () => reforge.keys()})
   }
 
-  return {key, prefab}
+  return {key, reforge}
 }
 
 export default getKey
