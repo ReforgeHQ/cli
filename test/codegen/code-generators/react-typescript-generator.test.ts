@@ -10,17 +10,6 @@ const defaultMockConfigFile: ConfigFile = {
 }
 
 describe('ReactTypeScriptGenerator', () => {
-  describe('filename', () => {
-    it('should return the correct filename', () => {
-      const generator = new ReactTypeScriptGenerator({
-        configFile: defaultMockConfigFile,
-        log: mockLog,
-      })
-
-      expect(generator.filename).to.equal('reforge-client.ts')
-    })
-  })
-
   describe('generate', () => {
     it('should generate basic code structure when no configs exist', () => {
       const generator = new ReactTypeScriptGenerator({

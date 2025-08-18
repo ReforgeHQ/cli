@@ -1,18 +1,23 @@
 import {expect, test} from '@oclif/test'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
-import {fileURLToPath} from 'node:url'
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 describe('generate', () => {
-  const fixturePath = path.join(__dirname, '..', 'fixtures')
-  const outputPath = path.join(fixturePath, 'output.ts')
+  const configPath = path.join(process.cwd(), 'reforge.config.json')
 
   afterEach(() => {
-    // Clean up the output file if it exists
-    if (fs.existsSync(outputPath)) {
-      fs.unlinkSync(outputPath)
+    try {
+      // Clean up any test config files (could be file or directory)
+      if (fs.existsSync(configPath)) {
+        const stat = fs.statSync(configPath)
+        if (stat.isDirectory()) {
+          fs.rmSync(configPath, {force: true, recursive: true})
+        } else {
+          fs.unlinkSync(configPath)
+        }
+      }
+    } catch {
+      // Do nothing
     }
   })
 
@@ -20,38 +25,215 @@ describe('generate', () => {
     .stdout()
     .command(['generate'])
     .it('runs generate without flags', (ctx) => {
-      // Updated to match the new default behavior (node-ts is the default target)
-      expect(ctx.stdout).to.include('Generating typescript code for configs')
+      // Updated to match the new default behavior (react-ts is the default target)
+      expect(ctx.stdout).to.include('Generating react-ts code for configs')
     })
 
   test
     .stdout()
-    .command(['generate', '--target', 'node-ts'])
+    .command(['generate', '--targets', 'node-ts'])
     .it('generates TypeScript definitions', (ctx) => {
-      expect(ctx.stdout).to.include('Generating typescript code for configs')
+      expect(ctx.stdout).to.include('Generating node-ts code for configs')
     })
 
   test
     .stdout()
-    .command(['gen', '--target', 'node-ts'])
-    .it('works with gen alias', (ctx) => {
-      expect(ctx.stdout).to.include('Generating typescript code for configs')
-    })
-
-  test
-    .stdout()
-    .command(['generate', '--target', 'react-ts'])
+    .command(['generate', '--targets', 'react-ts'])
     .it('generates React TypeScript definitions', (ctx) => {
-      expect(ctx.stdout).to.include('Generating react code for configs')
+      expect(ctx.stdout).to.include('Generating react-ts code for configs')
     })
 
   test
     .stdout()
-    .command(['generate', '--target', 'invalid'])
+    .command(['generate', '--targets', 'invalid'])
     .catch((error) => {
-      expect(error.message).to.include('Expected --target=invalid to be one of:')
+      expect(error.message).to.include('Unsupported target: invalid')
     })
     .it('handles invalid targets')
 
-  // Add more tests for output file paths, etc. as needed
+  describe('local configuration file parsing', () => {
+    test
+      .stderr()
+      .stdout()
+      .command(['generate', '--verbose', '--targets', 'node-ts'])
+      .it('uses default config when no local config file exists', (ctx) => {
+        expect(ctx.stderr).to.include('No reforge.config.json file found in current directory.')
+        expect(ctx.stderr).to.include('Output directory for node-ts: generated')
+        expect(ctx.stdout).to.include('Generating node-ts code for configs')
+        expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'reforge-server.ts')}`)
+      })
+
+    test
+      .stdout()
+      .stderr()
+      .do(() => {
+        // Create a valid config file
+        const validConfig = {
+          outputDirectory: 'generated/custom-output',
+          targets: {
+            'node-ts': {
+              outputDirectory: 'generated/server-types',
+              outputFileName: 'custom-server.ts',
+            },
+          },
+        }
+        fs.writeFileSync(configPath, JSON.stringify(validConfig, null, 2))
+      })
+      .command(['generate', '--verbose', '--targets', 'node-ts,react-ts'])
+      .it('loads and uses valid local config file', (ctx) => {
+        expect(ctx.stderr).to.include('Found local reforge.config.json')
+        expect(ctx.stderr).to.include('Output directory for node-ts: generated/server-types')
+        expect(ctx.stdout).to.include('Generating node-ts code for configs')
+        expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'server-types', 'custom-server.ts')}`)
+        expect(ctx.stderr).to.include('Output directory for react-ts: generated/custom-output')
+        expect(ctx.stdout).to.include('Generating react-ts code for configs')
+        expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'custom-output', 'reforge-client.ts')}`)
+      })
+
+    test
+      .stdout()
+      .stderr()
+      .do(() => {
+        // Create config with only global outputDirectory
+        const globalConfig = {
+          outputDirectory: 'generated/global-output',
+        }
+        fs.writeFileSync(configPath, JSON.stringify(globalConfig, null, 2))
+      })
+      .command(['generate', '--verbose', '--targets', 'react-ts'])
+      .it('falls back to global outputDirectory when target-specific not provided', (ctx) => {
+        expect(ctx.stderr).to.include('Found local reforge.config.json')
+        expect(ctx.stderr).to.include('Output directory for react-ts: generated/global-output')
+        expect(ctx.stdout).to.include('Generating react-ts code for configs')
+        expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'global-output', 'reforge-client.ts')}`)
+      })
+
+    test
+      .stdout()
+      .stderr()
+      .do(() => {
+        // Create config with partial target-specific config
+        const partialConfig = {
+          outputDirectory: 'generated/default-output',
+          targets: {
+            'node-ts': {
+              outputFileName: 'custom-node.ts',
+              // outputDirectory intentionally omitted
+            },
+          },
+        }
+        fs.writeFileSync(configPath, JSON.stringify(partialConfig, null, 2))
+      })
+      .command(['generate', '--verbose', '--targets', 'node-ts'])
+      .it('uses global config as fallback for missing target-specific properties', (ctx) => {
+        expect(ctx.stderr).to.include('Found local reforge.config.json')
+        expect(ctx.stderr).to.include('Output directory for node-ts: generated/default-output')
+        expect(ctx.stdout).to.include('Generating node-ts code for configs')
+        expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'default-output', 'custom-node.ts')}`)
+      })
+
+    test
+      .stdout()
+      .stderr()
+      .do(() => {
+        // Create config with empty targets object
+        const emptyTargetsConfig = {
+          outputDirectory: 'generated/base-output',
+          targets: {},
+        }
+        fs.writeFileSync(configPath, JSON.stringify(emptyTargetsConfig, null, 2))
+      })
+      .command(['generate', '--verbose', '--targets', 'react-ts'])
+      .it('handles empty targets object', (ctx) => {
+        expect(ctx.stderr).to.include('Found local reforge.config.json')
+        expect(ctx.stderr).to.include('Output directory for react-ts: generated/base-output')
+        expect(ctx.stdout).to.include('Generating react-ts code for configs')
+        expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'base-output', 'reforge-client.ts')}`)
+      })
+
+    test
+      .do(() => {
+        // Create invalid JSON file
+        fs.writeFileSync(configPath, '{ invalid json }')
+      })
+      .command(['generate', '--targets', 'node-ts'])
+      .catch((error) => {
+        expect(error.message).to.include('Error reading reforge.config.json')
+      })
+      .it('handles invalid JSON in config file')
+
+    test
+      .do(() => {
+        // Create config with invalid schema
+        const invalidConfig = {
+          outputDirectory: 123, // should be string
+          targets: {
+            'invalid-target': {
+              outputDirectory: 'test',
+            },
+          },
+        }
+        fs.writeFileSync(configPath, JSON.stringify(invalidConfig, null, 2))
+      })
+      .command(['generate', '--targets', 'node-ts'])
+      .catch((error) => {
+        expect(error.message).to.include('Expected string, received number')
+      })
+      .it('validates config schema and rejects invalid types')
+
+    test
+      .stdout()
+      .stderr()
+      .do(() => {
+        // Create minimal valid config
+        const minimalConfig = {}
+        fs.writeFileSync(configPath, JSON.stringify(minimalConfig, null, 2))
+      })
+      .command(['generate', '--verbose', '--targets', 'node-ts'])
+      .it('handles minimal empty config object', (ctx) => {
+        expect(ctx.stderr).to.include('Found local reforge.config.json')
+        expect(ctx.stderr).to.include('Output directory for node-ts: generated') // default
+        expect(ctx.stdout).to.include('Generating node-ts code for configs')
+        expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'reforge-server.ts')}`)
+      })
+
+    test
+      .stdout()
+      .stderr()
+      .do(() => {
+        // Create config that overrides only outputFileName
+        const filenameOnlyConfig = {
+          targets: {
+            'node-ts': {
+              outputFileName: 'my-custom-server.ts',
+            },
+            'react-ts': {
+              outputFileName: 'my-custom-client.ts',
+            },
+          },
+        }
+        fs.writeFileSync(configPath, JSON.stringify(filenameOnlyConfig, null, 2))
+      })
+      .command(['generate', '--verbose', '--targets', 'node-ts,react-ts'])
+      .it('handles multiple targets with custom filenames', (ctx) => {
+        expect(ctx.stderr).to.include('Found local reforge.config.json')
+        expect(ctx.stderr).to.include('Output directory for node-ts: generated') // default
+        expect(ctx.stderr).to.include('Output directory for react-ts: generated') // default
+        expect(ctx.stdout).to.include('Generating node-ts code for configs')
+        expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'my-custom-server.ts')}`)
+        expect(ctx.stdout).to.include('Generating react-ts code for configs')
+        expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'my-custom-client.ts')}`)
+      })
+
+    test
+      .do(() => {
+        // Create a directory instead of a file (edge case)
+        fs.mkdirSync(configPath, {recursive: true})
+      })
+      .command(['generate', '--targets', 'node-ts'])
+      .catch((error) => {
+        expect(error.message).to.include('Error reading reforge.config.json')
+      })
+      .it('handles case where config path is a directory')
+  })
 })

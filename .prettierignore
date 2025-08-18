@@ -3,3 +3,4 @@ src/reforge-common/
 .prettierignore
 package.json
 yarn.lock
+README.md

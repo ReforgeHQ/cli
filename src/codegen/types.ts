@@ -1,8 +1,8 @@
 import {z} from 'zod'
 
 export enum SupportedLanguage {
-  React = 'react',
-  TypeScript = 'typescript',
+  Node = 'node-ts',
+  React = 'react-ts',
 }
 
 export interface ConfigValue {

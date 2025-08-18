@@ -6,10 +6,6 @@ import {ZodToTypescriptReturnValueMapper} from '../language-mappers/zod-to-types
 import {BaseTypescriptGenerator} from './base-typescript-generator.js'
 
 export class NodeTypeScriptGenerator extends BaseTypescriptGenerator {
-  get filename(): string {
-    return 'reforge-server.ts'
-  }
-
   generate(): string {
     return stripIndent`
     /* eslint-disable */

@@ -14,6 +14,5 @@ export abstract class BaseGenerator {
     this.log = log
   }
 
-  abstract get filename(): string
   abstract generate(): string
 }

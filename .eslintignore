@@ -3,7 +3,7 @@
 src/reforge-common/
 package.json
 yarn.lock
-generated-sources/
+generated/
 .vscode/
 reforge.*.config.json
 test/fixtures
