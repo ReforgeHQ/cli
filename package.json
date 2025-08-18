@@ -1,4 +1,5 @@
 {
+  "packageManager": "yarn@4.9.2",
   "name": "@reforge-com/cli",
   "version": "0.0.0-pre.2",
   "author": "Jeffrey Chupp @semanticart",
@@ -80,8 +81,8 @@
     "test:debug:single": "node --inspect-brk --loader ts-node/esm --no-warnings=ExperimentalWarning ./node_modules/.bin/mocha --exit",
     "lint": "eslint --cache=true \"**/*.{ts,md,json}\"",
     "lint:fix": "eslint --cache=true --fix \"**/*.{ts,md,json}\"",
-    "format": "prettier -l \"**/*.{ts,md,json}\"",
-    "format:fix": "prettier --write \"**/*.{ts,md,json}\"",
+    "prettier": "prettier -l \"**/*.{ts,md,json}\"",
+    "prettier:fix": "prettier --write \"**/*.{ts,md,json}\"",
     "postpack": "shx rm -f oclif.manifest.json",
     "posttest": "yarn lint",
     "prepack": "yarn build && oclif manifest && oclif readme",
