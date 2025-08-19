@@ -53,6 +53,8 @@ jobs:
       id-token: write
     outputs:
       published-version: ${{ needs.check-version.outputs.current-version }}
+    env:
+      NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -82,8 +84,6 @@ jobs:
           else
             yarn npm publish --provenance --access public
           fi
-        env:
-          NPM_EAUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   create-release:
     runs-on: ubuntu-latest
