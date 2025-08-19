@@ -94,6 +94,10 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+      - name: enable corepack
+        run: |
+          corepack enable
+          corepack prepare yarn@4.9.2 --activate
       - name: Create Release
         uses: actions/create-release@v1
         env:
