@@ -1,7 +1,7 @@
 {
   "packageManager": "yarn@4.9.2",
   "name": "@reforge-com/cli",
-  "version": "0.0.0-pre.2",
+  "version": "0.0.0-pre.3",
   "author": "Jeffrey Chupp @semanticart",
   "bugs": {
     "url": "https://github.com/ReforgeHQ/cli/issues"
@@ -78,18 +78,18 @@
   },
   "scripts": {
     "build": "shx rm -rf dist && tsc -b",
-    "test:debug:single": "node --inspect-brk --loader ts-node/esm --no-warnings=ExperimentalWarning ./node_modules/.bin/mocha --exit",
     "lint": "eslint --cache=true \"**/*.{ts,md,json}\"",
     "lint:fix": "eslint --cache=true --fix \"**/*.{ts,md,json}\"",
-    "prettier": "prettier -l \"**/*.{ts,md,json}\"",
-    "prettier:fix": "prettier --write \"**/*.{ts,md,json}\"",
     "postpack": "shx rm -f oclif.manifest.json",
     "posttest": "yarn lint",
-    "prepack": "yarn build && oclif manifest && oclif readme",
+    "prepack": "yarn readme",
+    "prettier": "prettier -l \"**/*.{ts,md,json}\"",
+    "prettier:fix": "prettier --write \"**/*.{ts,md,json}\"",
+    "readme": "yarn build && oclif manifest && oclif readme",
     "test": "mocha \"test/**/*.test.ts\" --exit",
     "test:ci": "mocha --forbid-only \"test/**/*.test.ts\" --exit",
-    "update-submodule": "git submodule update --remote src/reforge-common",
-    "version": "yarn build && oclif readme && git add README.md && cat package.json | jq .version | awk '{print \"// NOTE: This file is generated\\nexport default \"$1}' > src/version.ts && git add src/version.ts"
+    "test:debug:single": "node --inspect-brk --loader ts-node/esm --no-warnings=ExperimentalWarning ./node_modules/.bin/mocha --exit",
+    "update-submodule": "git submodule update --remote src/reforge-common"
   },
   "types": "dist/index.d.ts",
   "exports": "./lib/index.js",

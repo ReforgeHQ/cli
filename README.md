@@ -1,46 +1,42 @@
 # Reforge CLI
 
 <!-- toc -->
-
-- [Usage](#usage)
-- [Commands](#commands)
+* [Reforge CLI](#reforge-cli)
+* [Usage](#usage)
+* [Commands](#commands)
 <!-- tocstop -->
 
 # Usage
 
 <!-- usage -->
-
 ```sh-session
 $ npm install -g @reforge-com/cli
 $ reforge COMMAND
 running command...
 $ reforge (--version)
-@reforge-com/cli/0.5.2 darwin-arm64 node-v22.12.0
+@reforge-com/cli/0.0.0-pre.3 darwin-arm64 node-v24.4.1
 $ reforge --help [COMMAND]
 USAGE
   $ reforge COMMAND
 ...
 ```
-
 <!-- usagestop -->
 
 # Commands
 
 <!-- commands -->
-
-- [`reforge create NAME`](#reforge-create-name)
-- [`reforge download`](#reforge-download)
-- [`reforge gen`](#reforge-gen)
-- [`reforge generate`](#reforge-generate)
-- [`reforge generate-new-hex-key`](#reforge-generate-new-hex-key)
-- [`reforge get [NAME]`](#reforge-get-name)
-- [`reforge info [NAME]`](#reforge-info-name)
-- [`reforge interactive`](#reforge-interactive)
-- [`reforge list`](#reforge-list)
-- [`reforge override [NAME]`](#reforge-override-name)
-- [`reforge schema NAME`](#reforge-schema-name)
-- [`reforge serve DATA-FILE`](#reforge-serve-data-file)
-- [`reforge set-default [NAME]`](#reforge-set-default-name)
+* [`reforge create NAME`](#reforge-create-name)
+* [`reforge download`](#reforge-download)
+* [`reforge generate`](#reforge-generate)
+* [`reforge generate-new-hex-key`](#reforge-generate-new-hex-key)
+* [`reforge get [NAME]`](#reforge-get-name)
+* [`reforge info [NAME]`](#reforge-info-name)
+* [`reforge interactive`](#reforge-interactive)
+* [`reforge list`](#reforge-list)
+* [`reforge override [NAME]`](#reforge-override-name)
+* [`reforge schema NAME`](#reforge-schema-name)
+* [`reforge serve DATA-FILE`](#reforge-serve-data-file)
+* [`reforge set-default [NAME]`](#reforge-set-default-name)
 
 ## `reforge create NAME`
 
@@ -89,7 +85,7 @@ EXAMPLES
   $ reforge create my.new.string --type json --value="{\"key\": \"value\"}"
 ```
 
-_See code: [src/commands/create.ts](https://github.com/reforgehq/cli/blob/main/src/commands/create.ts)_
+_See code: [src/commands/create.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.3/src/commands/create.ts)_
 
 ## `reforge download`
 
@@ -97,7 +93,8 @@ Download a Datafile for a given environment
 
 ```
 USAGE
-  $ reforge download --api-key <value> [--json] [--interactive] [--no-color] [--verbose] [--environment <value>]
+  $ reforge download --api-key <value> [--json] [--interactive] [--no-color] [--verbose] [--environment
+    <value>]
 
 FLAGS
   --environment=<value>  environment to download
@@ -118,42 +115,7 @@ EXAMPLES
   $ reforge download --environment=test
 ```
 
-_See code: [src/commands/download.ts](https://github.com/reforgehq/cli/blob/main/src/commands/download.ts)_
-
-## `reforge gen`
-
-Generate type definitions for your Reforge configuration
-
-```
-USAGE
-  $ reforge gen --api-key <value> [--json] [--interactive] [--no-color] [--verbose] [--output-dir <value>]
-    [--target node-ts|react-ts|python-pydantic|ruby]
-
-FLAGS
-  --output-dir=<value>  [default: generated-sources] output directory for generated code
-  --target=<option>     [default: node-ts] language/framework to generate code for
-                        <options: node-ts|react-ts|python-pydantic|ruby>
-
-GLOBAL FLAGS
-  --api-key=<value>   (required) Reforge API KEY (defaults to ENV var REFORGE_API_KEY)
-  --[no-]interactive  Force interactive mode
-  --json              Format output as json.
-  --no-color          Do not colorize output
-  --verbose           Verbose output
-
-DESCRIPTION
-  Generate type definitions for your Reforge configuration
-
-ALIASES
-  $ reforge gen
-
-EXAMPLES
-  $ reforge gen --target node-ts
-
-  $ reforge gen --target react-ts --output-dir custom/path
-
-  $ reforge gen --target python
-```
+_See code: [src/commands/download.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.3/src/commands/download.ts)_
 
 ## `reforge generate`
 
@@ -161,13 +123,10 @@ Generate type definitions for your Reforge configuration
 
 ```
 USAGE
-  $ reforge generate --api-key <value> [--json] [--interactive] [--no-color] [--verbose] [--output-dir <value>]
-    [--target node-ts|react-ts|python-pydantic|ruby]
+  $ reforge generate --api-key <value> [--json] [--interactive] [--no-color] [--verbose] [--targets <value>]
 
 FLAGS
-  --output-dir=<value>  [default: generated-sources] output directory for generated code
-  --target=<option>     [default: node-ts] language/framework to generate code for
-                        <options: node-ts|react-ts|python-pydantic|ruby>
+  --targets=<value>  [default: react-ts] Determines for language/framework to generate code for (node-ts, react-ts)
 
 GLOBAL FLAGS
   --api-key=<value>   (required) Reforge API KEY (defaults to ENV var REFORGE_API_KEY)
@@ -179,18 +138,45 @@ GLOBAL FLAGS
 DESCRIPTION
   Generate type definitions for your Reforge configuration
 
-ALIASES
-  $ reforge gen
+  You can use the default type-generation configuration, or by provide your own:
+
+  Format:
+  {
+  ​  outputDirectory?: string;
+  ​  targets?: {
+  ​    <language key>?: {
+  ​      outputDirectory?: string;
+  ​      outputFileName?: string;
+  ​    }
+  ​  }
+  };
+
+  Example:
+  ```json
+  {
+  ​  "outputDirectory": "path/to/your/directory",
+  ​  "targets": {
+  ​    "react-ts": {
+  ​      "outputDirectory": "diff/path/to/your/directory",
+  ​      "outputFileName": "client.ts",
+  ​    },
+  ​    "node-ts": {
+  ​      "outputFileName": "client.ts",
+  ​    }
+  ​  }
+  }
+  ```
+
 
 EXAMPLES
-  $ reforge generate --target node-ts
+  $ reforge generate # react-ts only by default
 
-  $ reforge generate --target react-ts --output-dir custom/path
+  $ reforge generate --target node-ts # node-ts only
 
-  $ reforge generate --target python
+  $ reforge generate --target react-ts,node-ts # both node+react-ts
 ```
 
-_See code: [src/commands/generate.ts](https://github.com/reforgehq/cli/blob/main/src/commands/generate.ts)_
+_See code: [src/commands/generate.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.3/src/commands/generate.ts)_
 
 ## `reforge generate-new-hex-key`
 
@@ -213,7 +199,7 @@ EXAMPLES
   $ reforge generate-new-hex-key
 ```
 
-_See code: [src/commands/generate-new-hex-key.ts](https://github.com/reforgehq/cli/blob/main/src/commands/generate-new-hex-key.ts)_
+_See code: [src/commands/generate-new-hex-key.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.3/src/commands/generate-new-hex-key.ts)_
 
 ## `reforge get [NAME]`
 
@@ -240,7 +226,7 @@ EXAMPLES
   $ reforge get my.config.name
 ```
 
-_See code: [src/commands/get.ts](https://github.com/reforgehq/cli/blob/main/src/commands/get.ts)_
+_See code: [src/commands/get.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.3/src/commands/get.ts)_
 
 ## `reforge info [NAME]`
 
@@ -271,7 +257,7 @@ EXAMPLES
   $ reforge info my.config.name
 ```
 
-_See code: [src/commands/info.ts](https://github.com/reforgehq/cli/blob/main/src/commands/info.ts)_
+_See code: [src/commands/info.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.3/src/commands/info.ts)_
 
 ## `reforge interactive`
 
@@ -289,7 +275,7 @@ EXAMPLES
   $ reforge
 ```
 
-_See code: [src/commands/interactive.ts](https://github.com/reforgehq/cli/blob/main/src/commands/interactive.ts)_
+_See code: [src/commands/interactive.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.3/src/commands/interactive.ts)_
 
 ## `reforge list`
 
@@ -325,7 +311,7 @@ EXAMPLES
   $ reforge list --feature-flags
 ```
 
-_See code: [src/commands/list.ts](https://github.com/reforgehq/cli/blob/main/src/commands/list.ts)_
+_See code: [src/commands/list.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.3/src/commands/list.ts)_
 
 ## `reforge override [NAME]`
 
@@ -363,7 +349,7 @@ EXAMPLES
   $ reforge override my.double.config --value=3.14159
 ```
 
-_See code: [src/commands/override.ts](https://github.com/reforgehq/cli/blob/main/src/commands/override.ts)_
+_See code: [src/commands/override.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.3/src/commands/override.ts)_
 
 ## `reforge schema NAME`
 
@@ -397,7 +383,7 @@ EXAMPLES
   $ reforge schema my-schema --get
 ```
 
-_See code: [src/commands/schema.ts](https://github.com/reforgehq/cli/blob/main/src/commands/schema.ts)_
+_See code: [src/commands/schema.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.3/src/commands/schema.ts)_
 
 ## `reforge serve DATA-FILE`
 
@@ -433,7 +419,7 @@ EXAMPLES
   $ reforge serve ./reforge.test.588.config.json --port=3099
 ```
 
-_See code: [src/commands/serve.ts](https://github.com/reforgehq/cli/blob/main/src/commands/serve.ts)_
+_See code: [src/commands/serve.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.3/src/commands/serve.ts)_
 
 ## `reforge set-default [NAME]`
 
@@ -478,13 +464,13 @@ EXAMPLES
   $ reforge set-default my.config.name --env-var=MY_ENV_VAR_NAME --environment=production
 ```
 
-_See code: [src/commands/set-default.ts](https://github.com/reforgehq/cli/blob/main/src/commands/set-default.ts)_
-
+_See code: [src/commands/set-default.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.3/src/commands/set-default.ts)_
 <!-- commandsstop -->
 
 ## Local Development
 
 ```
+
 mise install
 git submodule init
 git submodule update
@@ -492,11 +478,16 @@ yarn install
 yarn build
 bin/dev.js
 fish -c "cd ../../reforgehq/cli;bin/dev.js"
+
 ```
 
 ## Releasing
 
 ```
+
 yarn version
 npm publish --access public
+
+```
+
 ```

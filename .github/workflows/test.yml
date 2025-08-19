@@ -46,3 +46,15 @@ jobs:
       - run: yarn lint
       - run: yarn build
       - run: yarn test:ci
+      - run: yarn oclif manifest
+      - run: yarn oclif readme
+      - name: Check for uncommitted changes
+        if: matrix.os == 'ubuntu-latest'
+        # NOTE: We expclude the arch type because CI runs on a different arc than our macs
+        shell: bash
+        run: |
+          if ! git diff -I"linux-x64" -I"darwin-arm64" --quiet; then
+            echo "Error: README is out of date. Please run 'yarn readme' and commit the changes."
+            git diff -I"linux-x64" -I"darwin-arm64"
+            exit 1
+          fi

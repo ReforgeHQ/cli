@@ -7,10 +7,6 @@ import {ZodToTypescriptReturnValueMapper} from '../language-mappers/zod-to-types
 import {BaseTypescriptGenerator} from './base-typescript-generator.js'
 
 export class ReactTypeScriptGenerator extends BaseTypescriptGenerator {
-  get filename(): string {
-    return 'reforge-client.ts'
-  }
-
   protected durationTypeMap(): z.ZodTypeAny {
     return z.object({ms: z.number(), seconds: z.number()})
   }
