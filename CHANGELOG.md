@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.0.0-pre.4 - 2025-08-18
+## 0.0.0-pre.5 - 2025-08-18
 
 - Type generation support for node + react
 

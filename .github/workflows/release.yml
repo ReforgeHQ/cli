@@ -78,9 +78,9 @@ jobs:
       - name: Publish to npm
         run: |
           if [ "${{ needs.check-version.outputs.is-prerelease }}" == "true" ]; then
-            npm publish --provenance --access public --tag ${{ needs.check-version.outputs.npm-tag }}
+            yarn npm publish --provenance --access public --tag ${{ needs.check-version.outputs.npm-tag }}
           else
-            npm publish --provenance --access public
+            yarn npm publish --provenance --access public
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
