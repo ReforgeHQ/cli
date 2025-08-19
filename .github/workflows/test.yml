@@ -49,6 +49,7 @@ jobs:
       - run: yarn oclif manifest
       - run: yarn oclif readme
       - name: Check for uncommitted changes
+        # We don't need to check on windows, which results in other differences as well
         if: matrix.os == 'ubuntu-latest'
         # NOTE: We expclude the arch type because CI runs on a different arc than our macs
         shell: bash
