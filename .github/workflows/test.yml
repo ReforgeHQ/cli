@@ -17,6 +17,7 @@ jobs:
       REFORGE_API_URL: ${{ secrets.REFORGE_API_URL }}
       REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY: ${{ secrets.REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY }}
       FAKE_PROD_SECRET: ${{ secrets.FAKE_PROD_SECRET }}
+      NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     strategy:
       matrix:
         os: ['ubuntu-latest', 'windows-latest']
