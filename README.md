@@ -158,10 +158,12 @@ DESCRIPTION
   ​  "targets": {
   ​    "react-ts": {
   ​      "outputDirectory": "diff/path/to/your/directory",
-  ​      "outputFileName": "client.ts",
+  ​      "declarationFileName": "reforge-client-types.d.ts",
+  ​      "clientFileName": "reforge-client.ts",
   ​    },
   ​    "node-ts": {
-  ​      "outputFileName": "client.ts",
+  ​      "declarationFileName": "reforge-server-types.d.ts",
+  ​      "clientFileName": "reforge-server.ts",
   ​    }
   ​  }
   }

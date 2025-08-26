@@ -6,6 +6,7 @@ import {z} from 'zod'
 import type {JsonObj} from '../result.js'
 
 import {BaseGenerator} from '../codegen/code-generators/base-generator.js'
+import {BaseTypescriptGenerator} from '../codegen/code-generators/base-typescript-generator.js'
 import {NodeTypeScriptGenerator} from '../codegen/code-generators/node-typescript-generator.js'
 import {ReactTypeScriptGenerator} from '../codegen/code-generators/react-typescript-generator.js'
 import {ConfigDownloader} from '../codegen/config-downloader.js'
@@ -14,29 +15,29 @@ import {APICommand} from '../index.js'
 import {createFileManager} from '../util/file-manager.js'
 
 // base types
-const languageSpecificSchema = z.object({
+const nodeOrReactLanguageSpecificSchema = z.object({
+  clientFileName: z.string().optional(),
+  declarationFileName: z.string().optional(),
   outputDirectory: z.string().optional(),
-  outputFileName: z.string().optional(),
 })
 
 /**
  * Types for parsed config schema
  *
  * {
- *   <supported language>: {
+ *   <react|node>: {
+ *     clientFileName: string;
+ *     declarationFileName: string;
  *     outputDirectory: string;
- *     outputFileName: string;
  *   },
  * }
  */
-const requiredLanguageSpecificSchema = languageSpecificSchema.required()
-const allLanguageEntries = Object.values(SupportedLanguage).reduce(
-  (acc, language) => {
-    acc[language] = requiredLanguageSpecificSchema
-    return acc
-  },
-  {} as Record<SupportedLanguage, typeof requiredLanguageSpecificSchema>,
-)
+const requiredNodeOrReactLanguageSpecificSchema = nodeOrReactLanguageSpecificSchema.required()
+const allLanguageEntries = {
+  [SupportedLanguage.Node]: requiredNodeOrReactLanguageSpecificSchema,
+  [SupportedLanguage.React]: requiredNodeOrReactLanguageSpecificSchema,
+}
+
 const parsedConfigSchema = z.object(allLanguageEntries)
 
 /**
@@ -52,7 +53,10 @@ const parsedConfigSchema = z.object(allLanguageEntries)
  *   },
  * }
  */
-const allTargetsSchema = z.record(z.nativeEnum(SupportedLanguage), languageSpecificSchema)
+const allTargetsSchema = z.object({
+  [SupportedLanguage.Node]: nodeOrReactLanguageSpecificSchema.optional(),
+  [SupportedLanguage.React]: nodeOrReactLanguageSpecificSchema.optional(),
+})
 const inputConfigSchema = z.object({
   outputDirectory: z.string().optional(),
   targets: allTargetsSchema.optional(),
@@ -61,15 +65,17 @@ const inputConfigSchema = z.object({
 const CONFIG_NAME = 'reforge.config.json'
 const DEFAULT_CONFIG: {
   outputDirectory: string
-  targets: Record<SupportedLanguage, {outputFileName: string}>
+  targets: Record<SupportedLanguage, {clientFileName: string; declarationFileName: string}>
 } = {
   outputDirectory: 'generated',
   targets: {
     'node-ts': {
-      outputFileName: 'reforge-server.ts',
+      clientFileName: 'reforge-server.ts',
+      declarationFileName: 'reforge-server-types.d.ts',
     },
     'react-ts': {
-      outputFileName: 'reforge-client.ts',
+      clientFileName: 'reforge-client.ts',
+      declarationFileName: 'reforge-client-types.d.ts',
     },
   },
 }
@@ -96,10 +102,12 @@ Example:
 ​  "targets": {
 ​    "react-ts": {
 ​      "outputDirectory": "diff/path/to/your/directory",
-​      "outputFileName": "client.ts",
+​      "declarationFileName": "reforge-client-types.d.ts",
+​      "clientFileName": "reforge-client.ts",
 ​    },
 ​    "node-ts": {
-​      "outputFileName": "client.ts",
+​      "declarationFileName": "reforge-server-types.d.ts",
+​      "clientFileName": "reforge-server.ts",
 ​    }
 ​  }
 }
@@ -167,9 +175,16 @@ Example:
 
         const fileManager = createFileManager({outputDirectory: outputDir, verboseLog: this.verboseLog.bind(this)})
 
-        const filename = targetConfig.outputFileName
+        fileCreationPromises.push(fileManager.writeFile({data: generatedCode, filename: targetConfig.clientFileName}))
 
-        fileCreationPromises.push(fileManager.writeFile({data: generatedCode, filename}))
+        if ([SupportedLanguage.Node, SupportedLanguage.React].includes(language)) {
+          const declarationGeneratedCode = (generator as BaseTypescriptGenerator).declarationGenerate()
+          this.verboseLog(`Code generation complete. Size: ${declarationGeneratedCode.length}`)
+
+          fileCreationPromises.push(
+            fileManager.writeFile({data: declarationGeneratedCode, filename: targetConfig.declarationFileName}),
+          )
+        }
       }
 
       await Promise.all(fileCreationPromises)
@@ -189,11 +204,16 @@ Example:
       (agg, language) => {
         const parsedLanguageConfig = parsedConfig.targets?.[language] || {}
 
-        agg[language] = {
+        const languageConfig = {
+          clientFileName: parsedLanguageConfig.clientFileName || DEFAULT_CONFIG.targets[language].clientFileName,
+          declarationFileName:
+            parsedLanguageConfig.declarationFileName || DEFAULT_CONFIG.targets[language].declarationFileName,
           outputDirectory:
             parsedLanguageConfig.outputDirectory || parsedConfig.outputDirectory || DEFAULT_CONFIG.outputDirectory,
-          outputFileName: parsedLanguageConfig.outputFileName || DEFAULT_CONFIG.targets[language].outputFileName,
         }
+
+        agg[language] = languageConfig
+
         return agg
       },
       {} as z.infer<typeof parsedConfigSchema>,

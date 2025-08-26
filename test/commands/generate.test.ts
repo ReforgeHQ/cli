@@ -61,6 +61,7 @@ describe('generate', () => {
         expect(ctx.stderr).to.include('Output directory for node-ts: generated')
         expect(ctx.stdout).to.include('Generating node-ts code for configs')
         expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'reforge-server.ts')}`)
+        expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'reforge-server-types.d.ts')}`)
       })
 
     test
@@ -72,8 +73,9 @@ describe('generate', () => {
           outputDirectory: 'generated/custom-output',
           targets: {
             'node-ts': {
+              clientFileName: 'custom-server.ts',
+              declarationFileName: 'custom-server-types.d.ts',
               outputDirectory: 'generated/server-types',
-              outputFileName: 'custom-server.ts',
             },
           },
         }
@@ -85,9 +87,15 @@ describe('generate', () => {
         expect(ctx.stderr).to.include('Output directory for node-ts: generated/server-types')
         expect(ctx.stdout).to.include('Generating node-ts code for configs')
         expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'server-types', 'custom-server.ts')}`)
+        expect(ctx.stderr).to.include(
+          `Writing file: ${path.join('generated', 'server-types', 'custom-server-types.d.ts')}`,
+        )
         expect(ctx.stderr).to.include('Output directory for react-ts: generated/custom-output')
         expect(ctx.stdout).to.include('Generating react-ts code for configs')
         expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'custom-output', 'reforge-client.ts')}`)
+        expect(ctx.stderr).to.include(
+          `Writing file: ${path.join('generated', 'custom-output', 'reforge-client-types.d.ts')}`,
+        )
       })
 
     test
@@ -106,6 +114,9 @@ describe('generate', () => {
         expect(ctx.stderr).to.include('Output directory for react-ts: generated/global-output')
         expect(ctx.stdout).to.include('Generating react-ts code for configs')
         expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'global-output', 'reforge-client.ts')}`)
+        expect(ctx.stderr).to.include(
+          `Writing file: ${path.join('generated', 'global-output', 'reforge-client-types.d.ts')}`,
+        )
       })
 
     test
@@ -117,8 +128,9 @@ describe('generate', () => {
           outputDirectory: 'generated/default-output',
           targets: {
             'node-ts': {
-              outputFileName: 'custom-node.ts',
+              clientFileName: 'custom-node.ts',
               // outputDirectory intentionally omitted
+              // declarationFileName intentionally omitted
             },
           },
         }
@@ -130,6 +142,9 @@ describe('generate', () => {
         expect(ctx.stderr).to.include('Output directory for node-ts: generated/default-output')
         expect(ctx.stdout).to.include('Generating node-ts code for configs')
         expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'default-output', 'custom-node.ts')}`)
+        expect(ctx.stderr).to.include(
+          `Writing file: ${path.join('generated', 'default-output', 'reforge-server-types.d.ts')}`,
+        )
       })
 
     test
@@ -149,6 +164,9 @@ describe('generate', () => {
         expect(ctx.stderr).to.include('Output directory for react-ts: generated/base-output')
         expect(ctx.stdout).to.include('Generating react-ts code for configs')
         expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'base-output', 'reforge-client.ts')}`)
+        expect(ctx.stderr).to.include(
+          `Writing file: ${path.join('generated', 'base-output', 'reforge-client-types.d.ts')}`,
+        )
       })
 
     test
@@ -195,20 +213,23 @@ describe('generate', () => {
         expect(ctx.stderr).to.include('Output directory for node-ts: generated') // default
         expect(ctx.stdout).to.include('Generating node-ts code for configs')
         expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'reforge-server.ts')}`)
+        expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'reforge-server-types.d.ts')}`)
       })
 
     test
       .stdout()
       .stderr()
       .do(() => {
-        // Create config that overrides only outputFileName
+        // Create config that overrides only clientFileName
         const filenameOnlyConfig = {
           targets: {
             'node-ts': {
-              outputFileName: 'my-custom-server.ts',
+              clientFileName: 'my-custom-server.ts',
+              declarationFileName: 'my-custom-server-types.d.ts',
             },
             'react-ts': {
-              outputFileName: 'my-custom-client.ts',
+              clientFileName: 'my-custom-client.ts',
+              declarationFileName: 'my-custom-client-types.d.ts',
             },
           },
         }
@@ -221,8 +242,10 @@ describe('generate', () => {
         expect(ctx.stderr).to.include('Output directory for react-ts: generated') // default
         expect(ctx.stdout).to.include('Generating node-ts code for configs')
         expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'my-custom-server.ts')}`)
+        expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'my-custom-server-types.d.ts')}`)
         expect(ctx.stdout).to.include('Generating react-ts code for configs')
         expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'my-custom-client.ts')}`)
+        expect(ctx.stderr).to.include(`Writing file: ${path.join('generated', 'my-custom-client-types.d.ts')}`)
       })
 
     test
