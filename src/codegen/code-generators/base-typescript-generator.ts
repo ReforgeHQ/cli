@@ -39,5 +39,6 @@ export abstract class BaseTypescriptGenerator extends BaseGenerator {
     return z.number()
   }
 
+  abstract declarationGenerate(): string
   abstract generate(): string
 }

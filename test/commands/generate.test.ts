@@ -72,8 +72,8 @@ describe('generate', () => {
           outputDirectory: 'generated/custom-output',
           targets: {
             'node-ts': {
+              clientFileName: 'custom-server.ts',
               outputDirectory: 'generated/server-types',
-              outputFileName: 'custom-server.ts',
             },
           },
         }
@@ -117,7 +117,7 @@ describe('generate', () => {
           outputDirectory: 'generated/default-output',
           targets: {
             'node-ts': {
-              outputFileName: 'custom-node.ts',
+              clientFileName: 'custom-node.ts',
               // outputDirectory intentionally omitted
             },
           },
@@ -201,14 +201,14 @@ describe('generate', () => {
       .stdout()
       .stderr()
       .do(() => {
-        // Create config that overrides only outputFileName
+        // Create config that overrides only clientFileName
         const filenameOnlyConfig = {
           targets: {
             'node-ts': {
-              outputFileName: 'my-custom-server.ts',
+              clientFileName: 'my-custom-server.ts',
             },
             'react-ts': {
-              outputFileName: 'my-custom-client.ts',
+              clientFileName: 'my-custom-client.ts',
             },
           },
         }
