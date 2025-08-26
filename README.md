@@ -470,7 +470,6 @@ _See code: [src/commands/set-default.ts](https://github.com/ReforgeHQ/cli/blob/v
 ## Local Development
 
 ```
-
 mise install
 git submodule init
 git submodule update
@@ -478,16 +477,17 @@ yarn install
 yarn build
 bin/dev.js
 fish -c "cd ../../reforgehq/cli;bin/dev.js"
-
 ```
 
 ## Releasing
 
 ```
-
 yarn version
 npm publish --access public
-
 ```
 
-```
+## Contributing
+
+Contributions are what make the open source community such an amazing place to learn, inspire, and
+create. Any contributions you make are **greatly appreciated**. For detailed contributing
+guidelines, please see [CONTRIBUTING.md](CONTRIBUTING.md)
