@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.0-pre.9 - 2025-09-05
+
+- Type generation improvements to support module augmentation
+
 ## 0.0.0-pre.8 - 2025-08-18
 
 - Type generation support for node + react
