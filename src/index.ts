@@ -96,7 +96,14 @@ export abstract class APICommand extends BaseCommand {
       description: 'Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)',
       env: 'REFORGE_SDK_KEY',
       helpGroup: 'GLOBAL',
-      required: true,
+      hidden: true,
+      required: false,
+    }),
+    'profile': Flags.string({
+      char: 'p',
+      description: 'Profile to use (defaults to ENV var REFORGE_PROFILE or "default")',
+      helpGroup: 'GLOBAL',
+      required: false,
     }),
   }
 
@@ -117,13 +124,21 @@ export abstract class APICommand extends BaseCommand {
 
     const {flags} = await this.parse()
 
+    this.rawApiClient = await rawGetClient(this, flags['sdk-key'], flags['profile'])
     // We want to handle the sdk-key being explicitly blank.
     // If it is truly absent then the `required: true` will catch it.
     if (!flags['sdk-key']) {
       this.error('SDK key is required', {exit: 401})
     }
 
-    this.rawApiClient = rawGetClient(this, flags['sdk-key'])
-    this.currentEnvironment = getProjectEnvFromSdkKey(flags['sdk-key'])
+    // If we have an API key, use it to get the environment
+    // Otherwise we'll need to handle auth differently (JWT-based)
+    if (flags['sdk-key']) {
+      this.currentEnvironment = getProjectEnvFromSdkKey(flags['sdk-key'])
+    } else {
+      // For JWT-based auth, we'll need to get environment info from the token
+      // For now, set a placeholder - this should be enhanced later
+      this.currentEnvironment = {id: 'unknown', projectId: 'unknown'}
+    }
   }
 }
