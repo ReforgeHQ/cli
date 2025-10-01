@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.0-pre.10 - 2025-09-30
+
+- Type generation improvements to support javascript sdk
+
 ## 0.0.0-pre.9 - 2025-09-05
 
 - Type generation improvements to support module augmentation
