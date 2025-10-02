@@ -494,8 +494,8 @@ describe('ReactTypeScriptGenerator', () => {
           return this.get('config1')
         }
 
-        get flag1(): boolean {
-          return this.reforge.isEnabled('flag1')
+        get flag1(): TypedFrontEndConfigurationAccessor['flag1'] {
+          return this.get('flag1')
         }
       }
 
@@ -635,8 +635,8 @@ describe('ReactTypeScriptGenerator', () => {
           return this.get('1config')
         }
 
-        get _1Flag(): boolean {
-          return this.reforge.isEnabled('1flag')
+        get _1Flag(): TypedFrontEndConfigurationAccessor['1flag'] {
+          return this.get('1flag')
         }
       }
 
@@ -717,24 +717,24 @@ describe('ReactTypeScriptGenerator', () => {
           return this.get('dot.notation.key')
         }
 
-        get kebabCaseKey(): boolean {
-          return this.reforge.isEnabled('kebab-case-key')
+        get kebabCaseKey(): TypedFrontEndConfigurationAccessor['kebab-case-key'] {
+          return this.get('kebab-case-key')
         }
 
         get keyWithSpecial(): TypedFrontEndConfigurationAccessor['key_with_$_special'] {
           return this.get('key_with_$_special')
         }
 
-        get keyWithSlashes(): boolean {
-          return this.reforge.isEnabled('key/with/slashes')
+        get keyWithSlashes(): TypedFrontEndConfigurationAccessor['key/with/slashes'] {
+          return this.get('key/with/slashes')
         }
 
         get snakeCaseKey(): TypedFrontEndConfigurationAccessor['snake_case_key'] {
           return this.get('snake_case_key')
         }
 
-        get upperCaseKey(): boolean {
-          return this.reforge.isEnabled('UPPER_CASE_KEY')
+        get upperCaseKey(): TypedFrontEndConfigurationAccessor['UPPER_CASE_KEY'] {
+          return this.get('UPPER_CASE_KEY')
         }
       }
 
