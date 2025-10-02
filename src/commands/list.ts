@@ -2,7 +2,19 @@ import {Flags} from '@oclif/core'
 import {ConfigType} from '@reforge-com/node'
 
 import {APICommand} from '../index.js'
-import {initReforge} from '../reforge.js'
+
+interface ConfigMetadata {
+  id: number
+  type: string
+  key: string
+  name: string
+  description: string
+  version: number
+}
+
+interface ConfigMetadataResponse {
+  configs: ConfigMetadata[]
+}
 
 export default class List extends APICommand {
   static description = `Show keys for your config/feature flags/etc.
@@ -15,37 +27,49 @@ export default class List extends APICommand {
     configs: Flags.boolean({default: false, description: 'include configs'}),
     'feature-flags': Flags.boolean({default: false, description: 'include flags'}),
     'log-levels': Flags.boolean({default: false, description: 'include log levels'}),
+    schemas: Flags.boolean({default: false, description: 'include schemas'}),
     segments: Flags.boolean({default: false, description: 'include segments'}),
   }
 
   public async run() {
     const {flags} = await this.parse(List)
 
-    const reforge = await initReforge(this, flags)
+    const request = await this.apiClient.get('/all-config-types/v1/metadata')
 
-    let keys = reforge.keys()
+    if (!request.ok) {
+      return this.err(`Failed to fetch configs: ${request.status}`, {serverError: request.error})
+    }
 
-    const types: ConfigType[] = []
+    const response = request.json as unknown as ConfigMetadataResponse
+    let configs = response.configs
+
+    const selectedTypes: string[] = []
 
     if (flags.configs) {
-      types.push(ConfigType.Config)
+      selectedTypes.push('config')
     }
 
     if (flags['feature-flags']) {
-      types.push(ConfigType.FeatureFlag)
+      selectedTypes.push('feature_flag')
     }
 
     if (flags['log-levels']) {
-      types.push(ConfigType.LogLevel)
+      selectedTypes.push('log_level')
+    }
+
+    if (flags.schemas) {
+      selectedTypes.push('schema')
     }
 
     if (flags.segments) {
-      types.push(ConfigType.Segment)
+      selectedTypes.push('segment')
     }
 
-    if (types.length > 0) {
-      keys = keys.filter((key) => types.includes(reforge.raw(key)!.configType))
+    if (selectedTypes.length > 0) {
+      configs = configs.filter((config) => selectedTypes.includes(config.type.toLowerCase()))
     }
+
+    const keys = configs.map((config) => config.key)
 
     return this.ok(keys.join('\n'), {keys})
   }

@@ -138,7 +138,7 @@ export abstract class APICommand extends BaseCommand {
     } else {
       // For JWT-based auth, we'll need to get environment info from the token
       // For now, set a placeholder - this should be enhanced later
-      this.currentEnvironment = {id: 'unknown', projectId: 'unknown'}
+      this.currentEnvironment = {id: 'unknown', projectId: 0}
     }
   }
 }

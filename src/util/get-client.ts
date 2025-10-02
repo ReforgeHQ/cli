@@ -9,7 +9,7 @@ import version from '../version.js'
 
 let clientInstance: Client | undefined
 
-const getClient = (command: APICommand, sdkKey: string, profile?: string) => {
+const getClient = async (command: APICommand, sdkKey: string, profile?: string) => {
   if (clientInstance) return clientInstance
 
   let jwt: string | undefined
@@ -39,6 +39,7 @@ const getClient = (command: APICommand, sdkKey: string, profile?: string) => {
   }
 
   clientInstance = new Client({
+    jwt,
     sdkKey,
     apiUrl: process.env.REFORGE_API_URL,
     clientIdentifier: `cli-${version}`,
