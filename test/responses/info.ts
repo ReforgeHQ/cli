@@ -13,7 +13,7 @@ const noEvaluationsResponse = (key: string) => ({end: 1_700_059_396_635, key, st
 export const rawSecret = `875247386844c18c58a97c--b307b97a8288ac9da3ce0cf2--7ab0c32e044869e355586ed653a435de`
 
 const rawConfigResponseForKeyWithEvaluations = {
-  changedBy: {apiKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
+  changedBy: {sdkKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
   configType: 'CONFIG',
   key: keyWithEvaluations,
   projectId: '124',
@@ -22,7 +22,7 @@ const rawConfigResponseForKeyWithEvaluations = {
 }
 
 const rawSecretConfigResponse = {
-  changedBy: {apiKeyId: '315', email: '', userId: '4'},
+  changedBy: {sdkKeyId: '315', email: '', userId: '4'},
   configType: 'CONFIG',
   draftId: '539',
   id: '17017173800583163',
@@ -33,7 +33,7 @@ const rawSecretConfigResponse = {
 }
 
 const rawConfidentialConfigResponse = {
-  changedBy: {apiKeyId: '315', email: '', userId: '4'},
+  changedBy: {sdkKeyId: '315', email: '', userId: '4'},
   configType: 'CONFIG',
   draftId: '539',
   id: '17017173800583163',
@@ -63,7 +63,7 @@ const rawEvaluationResponse = {
 }
 
 const rawConfigResponseForKeyWithNoEvaluations = {
-  changedBy: {apiKeyId: '', email: 'mark.faga@reforge.com', userId: '0'},
+  changedBy: {sdkKeyId: '', email: 'mark.faga@reforge.com', userId: '0'},
   configType: 'CONFIG',
   key: 'jeffreys.test.key.reforge',
   projectId: '124',
@@ -109,32 +109,32 @@ const environmentResponse = {
 }
 
 const cannedResponses: CannedResponses = {
-  [`https://api.staging-prefab.cloud/api/v1/config/key/${confidentialKey}`]: [[{}, rawConfidentialConfigResponse, 200]],
-  [`https://api.staging-prefab.cloud/api/v1/config/key/${keyWithEvaluations}`]: [
+  [`https://api.staging-prefab.cloud/api/v2/config/key/${confidentialKey}`]: [[{}, rawConfidentialConfigResponse, 200]],
+  [`https://api.staging-prefab.cloud/api/v2/config/key/${keyWithEvaluations}`]: [
     [{}, rawConfigResponseForKeyWithEvaluations, 200],
   ],
-  [`https://api.staging-prefab.cloud/api/v1/config/key/${keyWithNoEvaluations}`]: [
+  [`https://api.staging-prefab.cloud/api/v2/config/key/${keyWithNoEvaluations}`]: [
     [{}, rawConfigResponseForKeyWithNoEvaluations, 200],
   ],
-  [`https://api.staging-prefab.cloud/api/v1/config/key/${secretKey}`]: [[{}, rawSecretConfigResponse, 200]],
-  [`https://api.staging-prefab.cloud/api/v1/evaluation-stats/${confidentialKey}`]: [
+  [`https://api.staging-prefab.cloud/api/v2/config/key/${secretKey}`]: [[{}, rawSecretConfigResponse, 200]],
+  [`https://api.staging-prefab.cloud/api/v2/evaluation-stats/${confidentialKey}`]: [
     [{}, rawConfigResponseForKeyWithNoEvaluations, 200],
   ],
-  [`https://api.staging-prefab.cloud/api/v1/evaluation-stats/${keyWithEvaluations}`]: [
+  [`https://api.staging-prefab.cloud/api/v2/evaluation-stats/${keyWithEvaluations}`]: [
     [{}, rawEvaluationResponse, 200],
   ],
-  [`https://api.staging-prefab.cloud/api/v1/evaluation-stats/${keyWithNoEvaluations}`]: [
+  [`https://api.staging-prefab.cloud/api/v2/evaluation-stats/${keyWithNoEvaluations}`]: [
     [{}, noEvaluationsResponse(keyWithNoEvaluations), 200],
   ],
-  [`https://api.staging-prefab.cloud/api/v1/evaluation-stats/${secretKey}`]: [
+  [`https://api.staging-prefab.cloud/api/v2/evaluation-stats/${secretKey}`]: [
     [{}, noEvaluationsResponse(keyWithNoEvaluations), 200],
   ],
-  'https://api.staging-prefab.cloud/api/v1/project-environments': [[{}, environmentResponse, 200]],
+  'https://api.staging-prefab.cloud/api/v2/project-environments': [[{}, environmentResponse, 200]],
 }
 
 export const server = setupServer(
-  http.get('https://api.staging-prefab.cloud/api/v1/configs/0', () => passthrough()),
-  http.get('https://api.staging-prefab.cloud/api/v1/*', async ({request}) =>
+  http.get('https://api.staging-prefab.cloud/api/v2/configs/0', () => passthrough()),
+  http.get('https://api.staging-prefab.cloud/api/v2/*', async ({request}) =>
     getCannedResponse(request, cannedResponses).catch(console.error),
   ),
 )

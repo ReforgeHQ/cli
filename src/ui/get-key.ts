@@ -5,7 +5,7 @@ import autocomplete from '../util/autocomplete.js'
 import isInteractive from '../util/is-interactive.js'
 
 type Flags = {
-  ['api-key']?: string
+  ['sdk-key']?: string
   interactive?: boolean
 }
 

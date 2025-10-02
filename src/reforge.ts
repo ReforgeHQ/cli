@@ -5,7 +5,7 @@ import type {ConfigValue} from './reforge-common/src/types.js'
 import {CommandLike} from './ui/get-key.js'
 
 type Flags = {
-  ['api-key']?: string
+  ['sdk-key']?: string
 }
 
 type FlagsOrDatafile = Flags | string
@@ -16,21 +16,21 @@ const DEFAULT_CONTEXT_USER_ID_NAMESPACE = 'prefab-api-key'
 const DEFAULT_CONTEXT_USER_ID = 'user-id'
 
 export const initReforge = async (_ctx: CommandLike, flagsOrDatafile: FlagsOrDatafile) => {
-  let apiKey = 'NO_API_KEY'
+  let sdkKey = 'NO_API_KEY'
   let datafile
 
   if (typeof flagsOrDatafile === 'string') {
     datafile = flagsOrDatafile
   } else {
-    if (!flagsOrDatafile['api-key']) {
-      throw new Error(`API key is required`)
+    if (!flagsOrDatafile['sdk-key']) {
+      throw new Error(`SDK key is required`)
     }
 
-    apiKey = flagsOrDatafile['api-key']
+    sdkKey = flagsOrDatafile['sdk-key']
   }
 
   const options: ConstructorParameters<typeof Reforge>[0] = {
-    apiKey,
+    sdkKey,
     collectEvaluationSummaries: false,
     collectLoggerCounts: false,
     contextUploadMode: 'none',

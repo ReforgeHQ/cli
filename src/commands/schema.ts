@@ -1,21 +1,10 @@
-// eslint-disable-next-line n/no-extraneous-import
-import type Long from 'long'
-
 import {Args, Flags} from '@oclif/core'
+import {SchemaType} from '@reforge-com/node'
 
 import {APICommand} from '../index.js'
 import {ConfigType, ConfigValue} from '../reforge-common/src/types.js'
-// import { Schema_SchemaType } from '@reforge-com/node'
 import {JsonObj} from '../result.js'
 import {checkmark} from '../util/color.js'
-
-// TODO: this is a temporary fix for the schema type
-export enum Schema_SchemaType {
-  JSON_SCHEMA = 2,
-  UNKNOWN = 0,
-  UNRECOGNIZED = -1,
-  ZOD = 1,
-}
 
 interface SchemaResponse {
   rows: Array<{
@@ -50,7 +39,7 @@ export default class Schema extends APICommand {
     const {args, flags} = await this.parse(Schema)
 
     if (flags.get) {
-      const getRequest = await this.apiClient.get(`/api/v1/config/key/${args.name}`)
+      const getRequest = await this.apiClient.get(`/api/v2/config/key/${args.name}`)
 
       if (!getRequest.ok) {
         return this.err(`Failed to get schema: ${getRequest.status} | ${JSON.stringify(getRequest.error)}`, {
@@ -69,14 +58,14 @@ export default class Schema extends APICommand {
       const configValue: ConfigValue = {
         schema: {
           schema: flags['set-zod'],
-          schemaType: Schema_SchemaType.ZOD,
+          schemaType: SchemaType.ZOD,
         },
       }
 
       const createPayload = {
-        configType: ConfigType.SCHEMA,
+        configType: ConfigType.Schema,
         key: args.name,
-        projectId: this.currentEnvironment.projectId as unknown as Long,
+        projectId: this.currentEnvironment.projectId,
         rows: [
           {
             properties: {},
@@ -85,7 +74,7 @@ export default class Schema extends APICommand {
         ],
       }
 
-      const createRequest = await this.apiClient.post('/api/v1/config/', createPayload)
+      const createRequest = await this.apiClient.post('/api/v2/config/', createPayload)
 
       if (!createRequest.ok) {
         if (createRequest.status === 409) {
@@ -95,7 +84,7 @@ export default class Schema extends APICommand {
             value: configValue,
           }
 
-          const updateRequest = await this.apiClient.post('/api/v1/config/set-default/', updatePayload)
+          const updateRequest = await this.apiClient.post('/api/v2/config/set-default/', updatePayload)
 
           if (!updateRequest.ok) {
             return this.err(

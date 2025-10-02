@@ -44,7 +44,7 @@ Create a new item in Reforge
 
 ```
 USAGE
-  $ reforge create NAME --api-key <value> --type boolean-flag|boolean|string|double|int|string-list|json
+  $ reforge create NAME --sdk-key <value> --type boolean-flag|boolean|string|double|int|string-list|json
     [--json] [--interactive] [--no-color] [--verbose] [--confidential] [--env-var <value>] [--value <value>] [--secret]
     [--secret-key-name <value>]
 
@@ -62,10 +62,10 @@ FLAGS
   --value=<value>            default value for your new item
 
 GLOBAL FLAGS
-  --api-key=<value>   (required) Reforge API KEY (defaults to ENV var REFORGE_API_KEY)
   --[no-]interactive  Force interactive mode
   --json              Format output as json.
   --no-color          Do not colorize output
+  --sdk-key=<value>   (required) Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)
   --verbose           Verbose output
 
 DESCRIPTION
@@ -93,17 +93,17 @@ Download a Datafile for a given environment
 
 ```
 USAGE
-  $ reforge download --api-key <value> [--json] [--interactive] [--no-color] [--verbose] [--environment
+  $ reforge download --sdk-key <value> [--json] [--interactive] [--no-color] [--verbose] [--environment
     <value>]
 
 FLAGS
   --environment=<value>  environment to download
 
 GLOBAL FLAGS
-  --api-key=<value>   (required) Reforge API KEY (defaults to ENV var REFORGE_API_KEY)
   --[no-]interactive  Force interactive mode
   --json              Format output as json.
   --no-color          Do not colorize output
+  --sdk-key=<value>   (required) Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)
   --verbose           Verbose output
 
 DESCRIPTION
@@ -123,16 +123,16 @@ Generate type definitions for your Reforge configuration
 
 ```
 USAGE
-  $ reforge generate --api-key <value> [--json] [--interactive] [--no-color] [--verbose] [--targets <value>]
+  $ reforge generate --sdk-key <value> [--json] [--interactive] [--no-color] [--verbose] [--targets <value>]
 
 FLAGS
   --targets=<value>  [default: react-ts] Determines for language/framework to generate code for (node-ts, react-ts)
 
 GLOBAL FLAGS
-  --api-key=<value>   (required) Reforge API KEY (defaults to ENV var REFORGE_API_KEY)
   --[no-]interactive  Force interactive mode
   --json              Format output as json.
   --no-color          Do not colorize output
+  --sdk-key=<value>   (required) Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)
   --verbose           Verbose output
 
 DESCRIPTION
@@ -209,16 +209,16 @@ Get the value of a config/feature-flag/etc.
 
 ```
 USAGE
-  $ reforge get [NAME] --api-key <value> [--json] [--interactive] [--no-color] [--verbose]
+  $ reforge get [NAME] --sdk-key <value> [--json] [--interactive] [--no-color] [--verbose]
 
 ARGUMENTS
   NAME  config/feature-flag/etc. name
 
 GLOBAL FLAGS
-  --api-key=<value>   (required) Reforge API KEY (defaults to ENV var REFORGE_API_KEY)
   --[no-]interactive  Force interactive mode
   --json              Format output as json.
   --no-color          Do not colorize output
+  --sdk-key=<value>   (required) Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)
   --verbose           Verbose output
 
 DESCRIPTION
@@ -236,7 +236,7 @@ Show details about the provided config/feature-flag/etc.
 
 ```
 USAGE
-  $ reforge info [NAME] --api-key <value> [--json] [--interactive] [--no-color] [--verbose]
+  $ reforge info [NAME] --sdk-key <value> [--json] [--interactive] [--no-color] [--verbose]
     [--exclude-evaluations]
 
 ARGUMENTS
@@ -246,10 +246,10 @@ FLAGS
   --exclude-evaluations  Exclude evaluation data
 
 GLOBAL FLAGS
-  --api-key=<value>   (required) Reforge API KEY (defaults to ENV var REFORGE_API_KEY)
   --[no-]interactive  Force interactive mode
   --json              Format output as json.
   --no-color          Do not colorize output
+  --sdk-key=<value>   (required) Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)
   --verbose           Verbose output
 
 DESCRIPTION
@@ -285,7 +285,7 @@ Show keys for your config/feature flags/etc.
 
 ```
 USAGE
-  $ reforge list --api-key <value> [--json] [--interactive] [--no-color] [--verbose] [--configs]
+  $ reforge list --sdk-key <value> [--json] [--interactive] [--no-color] [--verbose] [--configs]
     [--feature-flags] [--log-levels] [--segments]
 
 FLAGS
@@ -295,10 +295,10 @@ FLAGS
   --segments       include segments
 
 GLOBAL FLAGS
-  --api-key=<value>   (required) Reforge API KEY (defaults to ENV var REFORGE_API_KEY)
   --[no-]interactive  Force interactive mode
   --json              Format output as json.
   --no-color          Do not colorize output
+  --sdk-key=<value>   (required) Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)
   --verbose           Verbose output
 
 DESCRIPTION
@@ -317,11 +317,11 @@ _See code: [src/commands/list.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-p
 
 ## `reforge override [NAME]`
 
-Override the value of an item for your user/API key combo
+Override the value of an item for your user/SDK key combo
 
 ```
 USAGE
-  $ reforge override [NAME] --api-key <value> [--json] [--interactive] [--no-color] [--verbose] [--remove]
+  $ reforge override [NAME] --sdk-key <value> [--json] [--interactive] [--no-color] [--verbose] [--remove]
     [--value <value>]
 
 ARGUMENTS
@@ -332,14 +332,14 @@ FLAGS
   --value=<value>  value to use for your override
 
 GLOBAL FLAGS
-  --api-key=<value>   (required) Reforge API KEY (defaults to ENV var REFORGE_API_KEY)
   --[no-]interactive  Force interactive mode
   --json              Format output as json.
   --no-color          Do not colorize output
+  --sdk-key=<value>   (required) Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)
   --verbose           Verbose output
 
 DESCRIPTION
-  Override the value of an item for your user/API key combo
+  Override the value of an item for your user/SDK key combo
 
 EXAMPLES
   $ reforge override # will prompt for name and value
@@ -359,7 +359,7 @@ Manage schemas for Reforge configs
 
 ```
 USAGE
-  $ reforge schema NAME --api-key <value> [--json] [--interactive] [--no-color] [--verbose] [--get]
+  $ reforge schema NAME --sdk-key <value> [--json] [--interactive] [--no-color] [--verbose] [--get]
     [--set-zod <value>]
 
 ARGUMENTS
@@ -370,10 +370,10 @@ FLAGS
   --set-zod=<value>  set a Zod schema definition
 
 GLOBAL FLAGS
-  --api-key=<value>   (required) Reforge API KEY (defaults to ENV var REFORGE_API_KEY)
   --[no-]interactive  Force interactive mode
   --json              Format output as json.
   --no-color          Do not colorize output
+  --sdk-key=<value>   (required) Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)
   --verbose           Verbose output
 
 DESCRIPTION
@@ -429,7 +429,7 @@ Set/update the default value for an environment (other rules still apply)
 
 ```
 USAGE
-  $ reforge set-default [NAME] --api-key <value> [--json] [--interactive] [--no-color] [--verbose]
+  $ reforge set-default [NAME] --sdk-key <value> [--json] [--interactive] [--no-color] [--verbose]
     [--confidential] [--env-var <value>] [--environment <value>] [--value <value>] [--confirm] [--secret]
     [--secret-key-name <value>]
 
@@ -447,10 +447,10 @@ FLAGS
   --value=<value>            new default value
 
 GLOBAL FLAGS
-  --api-key=<value>   (required) Reforge API KEY (defaults to ENV var REFORGE_API_KEY)
   --[no-]interactive  Force interactive mode
   --json              Format output as json.
   --no-color          Do not colorize output
+  --sdk-key=<value>   (required) Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)
   --verbose           Verbose output
 
 DESCRIPTION

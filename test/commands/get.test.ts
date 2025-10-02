@@ -40,9 +40,9 @@ describe('get', () => {
     .it("shows an error if no key is provided when things aren't interactive")
 
   test
-    .command(['get', validKey, '--api-key='])
+    .command(['get', validKey, '--sdk-key='])
     .catch((error) => {
-      expect(error.message).to.eql('API key is required')
+      expect(error.message).to.eql('SDK key is required')
     })
-    .it('returns an error when the API key is not set')
+    .it('returns an error when the SDK key is not set')
 })

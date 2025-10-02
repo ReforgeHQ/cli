@@ -2,7 +2,7 @@
   "configServicePointer": {"projectEnvId": "588"},
   "configs": [
     {
-      "changedBy": {"apiKeyId": "", "email": "test@example.com", "userId": "0"},
+      "changedBy": {"sdkKeyId": "", "email": "test@example.com", "userId": "0"},
       "configType": "CONFIG",
       "id": "16777738077090689",
       "key": "intprop",
@@ -12,7 +12,7 @@
       "sendToClientSdk": true
     },
     {
-      "changedBy": {"apiKeyId": "", "email": "test@example.com", "userId": "0"},
+      "changedBy": {"sdkKeyId": "", "email": "test@example.com", "userId": "0"},
       "configType": "CONFIG",
       "id": "16777738077090698",
       "key": "notSenttoClient",

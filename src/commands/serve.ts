@@ -14,7 +14,7 @@ const allowCORSPreflight = (res: ServerResponse) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-reforge-client-version, authorization')
 }
 
-const ALWAYS_SEND_CONFIG_TYPES = new Set([ConfigType.FEATURE_FLAG, ConfigType.LOG_LEVEL])
+const ALWAYS_SEND_CONFIG_TYPES = new Set([ConfigType.FeatureFlag, ConfigType.LogLevel])
 
 const base64ToBytes = (base64: string): Uint8Array => {
   const binString = Buffer.from(base64, 'base64').toString('binary')

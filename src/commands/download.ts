@@ -36,7 +36,7 @@ export default class Download extends APICommand {
 
     this.verboseLog({environment})
 
-    const download = await this.apiClient.get(`/api/v1/configs/download?envId=${environment.id}`)
+    const download = await this.apiClient.get(`/api/v2/configs/download?envId=${environment.id}`)
 
     if (download.ok) {
       return this.writeFile(download, environment)
