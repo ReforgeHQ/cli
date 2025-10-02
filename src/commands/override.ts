@@ -73,7 +73,7 @@ export default class Override extends APICommand {
       return
     }
 
-    const request = await this.apiClient.post('/api/v1/config/remove-variant', {
+    const request = await this.apiClient.post('/api/v2/config/remove-variant', {
       configKey: key,
       variant: override,
     })
@@ -95,7 +95,7 @@ export default class Override extends APICommand {
       return this.err(`Could not find type for config named ${key}`)
     }
 
-    const request = await this.apiClient.post('/api/v1/config/assign-variant', {
+    const request = await this.apiClient.post('/api/v2/config/assign-variant', {
       configKey: key,
       variant: {[type]: type === 'stringList' ? {values: value.split(',')} : value},
     })

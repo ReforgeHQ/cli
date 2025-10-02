@@ -4,13 +4,13 @@ import {setupServer} from 'msw/node'
 import {CannedResponses, getCannedResponse} from '../test-helper.js'
 
 const cannedResponses: CannedResponses = {
-  'https://api.staging-prefab.cloud/api/v1/config/': [
+  'https://api.staging-prefab.cloud/api/v2/config/': [
     // New schema creation success case
     [
       {
-        configType: 7,
+        configType: 'SCHEMA',
         key: 'new.schema',
-        projectId: '124',
+        projectId: 124,
         rows: [
           {
             properties: {},
@@ -37,9 +37,9 @@ const cannedResponses: CannedResponses = {
     // Existing schema case - returns 409
     [
       {
-        configType: 7,
+        configType: 'SCHEMA',
         key: 'existing.schema',
-        projectId: '124',
+        projectId: 124,
         rows: [
           {
             properties: {},
@@ -71,7 +71,7 @@ const cannedResponses: CannedResponses = {
     ],
   ],
 
-  'https://api.staging-prefab.cloud/api/v1/config/key/my.schema': [
+  'https://api.staging-prefab.cloud/api/v2/config/key/my.schema': [
     [
       {},
       {
@@ -93,9 +93,9 @@ const cannedResponses: CannedResponses = {
     ],
   ],
 
-  'https://api.staging-prefab.cloud/api/v1/config/key/non.existent.schema': [[{}, {message: 'Not Found'}, 404]],
+  'https://api.staging-prefab.cloud/api/v2/config/key/non.existent.schema': [[{}, {message: 'Not Found'}, 404]],
 
-  'https://api.staging-prefab.cloud/api/v1/config/set-default/': [
+  'https://api.staging-prefab.cloud/api/v2/config/set-default/': [
     [
       {
         configKey: 'existing.schema',
@@ -115,13 +115,13 @@ const cannedResponses: CannedResponses = {
 }
 
 export const server = setupServer(
-  http.get('https://api.staging-prefab.cloud/api/v1/configs/0', () => passthrough()),
+  http.get('https://api.staging-prefab.cloud/api/v2/configs/0', () => passthrough()),
 
-  http.get('https://api.staging-prefab.cloud/api/v1/*', async ({request}) =>
+  http.get('https://api.staging-prefab.cloud/api/v2/*', async ({request}) =>
     getCannedResponse(request, cannedResponses).catch(console.error),
   ),
 
-  http.post('https://api.staging-prefab.cloud/api/v1/*', async ({request}) =>
+  http.post('https://api.staging-prefab.cloud/api/v2/*', async ({request}) =>
     getCannedResponse(request, cannedResponses).catch(console.error),
   ),
 )

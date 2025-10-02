@@ -26,11 +26,11 @@ const createFlagRequest = (key: string, defaultValue: boolean = false) => ({
 })
 
 const createRequest = (key: string, options: Record<string, unknown>) => ({
-  configType: 1,
+  configType: 'CONFIG',
   key,
-  projectId: '124',
+  projectId: 124,
   sendToClientSdk: false,
-  valueType: 2,
+  valueType: 'STRING',
   ...options,
 })
 
@@ -38,7 +38,7 @@ const conflictResponse = {
   _embedded: {
     errors: [{message: 'key `already.in.use` is already in use. Pass existing config id to overwrite'}],
   },
-  _links: {self: {href: '/api/v1/config/', templated: false}},
+  _links: {self: {href: '/api/v2/config/', templated: false}},
   message: 'Conflict',
 }
 
@@ -48,7 +48,7 @@ const successResponse = {
 }
 
 const cannedResponses: CannedResponses = {
-  'https://api.staging-prefab.cloud/api/v1/config/': [
+  'https://api.staging-prefab.cloud/api/v2/config/': [
     [createFlagRequest('brand.new.flag'), successResponse, 200],
     [createFlagRequest('already.in.use'), conflictResponse, 409],
     [createFlagRequest('new.with.different.default', true), conflictResponse, 200],
@@ -61,55 +61,55 @@ const cannedResponses: CannedResponses = {
     ],
     [
       createRequest('brand.new.int', {
-        configType: 1,
+        configType: 'CONFIG',
         key: 'brand.new.int',
-        projectId: '124',
-        rows: [{properties: {}, values: [{criteria: [], value: {int: 123}}]}],
-        valueType: 1,
+        projectId: 124,
+        rows: [{properties: {}, values: [{criteria: [], value: {int: '123'}}]}],
+        valueType: 'INT',
       }),
       successResponse,
       200,
     ],
     [
       createRequest('brand.new.double', {
-        configType: 1,
+        configType: 'CONFIG',
         key: 'brand.new.double',
-        projectId: '124',
+        projectId: 124,
         rows: [{properties: {}, values: [{criteria: [], value: {double: 123.99}}]}],
-        valueType: 4,
+        valueType: 'DOUBLE',
       }),
       successResponse,
       200,
     ],
     [
       createRequest('brand.new.boolean', {
-        configType: 1,
+        configType: 'CONFIG',
         key: 'brand.new.boolean',
-        projectId: '124',
+        projectId: 124,
         rows: [{properties: {}, values: [{criteria: [], value: {bool: false}}]}],
-        valueType: 5,
+        valueType: 'BOOL',
       }),
       successResponse,
       200,
     ],
     [
       createRequest('brand.new.string-list', {
-        configType: 1,
+        configType: 'CONFIG',
         key: 'brand.new.string-list',
-        projectId: '124',
+        projectId: 124,
         rows: [{properties: {}, values: [{criteria: [], value: {stringList: {values: ['a', 'b', 'c', 'd']}}}]}],
-        valueType: 10,
+        valueType: 'STRING_LIST',
       }),
       successResponse,
       200,
     ],
     [
       createRequest('brand.new.json', {
-        configType: 1,
+        configType: 'CONFIG',
         key: 'brand.new.json',
-        projectId: '124',
+        projectId: 124,
         rows: [{properties: {}, values: [{criteria: [], value: {json: {json: '{"key": "value"}'}}}]}],
-        valueType: 13,
+        valueType: 'JSON',
       }),
       successResponse,
       200,
@@ -123,15 +123,15 @@ const cannedResponses: CannedResponses = {
     ],
     [
       createRequest('int.from.env', {
-        rows: [{properties: {}, values: [{criteria: [], value: {provided: {lookup: 'MY_INT', source: 1}}}]}],
-        valueType: 1,
+        rows: [{properties: {}, values: [{criteria: [], value: {provided: {lookup: 'MY_INT', source: 'ENV_VAR'}}}]}],
+        valueType: 'INT',
       }),
       successResponse,
       200,
     ],
     [
       createRequest('greeting.from.env', {
-        rows: [{properties: {}, values: [{criteria: [], value: {provided: {lookup: 'GREETING', source: 1}}}]}],
+        rows: [{properties: {}, values: [{criteria: [], value: {provided: {lookup: 'GREETING', source: 'ENV_VAR'}}}]}],
       }),
       successResponse,
       200,
@@ -141,7 +141,7 @@ const cannedResponses: CannedResponses = {
         rows: [
           {
             properties: {},
-            values: [{criteria: [], value: {confidential: true, provided: {lookup: 'GREETING', source: 1}}}],
+            values: [{criteria: [], value: {confidential: true, provided: {lookup: 'GREETING', source: 'ENV_VAR'}}}],
           },
         ],
       }),
@@ -171,9 +171,9 @@ const cannedResponses: CannedResponses = {
     ],
   ],
 
-  'https://api.staging-prefab.cloud/api/v1/config/key/missing.secret.key': [[{}, {}, 404]],
+  'https://api.staging-prefab.cloud/api/v2/config/key/missing.secret.key': [[{}, {}, 404]],
 
-  'https://api.staging-prefab.cloud/api/v1/config/key/reforge.secrets.encryption.key': [
+  'https://api.staging-prefab.cloud/api/v2/config/key/reforge.secrets.encryption.key': [
     [
       {},
       {
@@ -182,7 +182,7 @@ const cannedResponses: CannedResponses = {
         draftId: '497',
         id: '17018809595519854',
         key: 'reforge.secrets.encryption.key',
-        projectId: '100',
+        projectId: 100,
         rows: [
           {values: [{value: {provided: {lookup: 'FAKE_PROD_SECRET', source: 'ENV_VAR'}}}]},
           {projectEnvId: '101', values: [{value: {provided: {lookup: 'FAKE_DEFAULT_SECRET', source: 'ENV_VAR'}}}]},
@@ -193,7 +193,7 @@ const cannedResponses: CannedResponses = {
     ],
   ],
 
-  'https://api.staging-prefab.cloud/api/v1/config-recipes/feature-flag/boolean': [
+  'https://api.staging-prefab.cloud/api/v2/config-recipes/feature-flag/boolean': [
     [{defaultValue: false, key: 'brand.new.flag'}, recipeResponse('brand.new.flag'), 200],
     [{defaultValue: false, key: 'already.in.use'}, recipeResponse('already.in.use'), 200],
     [{defaultValue: true, key: 'new.with.different.default'}, recipeResponse('new.with.different.default', true), 200],
@@ -201,13 +201,13 @@ const cannedResponses: CannedResponses = {
 }
 
 export const server = setupServer(
-  http.get('https://api.staging-prefab.cloud/api/v1/configs/0', () => passthrough()),
+  http.get('https://api.staging-prefab.cloud/api/v2/configs/0', () => passthrough()),
 
-  http.get('https://api.staging-prefab.cloud/api/v1/*', async ({request}) =>
+  http.get('https://api.staging-prefab.cloud/api/v2/*', async ({request}) =>
     getCannedResponse(request, cannedResponses).catch(console.error),
   ),
 
-  http.post('https://api.staging-prefab.cloud/api/v1/*', async ({request}) =>
+  http.post('https://api.staging-prefab.cloud/api/v2/*', async ({request}) =>
     getCannedResponse(request, cannedResponses).catch(console.error),
   ),
 )

@@ -1,4 +1,5 @@
 import {Args, Flags} from '@oclif/core'
+import {ProvidedSource} from '@reforge-com/node'
 
 import {APICommand} from '../index.js'
 import {initReforge} from '../reforge.js'
@@ -72,7 +73,7 @@ export default class Create extends APICommand {
       configValue = {
         provided: {
           lookup: flags['env-var'],
-          source: 1,
+          source: ProvidedSource.EnvVar,
         },
       }
     } else {
@@ -122,7 +123,7 @@ export default class Create extends APICommand {
       valueType,
     }
 
-    const request = await this.apiClient.post('/api/v1/config/', newConfig)
+    const request = await this.apiClient.post('/api/v2/config/', newConfig)
 
     if (!request.ok) {
       const errMsg =
@@ -150,7 +151,7 @@ export default class Create extends APICommand {
       key,
     }
 
-    const recipeRequest = await this.apiClient.post('/api/v1/config-recipes/feature-flag/boolean', recipePaylod)
+    const recipeRequest = await this.apiClient.post('/api/v2/config-recipes/feature-flag/boolean', recipePaylod)
 
     if (!recipeRequest.ok) {
       return this.err(`Failed to create boolean flag recipe: ${recipeRequest.status}`, {
@@ -162,7 +163,7 @@ export default class Create extends APICommand {
 
     const payload = recipeRequest.json
 
-    const request = await this.apiClient.post('/api/v1/config/', payload)
+    const request = await this.apiClient.post('/api/v2/config/', payload)
 
     if (!request.ok) {
       const errMsg =

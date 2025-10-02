@@ -6,7 +6,7 @@ import {ANY, CannedResponses, SECRET_VALUE, getCannedResponse} from '../test-hel
 const createdResponse = {response: {message: '', newId: '17002327855857830'}}
 
 const cannedResponses: CannedResponses = {
-  'https://api.staging-prefab.cloud/api/v1/config/key/feature-flag.simple': [
+  'https://api.staging-prefab.cloud/api/v2/config/key/feature-flag.simple': [
     [
       {},
       {
@@ -41,7 +41,7 @@ const cannedResponses: CannedResponses = {
     ],
   ],
 
-  'https://api.staging-prefab.cloud/api/v1/config/key/jeffreys.test.int': [
+  'https://api.staging-prefab.cloud/api/v2/config/key/jeffreys.test.int': [
     [
       {},
       {
@@ -58,7 +58,7 @@ const cannedResponses: CannedResponses = {
     ],
   ],
 
-  'https://api.staging-prefab.cloud/api/v1/config/key/jeffreys.test.key.reforge': [
+  'https://api.staging-prefab.cloud/api/v2/config/key/jeffreys.test.key.reforge': [
     [
       {},
       {
@@ -94,7 +94,7 @@ const cannedResponses: CannedResponses = {
     ],
   ],
 
-  'https://api.staging-prefab.cloud/api/v1/config/key/reforge.secrets.encryption.key': [
+  'https://api.staging-prefab.cloud/api/v2/config/key/reforge.secrets.encryption.key': [
     [
       {},
       {
@@ -114,7 +114,7 @@ const cannedResponses: CannedResponses = {
     ],
   ],
 
-  'https://api.staging-prefab.cloud/api/v1/config/key/robocop-secret': [
+  'https://api.staging-prefab.cloud/api/v2/config/key/robocop-secret': [
     [
       {},
       {
@@ -143,7 +143,7 @@ const cannedResponses: CannedResponses = {
     ],
   ],
 
-  'https://api.staging-prefab.cloud/api/v1/config/key/test.json': [
+  'https://api.staging-prefab.cloud/api/v2/config/key/test.json': [
     [
       {},
       {
@@ -160,9 +160,9 @@ const cannedResponses: CannedResponses = {
     ],
   ],
 
-  'https://api.staging-prefab.cloud/api/v1/config/key/this.does.not.exist': [[{}, {}, 404]],
+  'https://api.staging-prefab.cloud/api/v2/config/key/this.does.not.exist': [[{}, {}, 404]],
 
-  'https://api.staging-prefab.cloud/api/v1/config/set-default/': [
+  'https://api.staging-prefab.cloud/api/v2/config/set-default/': [
     [
       {configKey: 'feature-flag.simple', currentVersionId: ANY, environmentId: '5', value: {bool: true}},
       createdResponse,
@@ -199,7 +199,7 @@ const cannedResponses: CannedResponses = {
         configKey: 'jeffreys.test.key.reforge',
         currentVersionId: ANY,
         environmentId: '6',
-        value: {provided: {lookup: 'GREETING', source: 1}},
+        value: {provided: {lookup: 'GREETING', source: 'ENV_VAR'}},
       },
       createdResponse,
       200,
@@ -232,7 +232,7 @@ const cannedResponses: CannedResponses = {
     ],
   ],
 
-  'https://api.staging-prefab.cloud/api/v1/project-environments': [
+  'https://api.staging-prefab.cloud/api/v2/project-environments': [
     [
       {},
       {
@@ -249,11 +249,11 @@ const cannedResponses: CannedResponses = {
 }
 
 export const server = setupServer(
-  http.get('https://api.staging-prefab.cloud/api/v1/configs/0', () => passthrough()),
-  http.get('https://api.staging-prefab.cloud/api/v1/*', async ({request}) =>
+  http.get('https://api.staging-prefab.cloud/api/v2/configs/0', () => passthrough()),
+  http.get('https://api.staging-prefab.cloud/api/v2/*', async ({request}) =>
     getCannedResponse(request, cannedResponses).catch(console.error),
   ),
-  http.post('https://api.staging-prefab.cloud/api/v1/*', async ({request}) =>
+  http.post('https://api.staging-prefab.cloud/api/v2/*', async ({request}) =>
     getCannedResponse(request, cannedResponses).catch(console.error),
   ),
 )

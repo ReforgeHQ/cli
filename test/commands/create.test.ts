@@ -59,7 +59,7 @@ describe('create', () => {
               _embedded: {
                 errors: [{message: 'key `already.in.use` is already in use. Pass existing config id to overwrite'}],
               },
-              _links: {self: {href: '/api/v1/config/', templated: false}},
+              _links: {self: {href: '/api/v2/config/', templated: false}},
               message: 'Conflict',
             },
           },

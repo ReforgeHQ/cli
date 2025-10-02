@@ -109,32 +109,32 @@ const environmentResponse = {
 }
 
 const cannedResponses: CannedResponses = {
-  [`https://api.staging-prefab.cloud/api/v1/config/key/${confidentialKey}`]: [[{}, rawConfidentialConfigResponse, 200]],
-  [`https://api.staging-prefab.cloud/api/v1/config/key/${keyWithEvaluations}`]: [
+  [`https://api.staging-prefab.cloud/api/v2/config/key/${confidentialKey}`]: [[{}, rawConfidentialConfigResponse, 200]],
+  [`https://api.staging-prefab.cloud/api/v2/config/key/${keyWithEvaluations}`]: [
     [{}, rawConfigResponseForKeyWithEvaluations, 200],
   ],
-  [`https://api.staging-prefab.cloud/api/v1/config/key/${keyWithNoEvaluations}`]: [
+  [`https://api.staging-prefab.cloud/api/v2/config/key/${keyWithNoEvaluations}`]: [
     [{}, rawConfigResponseForKeyWithNoEvaluations, 200],
   ],
-  [`https://api.staging-prefab.cloud/api/v1/config/key/${secretKey}`]: [[{}, rawSecretConfigResponse, 200]],
-  [`https://api.staging-prefab.cloud/api/v1/evaluation-stats/${confidentialKey}`]: [
+  [`https://api.staging-prefab.cloud/api/v2/config/key/${secretKey}`]: [[{}, rawSecretConfigResponse, 200]],
+  [`https://api.staging-prefab.cloud/api/v2/evaluation-stats/${confidentialKey}`]: [
     [{}, rawConfigResponseForKeyWithNoEvaluations, 200],
   ],
-  [`https://api.staging-prefab.cloud/api/v1/evaluation-stats/${keyWithEvaluations}`]: [
+  [`https://api.staging-prefab.cloud/api/v2/evaluation-stats/${keyWithEvaluations}`]: [
     [{}, rawEvaluationResponse, 200],
   ],
-  [`https://api.staging-prefab.cloud/api/v1/evaluation-stats/${keyWithNoEvaluations}`]: [
+  [`https://api.staging-prefab.cloud/api/v2/evaluation-stats/${keyWithNoEvaluations}`]: [
     [{}, noEvaluationsResponse(keyWithNoEvaluations), 200],
   ],
-  [`https://api.staging-prefab.cloud/api/v1/evaluation-stats/${secretKey}`]: [
+  [`https://api.staging-prefab.cloud/api/v2/evaluation-stats/${secretKey}`]: [
     [{}, noEvaluationsResponse(keyWithNoEvaluations), 200],
   ],
-  'https://api.staging-prefab.cloud/api/v1/project-environments': [[{}, environmentResponse, 200]],
+  'https://api.staging-prefab.cloud/api/v2/project-environments': [[{}, environmentResponse, 200]],
 }
 
 export const server = setupServer(
-  http.get('https://api.staging-prefab.cloud/api/v1/configs/0', () => passthrough()),
-  http.get('https://api.staging-prefab.cloud/api/v1/*', async ({request}) =>
+  http.get('https://api.staging-prefab.cloud/api/v2/configs/0', () => passthrough()),
+  http.get('https://api.staging-prefab.cloud/api/v2/*', async ({request}) =>
     getCannedResponse(request, cannedResponses).catch(console.error),
   ),
 )

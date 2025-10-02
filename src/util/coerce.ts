@@ -22,13 +22,15 @@ export const coerceIntoType = (type: string, value: string): ConfigValueWithConf
     }
 
     case 'int': {
-      const int = Number.parseInt(value, 10)
+      try {
+        console.log('converting...')
+        const int = BigInt(value)
+        console.log('done converting...')
 
-      if (Number.isNaN(int)) {
+        return [{int}, TYPE_MAPPING[type]]
+      } catch {
         throw new TypeError(`Invalid default value for int: ${value}`)
       }
-
-      return [{int}, TYPE_MAPPING[type]]
     }
 
     case 'double': {

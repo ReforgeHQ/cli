@@ -27,11 +27,11 @@ export const downloadStub: JsonObj = {
 }
 
 export const server = setupServer(
-  http.get('https://api.staging-prefab.cloud/api/v1/project-environments', () =>
+  http.get('https://api.staging-prefab.cloud/api/v2/project-environments', () =>
     HttpResponse.json(environmentResponse),
   ),
 
-  http.get('https://api.staging-prefab.cloud/api/v1/configs/download', ({request}) => {
+  http.get('https://api.staging-prefab.cloud/api/v2/configs/download', ({request}) => {
     const url = new URL(request.url)
     const envId = url.searchParams.get('envId')
 

@@ -1,5 +1,5 @@
 import {Flags} from '@oclif/core'
-import {ConfigType, Reforge} from '@reforge-com/node'
+import {ConfigType, ProvidedSource, Reforge} from '@reforge-com/node'
 
 import type {Environment} from '../reforge-common/src/api/getEnvironmentsFromApi.js'
 import type {ConfigValue} from '../reforge-common/src/types.js'
@@ -81,7 +81,7 @@ export default class SetDefault extends APICommand {
     }
 
     const environment = await getEnvironment({
-      allowDefaultEnvironment: config.configType !== ConfigType.FEATURE_FLAG,
+      allowDefaultEnvironment: config.configType !== ConfigType.FeatureFlag,
       client: this.rawApiClient,
       command: this,
       flags,
@@ -189,7 +189,7 @@ export default class SetDefault extends APICommand {
       configValue = {
         provided: {
           lookup: envVar,
-          source: 1,
+          source: ProvidedSource.EnvVar,
         },
       }
       successMessage = `Successfully changed default to be provided by \`${envVar}\``
