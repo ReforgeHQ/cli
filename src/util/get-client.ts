@@ -9,7 +9,7 @@ import version from '../version.js'
 
 let clientInstance: Client | undefined
 
-const getClient = async (command: APICommand, sdkKey: string, profile?: string) => {
+const getClient = async (command: APICommand, sdkKey?: string, profile?: string) => {
   if (clientInstance) return clientInstance
 
   let jwt: string | undefined
@@ -19,10 +19,21 @@ const getClient = async (command: APICommand, sdkKey: string, profile?: string) 
     const authConfig = await loadAuthConfig()
     const tokens = await loadTokens()
 
+    command.verboseLog('OAuth auth', {
+      hasAuthConfig: !!authConfig,
+      hasAccessToken: !!tokens?.accessToken,
+    })
+
     if (authConfig && tokens?.accessToken) {
       // Get the active profile (from flag, env var, or default)
       const activeProfile = getActiveProfile(profile)
       const profileData = authConfig.profiles[activeProfile] || authConfig.profiles[authConfig.defaultProfile || 'default']
+
+      command.verboseLog('Profile lookup', {
+        activeProfile,
+        hasProfileData: !!profileData,
+        workspaceId: profileData?.workspace,
+      })
 
       if (profileData) {
         // Call identity endpoint to get fresh authz JWT for the active workspace
@@ -31,10 +42,20 @@ const getClient = async (command: APICommand, sdkKey: string, profile?: string) 
           .flatMap((org) => org.workspaces)
           .find((ws) => ws.id === profileData.workspace)
 
+        command.verboseLog('JWT lookup', {
+          foundWorkspace: !!workspace,
+          hasAuthzJwt: !!workspace?.authz_jwt,
+        })
+
         if (workspace) {
           jwt = workspace.authz_jwt
         }
       }
+    }
+
+    // If still no JWT, user needs to login
+    if (!jwt) {
+      command.error('No authentication found. Please run `reforge login`.', {exit: 401})
     }
   }
 
@@ -57,6 +78,15 @@ export const unwrapRequest = async (command: APICommand, promise: Promise<Respon
     command.verboseLog('ApiClient', {response: json})
 
     return {json, ok: true, status: request.status}
+  }
+
+  // Handle 403 with a user-friendly message
+  if (request.status === 403) {
+    return {
+      error: {error: 'You do not have permission to perform this action. Please check your workspace permissions.'},
+      ok: false,
+      status: request.status,
+    }
   }
 
   const error = jsonMaybe(await request.text())

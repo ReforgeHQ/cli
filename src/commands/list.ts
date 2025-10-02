@@ -37,7 +37,8 @@ export default class List extends APICommand {
     const request = await this.apiClient.get('/all-config-types/v1/metadata')
 
     if (!request.ok) {
-      return this.err(`Failed to fetch configs: ${request.status}`, {serverError: request.error})
+      const errorMsg = request.error?.error || `Failed to fetch configs: ${request.status}`
+      return this.err(errorMsg, {serverError: request.error})
     }
 
     const response = request.json as unknown as ConfigMetadataResponse
@@ -69,8 +70,26 @@ export default class List extends APICommand {
       configs = configs.filter((config) => selectedTypes.includes(config.type.toLowerCase()))
     }
 
+    // Calculate column widths
+    const maxKeyLength = Math.max(10, ...configs.map((c) => c.key.length))
+    const maxTypeLength = Math.max(10, ...configs.map((c) => c.type.length))
+    const maxNameLength = Math.max(20, ...configs.map((c) => (c.name || '').length))
+
+    // Build output
+    const header = `${'KEY'.padEnd(maxKeyLength)}  ${'TYPE'.padEnd(maxTypeLength)}  ${'NAME'.padEnd(maxNameLength)}  DESCRIPTION`
+    const separator = `${'-'.repeat(maxKeyLength)}  ${'-'.repeat(maxTypeLength)}  ${'-'.repeat(maxNameLength)}  ${'-'.repeat(20)}`
+
+    const rows = configs.map((config) => {
+      const key = config.key.padEnd(maxKeyLength)
+      const type = config.type.padEnd(maxTypeLength)
+      const name = (config.name || '').padEnd(maxNameLength)
+      const description = config.description || ''
+      return `${key}  ${type}  ${name}  ${description}`
+    })
+
+    const output = [header, separator, ...rows].join('\n')
     const keys = configs.map((config) => config.key)
 
-    return this.ok(keys.join('\n'), {keys})
+    return this.ok(output, {keys})
   }
 }

@@ -39,10 +39,10 @@ export abstract class BaseCommand extends Command {
     }
 
     if (typeof error === 'string') {
-      return this.error(error)
+      return this.error(error, {exit: 1})
     }
 
-    this.error(this.toErrorJson(error))
+    this.error(this.toErrorJson(error), {exit: 1})
   }
 
   public isVerbose!: boolean
@@ -125,14 +125,8 @@ export abstract class APICommand extends BaseCommand {
     const {flags} = await this.parse()
 
     this.rawApiClient = await rawGetClient(this, flags['sdk-key'], flags['profile'])
-    // We want to handle the sdk-key being explicitly blank.
-    // If it is truly absent then the `required: true` will catch it.
-    if (!flags['sdk-key']) {
-      this.error('SDK key is required', {exit: 401})
-    }
 
-    // If we have an API key, use it to get the environment
-    // Otherwise we'll need to handle auth differently (JWT-based)
+    // If we have an SDK key, use it to get the environment
     if (flags['sdk-key']) {
       this.currentEnvironment = getProjectEnvFromSdkKey(flags['sdk-key'])
     } else {
