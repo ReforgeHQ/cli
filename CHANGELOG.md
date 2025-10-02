@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.0-pre.11 - 2025-10-01
+
+- fix: don't assume feature flags are boolean values in typegen
+
 ## 0.0.0-pre.10 - 2025-09-30
 
 - Type generation improvements to support javascript sdk

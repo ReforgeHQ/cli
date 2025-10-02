@@ -95,14 +95,6 @@ export class ReactTypeScriptGenerator extends BaseTypescriptGenerator {
 
       uniqueMethods[methodName] = config.key
 
-      if (config.configType === 'FEATURE_FLAG') {
-        return stripIndent`
-          get ${methodName}(): boolean {
-                  return this.reforge.isEnabled('${config.key}')
-                }
-          `
-      }
-
       if (config.hasFunction) {
         const returnValue = new ZodToTypescriptReturnValueMapper().resolveType(config.schema)
 
