@@ -7,11 +7,11 @@ import version from '../version.js'
 
 let clientInstance: Client | undefined
 
-const getClient = (command: APICommand, apiKey: string) => {
+const getClient = (command: APICommand, sdkKey: string) => {
   if (clientInstance) return clientInstance
 
   clientInstance = new Client({
-    apiKey,
+    sdkKey,
     apiUrl: process.env.REFORGE_API_URL,
     clientIdentifier: `cli-${version}`,
     log: command.verboseLog,

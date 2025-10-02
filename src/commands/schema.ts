@@ -1,6 +1,3 @@
-// eslint-disable-next-line n/no-extraneous-import
-import type Long from 'long'
-
 import {Args, Flags} from '@oclif/core'
 
 import {APICommand} from '../index.js'
@@ -74,9 +71,9 @@ export default class Schema extends APICommand {
       }
 
       const createPayload = {
-        configType: ConfigType.SCHEMA,
+        configType: ConfigType.Schema,
         key: args.name,
-        projectId: this.currentEnvironment.projectId as unknown as Long,
+        projectId: this.currentEnvironment.projectId,
         rows: [
           {
             properties: {},

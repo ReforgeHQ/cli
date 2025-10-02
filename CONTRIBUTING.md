@@ -56,7 +56,7 @@ yarn build
 ## Running Tests
 
 ```sh
-REFORGE_API_URL=https://api.staging-prefab.cloud REFORGE_API_KEY=<prod_key> FAKE_PROD_SECRET=<prod_secret> REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY=<integration_key> yarn test
+REFORGE_API_URL=https://api.staging-prefab.cloud REFORGE_SDK_KEY=<prod_key> FAKE_PROD_SECRET=<prod_secret> REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY=<integration_key> yarn test
 ```
 
 ## Sending Pull Requests

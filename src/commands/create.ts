@@ -1,6 +1,3 @@
-// eslint-disable-next-line n/no-extraneous-import
-import type Long from 'long'
-
 import {Args, Flags} from '@oclif/core'
 
 import {APICommand} from '../index.js'
@@ -112,9 +109,9 @@ export default class Create extends APICommand {
     }
 
     const newConfig: Omit<NewConfig, 'allowableValues'> = {
-      configType: ConfigType.CONFIG,
+      configType: ConfigType.Config,
       key: args.name,
-      projectId: this.currentEnvironment.projectId as unknown as Long,
+      projectId: this.currentEnvironment.projectId,
       rows: [
         {
           properties: {},

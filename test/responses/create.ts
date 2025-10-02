@@ -5,7 +5,7 @@ import {CannedResponses, SECRET_VALUE, getCannedResponse} from '../test-helper.j
 
 const recipeResponse = (key: string, defaultValue: boolean = false) => ({
   allowableValues: [{bool: true}, {bool: false}],
-  changedBy: {apiKeyId: '315', email: '', userId: '4'},
+  changedBy: {sdkKeyId: '315', email: '', userId: '4'},
   configType: 'FEATURE_FLAG',
   id: '0',
   key,
@@ -16,7 +16,7 @@ const recipeResponse = (key: string, defaultValue: boolean = false) => ({
 
 const createFlagRequest = (key: string, defaultValue: boolean = false) => ({
   allowableValues: [{bool: true}, {bool: false}],
-  changedBy: {apiKeyId: '315', email: '', userId: '4'},
+  changedBy: {sdkKeyId: '315', email: '', userId: '4'},
   configType: 'FEATURE_FLAG',
   id: '0',
   key,
@@ -177,7 +177,7 @@ const cannedResponses: CannedResponses = {
     [
       {},
       {
-        changedBy: {apiKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
+        changedBy: {sdkKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
         configType: 'CONFIG',
         draftId: '497',
         id: '17018809595519854',

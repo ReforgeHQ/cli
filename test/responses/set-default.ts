@@ -11,7 +11,7 @@ const cannedResponses: CannedResponses = {
       {},
       {
         allowableValues: [{bool: true}, {bool: false}],
-        changedBy: {apiKeyId: '315', email: '', userId: '4'},
+        changedBy: {sdkKeyId: '315', email: '', userId: '4'},
         configType: 'FEATURE_FLAG',
         draftId: '522',
         id: '17005947285496532',
@@ -45,7 +45,7 @@ const cannedResponses: CannedResponses = {
     [
       {},
       {
-        changedBy: {apiKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
+        changedBy: {sdkKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
         configType: 'CONFIG',
         draftId: '531',
         id: '17005955334851009',
@@ -62,7 +62,7 @@ const cannedResponses: CannedResponses = {
     [
       {},
       {
-        changedBy: {apiKeyId: '', email: 'mark.faga@reforge.com', userId: '0'},
+        changedBy: {sdkKeyId: '', email: 'mark.faga@reforge.com', userId: '0'},
         configType: 'CONFIG',
         draftId: '531',
         id: '17005955334851003',
@@ -98,7 +98,7 @@ const cannedResponses: CannedResponses = {
     [
       {},
       {
-        changedBy: {apiKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
+        changedBy: {sdkKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
         configType: 'CONFIG',
         draftId: '497',
         id: '17018809595519854',
@@ -118,7 +118,7 @@ const cannedResponses: CannedResponses = {
     [
       {},
       {
-        changedBy: {apiKeyId: '315', email: '', userId: '4'},
+        changedBy: {sdkKeyId: '315', email: '', userId: '4'},
         configType: 'CONFIG',
         draftId: '554',
         id: '17049868822052866',
@@ -147,7 +147,7 @@ const cannedResponses: CannedResponses = {
     [
       {},
       {
-        changedBy: {apiKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
+        changedBy: {sdkKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
         configType: 'CONFIG',
         draftId: '533',
         id: '17005955334851012',

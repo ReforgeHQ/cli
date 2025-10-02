@@ -2,7 +2,7 @@ export {run} from '@oclif/core'
 import {Command, Flags} from '@oclif/core'
 
 import {Client} from './reforge-common/src/api/client.js'
-import {ProjectEnvId, getProjectEnvFromApiKey} from './reforge-common/src/getProjectEnvFromApiKey.js'
+import {ProjectEnvId, getProjectEnvFromSdkKey} from './reforge-common/src/getProjectEnvFromSdkKey.js'
 import {JsonObj, Result} from './result.js'
 import rawGetClient, {unwrapRequest} from './util/get-client.js'
 
@@ -92,9 +92,9 @@ export abstract class BaseCommand extends Command {
 export abstract class APICommand extends BaseCommand {
   static baseFlags = {
     ...globalFlags,
-    'api-key': Flags.string({
-      description: 'Reforge API KEY (defaults to ENV var REFORGE_API_KEY)',
-      env: 'REFORGE_API_KEY',
+    'sdk-key': Flags.string({
+      description: 'Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)',
+      env: 'REFORGE_SDK_KEY',
       helpGroup: 'GLOBAL',
       required: true,
     }),
@@ -117,13 +117,13 @@ export abstract class APICommand extends BaseCommand {
 
     const {flags} = await this.parse()
 
-    // We want to handle the api-key being explicitly blank.
+    // We want to handle the sdk-key being explicitly blank.
     // If it is truly absent then the `required: true` will catch it.
-    if (!flags['api-key']) {
-      this.error('API key is required', {exit: 401})
+    if (!flags['sdk-key']) {
+      this.error('SDK key is required', {exit: 401})
     }
 
-    this.rawApiClient = rawGetClient(this, flags['api-key'])
-    this.currentEnvironment = getProjectEnvFromApiKey(flags['api-key'])
+    this.rawApiClient = rawGetClient(this, flags['sdk-key'])
+    this.currentEnvironment = getProjectEnvFromSdkKey(flags['sdk-key'])
   }
 }

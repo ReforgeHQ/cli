@@ -13,7 +13,7 @@ const noEvaluationsResponse = (key: string) => ({end: 1_700_059_396_635, key, st
 export const rawSecret = `875247386844c18c58a97c--b307b97a8288ac9da3ce0cf2--7ab0c32e044869e355586ed653a435de`
 
 const rawConfigResponseForKeyWithEvaluations = {
-  changedBy: {apiKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
+  changedBy: {sdkKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
   configType: 'CONFIG',
   key: keyWithEvaluations,
   projectId: '124',
@@ -22,7 +22,7 @@ const rawConfigResponseForKeyWithEvaluations = {
 }
 
 const rawSecretConfigResponse = {
-  changedBy: {apiKeyId: '315', email: '', userId: '4'},
+  changedBy: {sdkKeyId: '315', email: '', userId: '4'},
   configType: 'CONFIG',
   draftId: '539',
   id: '17017173800583163',
@@ -33,7 +33,7 @@ const rawSecretConfigResponse = {
 }
 
 const rawConfidentialConfigResponse = {
-  changedBy: {apiKeyId: '315', email: '', userId: '4'},
+  changedBy: {sdkKeyId: '315', email: '', userId: '4'},
   configType: 'CONFIG',
   draftId: '539',
   id: '17017173800583163',
@@ -63,7 +63,7 @@ const rawEvaluationResponse = {
 }
 
 const rawConfigResponseForKeyWithNoEvaluations = {
-  changedBy: {apiKeyId: '', email: 'mark.faga@reforge.com', userId: '0'},
+  changedBy: {sdkKeyId: '', email: 'mark.faga@reforge.com', userId: '0'},
   configType: 'CONFIG',
   key: 'jeffreys.test.key.reforge',
   projectId: '124',

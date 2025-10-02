@@ -14,7 +14,7 @@ import nameArg from '../util/name-arg.js'
 export default class Override extends APICommand {
   static args = {...nameArg}
 
-  static description = 'Override the value of an item for your user/API key combo'
+  static description = 'Override the value of an item for your user/SDK key combo'
 
   static examples = [
     '<%= config.bin %> <%= command.id %> # will prompt for name and value',

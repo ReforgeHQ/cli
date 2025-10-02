@@ -1,6 +1,3 @@
-// eslint-disable-next-line n/no-extraneous-import
-import type Long from 'long'
-
 import {ConfigValue, ConfigValueType} from '../reforge-common/src/types.js'
 
 const TRUE_VALUES = new Set(['true', '1', 't'])
@@ -9,13 +6,13 @@ const BOOLEAN_VALUES = new Set([...TRUE_VALUES, 'false', '0', 'f'])
 type ConfigValueWithConfigValueType = [ConfigValue, ConfigValueType]
 
 export const TYPE_MAPPING: Record<string, ConfigValueType> = {
-  bool: ConfigValueType.BOOL,
-  boolean: ConfigValueType.BOOL,
-  double: ConfigValueType.DOUBLE,
-  int: ConfigValueType.INT,
-  string: ConfigValueType.STRING,
-  'string-list': ConfigValueType.STRING_LIST,
-  stringList: ConfigValueType.STRING_LIST,
+  bool: ConfigValueType.Bool,
+  boolean: ConfigValueType.Bool,
+  double: ConfigValueType.Double,
+  int: ConfigValueType.Int,
+  string: ConfigValueType.String,
+  'string-list': ConfigValueType.StringList,
+  stringList: ConfigValueType.StringList,
 }
 
 export const coerceIntoType = (type: string, value: string): ConfigValueWithConfigValueType | undefined => {
@@ -31,8 +28,7 @@ export const coerceIntoType = (type: string, value: string): ConfigValueWithConf
         throw new TypeError(`Invalid default value for int: ${value}`)
       }
 
-      // This unknown as Long is annoying but Long doesn't serialize to JSON correctly ATM
-      return [{int: int as unknown as Long}, TYPE_MAPPING[type]]
+      return [{int}, TYPE_MAPPING[type]]
     }
 
     case 'double': {
@@ -59,7 +55,7 @@ export const coerceIntoType = (type: string, value: string): ConfigValueWithConf
       try {
         // ensure the value is valid JSON
         JSON.parse(value)
-        return [{json: {json: value}}, ConfigValueType.JSON]
+        return [{json: {json: value}}, ConfigValueType.Json]
       } catch {
         throw new TypeError(`Invalid default value for JSON: ${value}`)
       }
