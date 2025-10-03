@@ -33,16 +33,25 @@ export abstract class BaseCommand extends Command {
 
   public static enableJsonFlag = true
 
+  protected async catch(err: Error & {exitCode?: number; code?: string}): Promise<any> {
+    // Override oclif's default error handling to suppress stack traces
+    // Log the error message without stack trace
+    this.log(err.message)
+
+    // Exit without calling super.catch which would show the stack trace
+    this.exit(err.exitCode || 1)
+  }
+
   public err = (error: Error | object | string, json?: JsonObj): never => {
     if (this.jsonEnabled()) {
       throw json ?? error
     }
 
     if (typeof error === 'string') {
-      return this.error(error, {exit: 1})
+      return this.error(error, {code: 'ERR', exit: 1})
     }
 
-    this.error(this.toErrorJson(error), {exit: 1})
+    this.error(this.toErrorJson(error), {code: 'ERR', exit: 1})
   }
 
   public isVerbose!: boolean
@@ -116,6 +125,8 @@ export abstract class APICommand extends BaseCommand {
       get: async (path: string) => unwrapRequest(this, this.rawApiClient.get(path)),
 
       post: async (path: string, payload: unknown) => unwrapRequest(this, this.rawApiClient.post(path, payload)),
+
+      put: async (path: string, payload: unknown) => unwrapRequest(this, this.rawApiClient.put(path, payload)),
     }
   }
 
