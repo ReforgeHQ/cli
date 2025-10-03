@@ -225,36 +225,36 @@ export default class SetDefault extends APICommand {
         // Parse the value based on type
         let parsedValue: unknown = value
         switch (type) {
-        case 'stringList': {
-          parsedValue = {values: value.split(',')}
-        
-        break;
-        }
-        case 'bool': {
-          parsedValue = value.toLowerCase() === 'true'
-        
-        break;
-        }
-        case 'int': {
-          parsedValue = Number.parseInt(value, 10)
-        
-        break;
-        }
-        case 'double': {
-          parsedValue = Number.parseFloat(value)
-        
-        break;
-        }
-        case 'json': {
-          try {
-            parsedValue = JSON.parse(value)
-          } catch {
-            return this.err(`Invalid JSON value: ${value}`)
+          case 'stringList': {
+            parsedValue = {values: value.split(',')}
+
+            break
           }
-        
-        break;
-        }
-        // No default
+          case 'bool': {
+            parsedValue = value.toLowerCase() === 'true'
+
+            break
+          }
+          case 'int': {
+            parsedValue = Number.parseInt(value, 10)
+
+            break
+          }
+          case 'double': {
+            parsedValue = Number.parseFloat(value)
+
+            break
+          }
+          case 'json': {
+            try {
+              parsedValue = JSON.parse(value)
+            } catch {
+              return this.err(`Invalid JSON value: ${value}`)
+            }
+
+            break
+          }
+          // No default
         }
 
         configValue = {

@@ -27,7 +27,8 @@ const getClient = async (command: APICommand, sdkKey?: string, profile?: string)
     if (authConfig && tokens?.accessToken) {
       // Get the active profile (from flag, env var, or default)
       const activeProfile = getActiveProfile(profile)
-      const profileData = authConfig.profiles[activeProfile] || authConfig.profiles[authConfig.defaultProfile || 'default']
+      const profileData =
+        authConfig.profiles[activeProfile] || authConfig.profiles[authConfig.defaultProfile || 'default']
 
       command.verboseLog('Profile lookup', {
         activeProfile,

@@ -133,11 +133,7 @@ export default class Override extends APICommand {
     this.err(`Failed to remove override: ${request.status}`, {key, serverError: request.error})
   }
 
-  private async setOverride(
-    config: ConfigMetadata,
-    value: string,
-    environmentId: string,
-  ): Promise<JsonObj | void> {
+  private async setOverride(config: ConfigMetadata, value: string, environmentId: string): Promise<JsonObj | void> {
     const {key, valueType, version} = config
 
     // Map the valueType to the format expected by the API
@@ -160,36 +156,36 @@ export default class Override extends APICommand {
     // Parse the value based on type
     let parsedValue: unknown = value
     switch (type) {
-    case 'stringList': {
-      parsedValue = {values: value.split(',')}
-    
-    break;
-    }
-    case 'bool': {
-      parsedValue = value.toLowerCase() === 'true'
-    
-    break;
-    }
-    case 'int': {
-      parsedValue = Number.parseInt(value, 10)
-    
-    break;
-    }
-    case 'double': {
-      parsedValue = Number.parseFloat(value)
-    
-    break;
-    }
-    case 'json': {
-      try {
-        parsedValue = JSON.parse(value)
-      } catch {
-        return this.err(`Invalid JSON value: ${value}`)
+      case 'stringList': {
+        parsedValue = {values: value.split(',')}
+
+        break
       }
-    
-    break;
-    }
-    // No default
+      case 'bool': {
+        parsedValue = value.toLowerCase() === 'true'
+
+        break
+      }
+      case 'int': {
+        parsedValue = Number.parseInt(value, 10)
+
+        break
+      }
+      case 'double': {
+        parsedValue = Number.parseFloat(value)
+
+        break
+      }
+      case 'json': {
+        try {
+          parsedValue = JSON.parse(value)
+        } catch {
+          return this.err(`Invalid JSON value: ${value}`)
+        }
+
+        break
+      }
+      // No default
     }
 
     const request = await this.apiClient.post('/internal/ops/v1/assign-variant', {

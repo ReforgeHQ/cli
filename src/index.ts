@@ -108,7 +108,7 @@ export abstract class APICommand extends BaseCommand {
       hidden: true,
       required: false,
     }),
-    'profile': Flags.string({
+    profile: Flags.string({
       char: 'p',
       description: 'Profile to use (defaults to ENV var REFORGE_PROFILE or "default")',
       helpGroup: 'GLOBAL',

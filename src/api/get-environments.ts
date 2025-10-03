@@ -24,7 +24,5 @@ export const getEnvironments = async (command: APICommand): Promise<Environment[
   const response = request.json as unknown as ProjectEnvironmentsResponse
 
   // Filter out deleted environments and sort by name
-  return response.environments
-    .filter((env) => !env.deletedAt)
-    .sort((a, b) => a.name.localeCompare(b.name))
+  return response.environments.filter((env) => !env.deletedAt).sort((a, b) => a.name.localeCompare(b.name))
 }

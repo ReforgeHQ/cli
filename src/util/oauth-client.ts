@@ -40,13 +40,10 @@ const getRedirectUri = (port: number): string => `http://${CALLBACK_HOST}:${port
 // Generate PKCE code verifier and challenge
 const generateCodeVerifier = (): string => crypto.randomBytes(32).toString('base64url')
 
-const generateCodeChallenge = (verifier: string): string => crypto.createHash('sha256').update(verifier).digest('base64url')
+const generateCodeChallenge = (verifier: string): string =>
+  crypto.createHash('sha256').update(verifier).digest('base64url')
 
-export const generateAuthUrl = (
-  port: number,
-  codeVerifier: string,
-  domain?: string,
-): string => {
+export const generateAuthUrl = (port: number, codeVerifier: string, domain?: string): string => {
   const idUrl = getIdApiUrl(domain)
   const codeChallenge = generateCodeChallenge(codeVerifier)
 
@@ -66,7 +63,8 @@ export const generateAuthUrl = (
 
 export const createCodeVerifier = (): string => generateCodeVerifier()
 
-const tryStartServer = (port: number): Promise<{port: number; server: http.Server} | null> => new Promise((resolve) => {
+const tryStartServer = (port: number): Promise<{port: number; server: http.Server} | null> =>
+  new Promise((resolve) => {
     const server = http.createServer()
 
     const onError = () => {
@@ -109,7 +107,8 @@ export const startCallbackServer = async (): Promise<{
 
   console.log(`Listening for OAuth callback on port ${port}...`)
 
-  const waitForCallback = (): Promise<string> => new Promise((resolve, reject) => {
+  const waitForCallback = (): Promise<string> =>
+    new Promise((resolve, reject) => {
       // Set up request handler now that we have a port
       server.on('request', (req, res) => {
         if (req.url?.startsWith(CALLBACK_PATH)) {
@@ -169,9 +168,7 @@ export const exchangeCodeForTokens = async (
   /* eslint-enable camelcase */
 
   // Create an agent that ignores SSL errors for local development
-  const agent = process.env.IDENTITY_BASE_URL_OVERRIDE
-    ? new https.Agent({rejectUnauthorized: false})
-    : undefined
+  const agent = process.env.IDENTITY_BASE_URL_OVERRIDE ? new https.Agent({rejectUnauthorized: false}) : undefined
 
   const response = await fetch(`${idUrl}/oauth/token`, {
     // @ts-expect-error - agent is valid for https URLs
@@ -203,9 +200,7 @@ export const refreshAccessToken = async (refreshToken: string, domain?: string):
   /* eslint-enable camelcase */
 
   // Create an agent that ignores SSL errors for local development
-  const agent = process.env.IDENTITY_BASE_URL_OVERRIDE
-    ? new https.Agent({rejectUnauthorized: false})
-    : undefined
+  const agent = process.env.IDENTITY_BASE_URL_OVERRIDE ? new https.Agent({rejectUnauthorized: false}) : undefined
 
   const response = await fetch(`${idUrl}/oauth/token`, {
     // @ts-expect-error - agent is valid for https URLs
@@ -229,9 +224,7 @@ export const introspectToken = async (accessToken: string, domain?: string): Pro
   const identityUrl = getIdApiUrl(domain)
 
   // Create an agent that ignores SSL errors for local development
-  const agent = process.env.IDENTITY_BASE_URL_OVERRIDE
-    ? new https.Agent({rejectUnauthorized: false})
-    : undefined
+  const agent = process.env.IDENTITY_BASE_URL_OVERRIDE ? new https.Agent({rejectUnauthorized: false}) : undefined
 
   const response = await fetch(`${identityUrl}/api/oauth/identity`, {
     // @ts-expect-error - agent is valid for https URLs

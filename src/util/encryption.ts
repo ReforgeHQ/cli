@@ -20,9 +20,7 @@ export async function makeConfidentialValue(
   environmentId: string,
 ): Promise<Result<Record<string, unknown>>> {
   // Fetch the encryption key config
-  const configRequest = await command.apiClient.get(
-    `/all-config-types/v1/config/${encodeURIComponent(secret.keyName)}`,
-  )
+  const configRequest = await command.apiClient.get(`/all-config-types/v1/config/${encodeURIComponent(secret.keyName)}`)
 
   if (!configRequest.ok) {
     return failure(`Failed to fetch encryption key config ${secret.keyName}: ${configRequest.status}`, {

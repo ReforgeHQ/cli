@@ -4,12 +4,7 @@ import * as os from 'node:os'
 import * as path from 'node:path'
 import {afterEach, beforeEach, describe, it} from 'node:test'
 
-import {
-  type AuthConfig,
-  getActiveProfile,
-  loadAuthConfig,
-  saveAuthConfig,
-} from '../../src/util/token-storage.js'
+import {type AuthConfig, getActiveProfile, loadAuthConfig, saveAuthConfig} from '../../src/util/token-storage.js'
 
 describe('token-storage', () => {
   const testDir = path.join(os.tmpdir(), '.reforge-test-' + Date.now())

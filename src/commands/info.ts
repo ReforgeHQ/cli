@@ -212,8 +212,7 @@ export default class Info extends APICommand {
     // Handle weighted values (A/B testing)
     if (Array.isArray(value.weightedValues)) {
       const weights = value.weightedValues
-        .sort((a: Record<string, unknown>, b: Record<string, unknown>) =>
-          (b.weight as number) - (a.weight as number))
+        .sort((a: Record<string, unknown>, b: Record<string, unknown>) => (b.weight as number) - (a.weight as number))
         .map((wv: Record<string, unknown>) => {
           const percent = (((wv.weight as number) / 1000) * 100).toFixed(1)
           const val = this.extractSimpleValue(wv.value as Record<string, unknown>)
