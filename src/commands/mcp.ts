@@ -4,13 +4,7 @@ import {existsSync, mkdirSync, readFileSync, writeFileSync} from 'node:fs'
 import {dirname, join, relative} from 'node:path'
 
 import {BaseCommand} from '../index.js'
-import {
-  ConfigPaths,
-  getServersConfig,
-  resolveConfigPath,
-  SupportedEditor,
-  SupportedEditors,
-} from '../services/mcp.js'
+import {ConfigPaths, getServersConfig, resolveConfigPath, SupportedEditor, SupportedEditors} from '../services/mcp.js'
 import autocomplete from '../util/autocomplete.js'
 import {green} from '../util/color.js'
 import isInteractive from '../util/is-interactive.js'
@@ -30,7 +24,7 @@ export default class Mcp extends BaseCommand {
       description: 'Editor to configure (cursor, vscode, claude, windsurf)',
       options: [...SupportedEditors],
     }),
-    'url': Flags.string({
+    url: Flags.string({
       description: 'Internal URL for testing (defaults to https://launch.reforge.com/api/v1/mcp)',
     }),
   }
@@ -45,7 +39,7 @@ export default class Mcp extends BaseCommand {
     } else if (isInteractive(flags)) {
       const editorChoice = await autocomplete({
         message: green('Which editor do you want to configure?'),
-        source: SupportedEditors.map(editor => ConfigPaths[editor].name),
+        source: SupportedEditors.map((editor) => ConfigPaths[editor].name),
       })
 
       if (!editorChoice) {
@@ -54,7 +48,7 @@ export default class Mcp extends BaseCommand {
 
       // Find the editor key by name
       selectedEditor = Object.keys(ConfigPaths).find(
-        key => ConfigPaths[key as SupportedEditor].name === editorChoice
+        (key) => ConfigPaths[key as SupportedEditor].name === editorChoice,
       ) as SupportedEditor
     } else {
       return this.error('--editor flag is required when interactive mode is not available')
@@ -75,10 +69,7 @@ export default class Mcp extends BaseCommand {
     if (fullLocalPath && isInteractive(flags)) {
       const scopeChoice = await autocomplete({
         message: green('Configure global or project-local settings?'),
-        source: [
-          `Local (${relative(cwd, fullLocalPath)})`,
-          `Global (${globalPath})`,
-        ],
+        source: [`Local (${relative(cwd, fullLocalPath)})`, `Global (${globalPath})`],
       })
 
       if (!scopeChoice) {
@@ -111,17 +102,12 @@ export default class Mcp extends BaseCommand {
     const serversConfig = getServersConfig(editorConfig)
 
     // Check for existing Reforge entries
-    const existingReforgeEntries = Object.keys(serversConfig).filter(key =>
-      /reforge/i.test(key)
-    )
+    const existingReforgeEntries = Object.keys(serversConfig).filter((key) => /reforge/i.test(key))
 
     // Determine entry key
     let targetEntryKey = 'reforge-launch'
     if (existingReforgeEntries.length > 0 && isInteractive(flags)) {
-      const choices = [
-        `Add: ${targetEntryKey}`,
-        ...existingReforgeEntries.map(key => `Update: ${key}`),
-      ]
+      const choices = [`Add: ${targetEntryKey}`, ...existingReforgeEntries.map((key) => `Update: ${key}`)]
 
       const choice = await autocomplete({
         message: green('Add a new MCP server or update an existing one?'),
