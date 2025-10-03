@@ -75,7 +75,8 @@
     "commands": "./dist/commands",
     "plugins": [],
     "topicSeparator": " ",
-    "helpClass": "./dist/help"
+    "helpClass": "./dist/help",
+    "stacktrace": false
   },
   "scripts": {
     "build": "shx rm -rf dist && tsc -b",
