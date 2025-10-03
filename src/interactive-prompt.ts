@@ -225,11 +225,12 @@ export const interactivePrompt = async (config: Config) => {
       return true
     })
 
-    if (Object.keys(chosenCommand.command.baseFlags ?? {}).includes('sdk-key') && !sdkKey) {
-      throw new Error(
-        'You must provide an SDK Key via --sdk-key=XYZ or by setting the REFORGE_SDK_KEY environment variable.',
-      )
-    }
+    // SDK key is no longer required - JWT authentication is used via OAuth login
+    // if (Object.keys(chosenCommand.command.baseFlags ?? {}).includes('sdk-key') && !sdkKey) {
+    //   throw new Error(
+    //     'You must provide an SDK Key via --sdk-key=XYZ or by setting the REFORGE_SDK_KEY environment variable.',
+    //   )
+    // }
 
     const args = await getArgs(chosenCommand.command.args, chosenCommand.id, sdkKey)
     const flags = await getFlags(chosenCommand.command.flags, chosenCommand.id, chosenCommand.implicitFlags, sdkKey)

@@ -174,16 +174,6 @@ export const exchangeCodeForTokens = async (
     redirect_uri: getRedirectUri(port),
   })
 
-  console.log('\n=== Token Exchange Request ===')
-  console.log(`curl -X POST "${idUrl}/oauth/token" \\`)
-  console.log(`  -H "Content-Type: application/x-www-form-urlencoded" \\`)
-  console.log(`  -d "client_id=${CLIENT_ID}" \\`)
-  console.log(`  -d "code=${code}" \\`)
-  console.log(`  -d "code_verifier=${codeVerifier}" \\`)
-  console.log(`  -d "grant_type=authorization_code" \\`)
-  console.log(`  -d "redirect_uri=${getRedirectUri(port)}"`)
-  console.log('==============================\n')
-
   // Create an agent that ignores SSL errors for local development
   const agent = process.env.IDENTITY_BASE_URL_OVERRIDE
     ? new https.Agent({rejectUnauthorized: false})
@@ -204,13 +194,7 @@ export const exchangeCodeForTokens = async (
     throw new Error(`Failed to exchange code for tokens: ${errorText}`)
   }
 
-  const tokenData = await response.json()
-
-  console.log('\n=== Token Exchange Response ===')
-  console.log(JSON.stringify(tokenData, null, 2))
-  console.log('================================\n')
-
-  return tokenData
+  return response.json()
 }
 
 export const refreshAccessToken = async (refreshToken: string, domain?: string): Promise<OAuthTokenResponse> => {
@@ -221,14 +205,6 @@ export const refreshAccessToken = async (refreshToken: string, domain?: string):
     grant_type: 'refresh_token',
     refresh_token: refreshToken,
   })
-
-  console.log('\n=== Refresh Token Request ===')
-  console.log(`curl -X POST "${idUrl}/oauth/token" \\`)
-  console.log(`  -H "Content-Type: application/x-www-form-urlencoded" \\`)
-  console.log(`  -d "client_id=${CLIENT_ID}" \\`)
-  console.log(`  -d "grant_type=refresh_token" \\`)
-  console.log(`  -d "refresh_token=${refreshToken}"`)
-  console.log('=============================\n')
 
   // Create an agent that ignores SSL errors for local development
   const agent = process.env.IDENTITY_BASE_URL_OVERRIDE
@@ -256,12 +232,6 @@ export const refreshAccessToken = async (refreshToken: string, domain?: string):
 export const introspectToken = async (accessToken: string, domain?: string): Promise<IntrospectionResponse> => {
   const identityUrl = getIdApiUrl(domain)
 
-  // Log the curl equivalent for debugging
-  console.log('\n=== Identity Request ===')
-  console.log(`curl -X GET "${identityUrl}/api/oauth/identity" \\`)
-  console.log(`  -H "Authorization: Bearer ${accessToken}"`)
-  console.log('========================\n')
-
   // Create an agent that ignores SSL errors for local development
   const agent = process.env.IDENTITY_BASE_URL_OVERRIDE
     ? new https.Agent({rejectUnauthorized: false})
@@ -282,10 +252,6 @@ export const introspectToken = async (accessToken: string, domain?: string): Pro
   }
 
   const data = await response.json()
-
-  console.log('\n=== Identity Response ===')
-  console.log(JSON.stringify(data, null, 2))
-  console.log('=========================\n')
 
   return data
 }
