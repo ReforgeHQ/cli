@@ -6,6 +6,7 @@ import GenerateNewHexKey from './commands/generate-new-hex-key.js'
 import Get from './commands/get.js'
 import Info from './commands/info.js'
 import List from './commands/list.js'
+import Mcp from './commands/mcp.js'
 import Override from './commands/override.js'
 import Serve from './commands/serve.js'
 import SetDefault from './commands/set-default.js'
@@ -29,6 +30,7 @@ type SuggestedCommand = {
     | typeof Get
     | typeof Info
     | typeof List
+    | typeof Mcp
     | typeof Override
     | typeof Serve
     | typeof SetDefault
@@ -45,6 +47,7 @@ const commands: SuggestedCommand[] = [
   Get,
   Info,
   Download,
+  Mcp,
   Override,
   List,
   Serve,
