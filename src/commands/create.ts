@@ -79,7 +79,7 @@ export default class Create extends APICommand {
         desiredValue: flags.value,
         flags,
         message: 'Default value',
-        reforge: undefined as any,
+        reforge: undefined as unknown,
       })
 
       if (valueInput.ok) {
@@ -208,8 +208,8 @@ export default class Create extends APICommand {
     return this.ok(`${checkmark} Created boolean flag: ${key}`, {key, ...response})
   }
 
-  private mapConfigValueToDto(configValue: ConfigValue, valueType: ConfigValueType): any {
-    const dto: any = {
+  private mapConfigValueToDto(configValue: ConfigValue, valueType: ConfigValueType): Record<string, unknown> {
+    const dto: Record<string, unknown> = {
       type: this.mapValueTypeToString(valueType),
     }
 
@@ -225,7 +225,7 @@ export default class Create extends APICommand {
     }
 
     // Extract the actual value based on type
-    let value: any
+    let value: unknown
     if (configValue.bool !== undefined) {
       value = configValue.bool
     } else if (configValue.string !== undefined) {

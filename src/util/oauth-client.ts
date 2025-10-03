@@ -50,6 +50,7 @@ export const generateAuthUrl = (
   const idUrl = getIdApiUrl(domain)
   const codeChallenge = generateCodeChallenge(codeVerifier)
 
+  /* eslint-disable camelcase */
   const params = new URLSearchParams({
     client_id: CLIENT_ID,
     code_challenge: codeChallenge,
@@ -58,6 +59,7 @@ export const generateAuthUrl = (
     response_type: 'code',
     scope: 'public read write',
   })
+  /* eslint-enable camelcase */
 
   return `${idUrl}/oauth/authorize?${params.toString()}`
 }
@@ -85,6 +87,7 @@ const tryStartServer = (port: number): Promise<{port: number; server: http.Serve
 
 const findAvailablePort = async (): Promise<{port: number; server: http.Server}> => {
   for (const port of FALLBACK_PORTS) {
+    // eslint-disable-next-line no-await-in-loop
     const result = await tryStartServer(port)
     if (result) {
       return result
@@ -155,6 +158,7 @@ export const exchangeCodeForTokens = async (
 ): Promise<OAuthTokenResponse> => {
   const idUrl = getIdApiUrl(domain)
 
+  /* eslint-disable camelcase */
   const params = new URLSearchParams({
     client_id: CLIENT_ID,
     code,
@@ -162,6 +166,7 @@ export const exchangeCodeForTokens = async (
     grant_type: 'authorization_code',
     redirect_uri: getRedirectUri(port),
   })
+  /* eslint-enable camelcase */
 
   // Create an agent that ignores SSL errors for local development
   const agent = process.env.IDENTITY_BASE_URL_OVERRIDE
@@ -169,7 +174,7 @@ export const exchangeCodeForTokens = async (
     : undefined
 
   const response = await fetch(`${idUrl}/oauth/token`, {
-    // @ts-ignore - agent is valid for https URLs
+    // @ts-expect-error - agent is valid for https URLs
     agent,
     body: params,
     headers: {
@@ -189,11 +194,13 @@ export const exchangeCodeForTokens = async (
 export const refreshAccessToken = async (refreshToken: string, domain?: string): Promise<OAuthTokenResponse> => {
   const idUrl = getIdApiUrl(domain)
 
+  /* eslint-disable camelcase */
   const params = new URLSearchParams({
     client_id: CLIENT_ID,
     grant_type: 'refresh_token',
     refresh_token: refreshToken,
   })
+  /* eslint-enable camelcase */
 
   // Create an agent that ignores SSL errors for local development
   const agent = process.env.IDENTITY_BASE_URL_OVERRIDE
@@ -201,7 +208,7 @@ export const refreshAccessToken = async (refreshToken: string, domain?: string):
     : undefined
 
   const response = await fetch(`${idUrl}/oauth/token`, {
-    // @ts-ignore - agent is valid for https URLs
+    // @ts-expect-error - agent is valid for https URLs
     agent,
     body: params,
     headers: {
@@ -227,7 +234,7 @@ export const introspectToken = async (accessToken: string, domain?: string): Pro
     : undefined
 
   const response = await fetch(`${identityUrl}/api/oauth/identity`, {
-    // @ts-ignore - agent is valid for https URLs
+    // @ts-expect-error - agent is valid for https URLs
     agent,
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -245,7 +252,7 @@ export const introspectToken = async (accessToken: string, domain?: string): Pro
   return data
 }
 
-export const decodeJWT = (token: string): any => {
+export const decodeJWT = (token: string): Record<string, unknown> => {
   const parts = token.split('.')
   if (parts.length !== 3) {
     throw new Error('Invalid JWT format')

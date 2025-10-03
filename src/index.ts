@@ -80,7 +80,7 @@ export abstract class BaseCommand extends Command {
     }
   }
 
-  protected async catch(err: {exitCode?: number; code?: string} & Error): Promise<any> {
+  protected async catch(err: {exitCode?: number; code?: string} & Error): Promise<void> {
     // Override oclif's default error handling to suppress stack traces
     // Log the error message without stack trace
     this.log(err.message)

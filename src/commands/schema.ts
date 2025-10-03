@@ -35,7 +35,7 @@ export default class Schema extends APICommand {
         })
       }
 
-      const response = getRequest.json as any
+      const response = getRequest.json as Record<string, unknown>
       const schemaData = response.default?.rules?.[0]?.value?.schema
 
       if (!schemaData) {

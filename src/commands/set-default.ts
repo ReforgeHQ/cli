@@ -190,6 +190,7 @@ export default class SetDefault extends APICommand {
     key: string
     secret: Secret
   } & ValueOrEnvVar) {
+    /* eslint-disable camelcase */
     const typeMapping: Record<string, string> = {
       bool: 'bool',
       string: 'string',
@@ -201,10 +202,11 @@ export default class SetDefault extends APICommand {
       duration: 'duration',
       int_range: 'intRange',
     }
+    /* eslint-enable camelcase */
 
     const type = typeMapping[config.valueType.toLowerCase()] || config.valueType
 
-    let configValue: any
+    let configValue: Record<string, unknown>
     let successMessage: string
 
     if (envVar === undefined) {
@@ -221,7 +223,7 @@ export default class SetDefault extends APICommand {
         successMessage += ' (encrypted)'
       } else {
         // Parse the value based on type
-        let parsedValue: any = value
+        let parsedValue: unknown = value
         switch (type) {
         case 'stringList': {
           parsedValue = {values: value.split(',')}

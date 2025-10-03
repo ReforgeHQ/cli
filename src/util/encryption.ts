@@ -18,7 +18,7 @@ export async function makeConfidentialValue(
   value: string,
   secret: Secret,
   environmentId: string,
-): Promise<Result<any>> {
+): Promise<Result<Record<string, unknown>>> {
   // Fetch the encryption key config
   const configRequest = await command.apiClient.get(
     `/all-config-types/v1/config/${encodeURIComponent(secret.keyName)}`,
@@ -30,14 +30,16 @@ export async function makeConfidentialValue(
     })
   }
 
-  const keyConfig = configRequest.json as any
+  const keyConfig = configRequest.json as Record<string, unknown>
 
   // Find the encryption key for this environment (or default)
   let envVar: string | undefined
 
   // Check environment-specific config first
   if (keyConfig.environments && environmentId) {
-    const envConfig = keyConfig.environments.find((env: any) => env.id === Number.parseInt(environmentId, 10))
+    const envConfig = (keyConfig.environments as Array<Record<string, unknown>>).find(
+      (env: Record<string, unknown>) => env.id === Number.parseInt(environmentId, 10),
+    )
     if (envConfig?.rules?.[0]?.value?.provided?.lookup) {
       envVar = envConfig.rules[0].value.provided.lookup
     }

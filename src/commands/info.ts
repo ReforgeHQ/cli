@@ -100,8 +100,8 @@ export default class Info extends APICommand {
     const contents: string[] = []
 
     for (const env of environments) {
-      const envStats = statsPerEnv[env.name] as any
-      if (!envStats || !envStats.intervals) continue
+      const envStats = statsPerEnv[env.name] as Record<string, unknown>
+      if (!envStats || !Array.isArray(envStats.intervals)) continue
 
       let totalEvaluations = 0
       const valueBreakdown: Map<string, number> = new Map()
@@ -145,7 +145,7 @@ export default class Info extends APICommand {
     }
   }
 
-  private extractSimpleValue(value: any): string {
+  private extractSimpleValue(value: Record<string, unknown>): string {
     if (!value) return 'null'
 
     if (value.type && value.value !== undefined) {
@@ -167,7 +167,7 @@ export default class Info extends APICommand {
 
   private async fetchEvaluationStats(
     key: string,
-    flags: any,
+    flags: Record<string, unknown>,
     environments: Environment[],
   ): Promise<JsonObj | undefined> {
     // Fetch stats for all environments (similar to original implementation)
@@ -187,10 +187,11 @@ export default class Info extends APICommand {
         endTime: String(endTime),
       })
 
+      // eslint-disable-next-line no-await-in-loop
       const request = await this.apiClient.get(`/evaluation-statistics/v1?${queryParams.toString()}`)
 
       if (request.ok) {
-        const response = request.json as any
+        const response = request.json as Record<string, unknown>
         statsPerEnv[env.name] = response
       }
     }
@@ -205,16 +206,17 @@ export default class Info extends APICommand {
     return statsPerEnv
   }
 
-  private formatValue(value: any): string {
+  private formatValue(value: Record<string, unknown>): string {
     if (!value) return 'null'
 
     // Handle weighted values (A/B testing)
-    if (value.weightedValues) {
+    if (Array.isArray(value.weightedValues)) {
       const weights = value.weightedValues
-        .sort((a: any, b: any) => b.weight - a.weight)
-        .map((wv: any) => {
-          const percent = ((wv.weight / 1000) * 100).toFixed(1)
-          const val = this.extractSimpleValue(wv.value)
+        .sort((a: Record<string, unknown>, b: Record<string, unknown>) =>
+          (b.weight as number) - (a.weight as number))
+        .map((wv: Record<string, unknown>) => {
+          const percent = (((wv.weight as number) / 1000) * 100).toFixed(1)
+          const val = this.extractSimpleValue(wv.value as Record<string, unknown>)
           return `${percent}% ${val}`
         })
       return weights.join(', ')
@@ -234,7 +236,7 @@ export default class Info extends APICommand {
     return this.extractSimpleValue(value)
   }
 
-  private parseConfig(config: any, environments: Environment[], url: string) {
+  private parseConfig(config: Record<string, unknown>, environments: Environment[], url: string) {
     const contents: string[] = []
     const json: JsonObj = {}
 
