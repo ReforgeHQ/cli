@@ -1,19 +1,11 @@
 import {Flags} from '@oclif/core'
 
-import type {Config} from '../reforge-common/src/types.js'
-
-import {DEFAULT_ENVIRONMENT_NAME, INHERIT} from '../constants.js'
 import {APICommand} from '../index.js'
-import {overrideFor} from '../reforge.js'
-import {getConfigFromApi} from '../reforge-common/src/api/getConfigFromApi.js'
-import {Environment, getEnvironmentsFromApi} from '../reforge-common/src/api/getEnvironmentsFromApi.js'
-import {configValuesInEnvironments} from '../reforge-common/src/configValuesInEnvironments.js'
-import {EvaluationStats, getEvaluationStats} from '../reforge-common/src/evaluations/stats.js'
-import {urlFor} from '../reforge-common/src/urlFor.js'
-import {valueOf, valueOfToString} from '../reforge-common/src/valueOf.js'
+import {getEnvironments, type Environment} from '../api/get-environments.js'
 import {JsonObj} from '../result.js'
-import getKey from '../ui/get-key.js'
+import autocomplete from '../util/autocomplete.js'
 import nameArg from '../util/name-arg.js'
+import isInteractive from '../util/is-interactive.js'
 
 export default class Info extends APICommand {
   static args = {...nameArg}
@@ -29,116 +21,132 @@ export default class Info extends APICommand {
   public async run(): Promise<JsonObj | void> {
     const {args, flags} = await this.parse(Info)
 
-    const {key, reforge} = await getKey({args, command: this, flags, message: 'Which item would you like to see?'})
+    // Fetch all configs from metadata endpoint
+    const metadataRequest = await this.apiClient.get('/all-config-types/v1/metadata')
 
-    if (key && reforge) {
-      const config = reforge.raw(key)
-      if (!config) {
-        return this.err(`Key ${key} not found`)
-      }
-
-      const url = urlFor(process.env.REFORGE_API_URL, config)
-
-      this.log(url)
-      this.log('')
-
-      const json: JsonObj = {url}
-
-      const client = this.rawApiClient
-
-      const [fullConfig, environments, evaluations] = await Promise.all([
-        getConfigFromApi({
-          client,
-          errorLog: this.verboseLog,
-          key,
-        }),
-        getEnvironmentsFromApi({
-          client,
-          log: this.verboseLog,
-        }),
-        getEvaluationStats({
-          client,
-          key,
-          log: this.verboseLog,
-        }),
-      ])
-
-      if (fullConfig) {
-        this.verboseLog('Full config:', fullConfig)
-        json.values = this.parseConfig(fullConfig, environments, url)
-        this.log('')
-      } else {
-        return this.err(`No config found for ${key}`)
-      }
-
-      if (evaluations) {
-        json.evaluations = this.parseEvaluations(evaluations)
-      } else {
-        const message = `No evaluations in the past 24 hours`
-        this.log(message)
-        json.evaluations = {error: message}
-      }
-
-      return {[key]: json}
+    if (!metadataRequest.ok) {
+      const errorMsg = metadataRequest.error?.error || `Failed to fetch configs: ${metadataRequest.status}`
+      return this.err(errorMsg, {serverError: metadataRequest.error})
     }
+
+    interface ConfigMetadata {
+      key: string
+    }
+
+    interface ConfigMetadataResponse {
+      configs: ConfigMetadata[]
+    }
+
+    const metadataResponse = metadataRequest.json as unknown as ConfigMetadataResponse
+    const configs = metadataResponse.configs
+
+    // Get the key - from args or prompt
+    let key = args.name
+
+    if (!key && isInteractive(flags)) {
+      const configKeys = configs.map((c) => c.key)
+      const selectedKey = await autocomplete({
+        message: 'Which item would you like to see?',
+        source: configKeys,
+      })
+      if (selectedKey) {
+        key = selectedKey
+      }
+    }
+
+    if (!key) {
+      return this.err('Key is required')
+    }
+
+    // Fetch full config details
+    const configRequest = await this.apiClient.get(`/all-config-types/v1/config/${encodeURIComponent(key)}`)
+
+    if (!configRequest.ok) {
+      const errorMsg = configRequest.error?.error || `Failed to fetch config: ${configRequest.status}`
+      return this.err(errorMsg, {serverError: configRequest.error})
+    }
+
+    const fullConfig = configRequest.json
+
+    this.verboseLog('Full config:', fullConfig)
+
+    // Get environments
+    const environments = await getEnvironments(this)
+
+    const url = `${process.env.REFORGE_API_URL || 'https://app.prefab.cloud'}/config/${key}`
+
+    this.log(url)
+    this.log('')
+
+    const json: JsonObj = {url}
+
+    json.values = this.parseConfig(fullConfig, environments, url)
+    this.log('')
+
+    // Fetch evaluation stats if needed
+    if (!flags['exclude-evaluations']) {
+      const evalStats = await this.fetchEvaluationStats(key, flags, environments)
+      if (evalStats) {
+        json.evaluations = evalStats
+      }
+    }
+
+    return {[key]: json}
   }
 
-  private parseConfig(config: Config, environments: Environment[], url: string) {
-    const values = configValuesInEnvironments(config, environments, this.verboseLog)
-    const override = overrideFor({currentEnvironmentId: this.currentEnvironment.id, key: config.key})
-
+  private parseConfig(config: any, environments: Environment[], url: string) {
     const contents: string[] = []
     const json: JsonObj = {}
 
-    const sortedValues = values.sort((a, b) =>
-      (a.environment?.name ?? DEFAULT_ENVIRONMENT_NAME).localeCompare(b.environment?.name ?? DEFAULT_ENVIRONMENT_NAME),
-    )
+    // Collect all environment configs including default
+    const allEnvConfigs = []
 
-    for (const value of sortedValues) {
-      const isCurrentEnv = value.environment?.id === this.currentEnvironment.id
+    // Add default config as a special environment
+    if (config.default) {
+      allEnvConfigs.push({
+        id: null,
+        name: 'Default',
+        rules: config.default.rules,
+      })
+    }
 
-      const overrideStr = isCurrentEnv && override ? ` [override] \`${valueOfToString(override)}\`` : ''
+    // Add environment-specific configs
+    if (config.environments) {
+      for (const envConfig of config.environments) {
+        const env = environments.find((e) => e.id === envConfig.id)
+        allEnvConfigs.push({
+          id: envConfig.id,
+          name: env?.name || envConfig.id,
+          rules: envConfig.rules,
+        })
+      }
+    }
 
-      if (value.hasRules) {
-        json[value.environment?.name ?? DEFAULT_ENVIRONMENT_NAME] = {
-          override: isCurrentEnv && override ? valueOfToString(override) : undefined,
-          url: url + `?environment=${value.environment?.id}`,
-          value: '[see rules]',
-        }
+    // Display all configs
+    for (const envConfig of allEnvConfigs) {
+      if (contents.length > 0) {
+        contents.push('') // blank line between environments
+      }
 
-        contents.push(
-          `- ${value.environment?.name ?? DEFAULT_ENVIRONMENT_NAME}:${overrideStr || ' [see rules]'} ${
-            url + `?environment=${value.environment?.id}`
-          }`,
-        )
-      } else {
-        let valueStr = `${value.value ?? INHERIT}`
+      contents.push(`${envConfig.name}:`)
 
-        if (value.rawValue?.weightedValues) {
-          valueStr = value.rawValue.weightedValues.weightedValues
-            .sort((a, b) => b.weight - a.weight)
-            .map((weightedValue) => {
-              const value = weightedValue.value ? valueOf(weightedValue.value) : ''
-              return `${weightedValue.weight}% ${value}`
-            })
-            .join(', ')
-        }
-
-        if (value.rawValue?.provided?.source?.toString() === 'ENV_VAR') {
-          if (value.rawValue.confidential) {
-            valueStr = `\`${value.rawValue.provided.lookup}\``
+      if (envConfig.rules && envConfig.rules.length > 0) {
+        for (const rule of envConfig.rules) {
+          const value = this.formatValue(rule.value)
+          if (rule.criteria && rule.criteria.length > 0) {
+            contents.push(`  - [conditional]: ${value}`)
+          } else {
+            contents.push(`  - ${value}`)
           }
-
-          valueStr += ` via ENV`
         }
+      } else {
+        contents.push(`  - [no rules]`)
+      }
 
-        json[value.environment?.name ?? DEFAULT_ENVIRONMENT_NAME] = {
-          override: isCurrentEnv && override ? valueOfToString(override) : undefined,
-          url: url + `?environment=${value.environment?.id}`,
-          value: value.value,
-        }
-
-        contents.push(`- ${value.environment?.name ?? DEFAULT_ENVIRONMENT_NAME}: ${valueStr}${overrideStr}`)
+      const envUrl = envConfig.id ? `${url}?environment=${envConfig.id}` : url
+      json[envConfig.name] = {
+        url: envUrl,
+        rules: envConfig.rules,
       }
     }
 
@@ -147,34 +155,143 @@ export default class Info extends APICommand {
     return json
   }
 
-  private parseEvaluations(evaluations: EvaluationStats) {
-    this.log('Evaluations over the last 24 hours:\n')
+  private formatValue(value: any): string {
+    if (!value) return 'null'
 
-    const contents = []
-
-    for (const env of evaluations.environments) {
-      contents.push(`${env.name}: ${env.total.toLocaleString()}`)
-
-      const counts: string[] = []
-
-      for (const count of env.counts) {
-        counts.push(`- ${percent(count.count / env.total)} - ${valueOfToString(count.configValue)}`)
-      }
-
-      for (const count of counts) {
-        contents.push(count)
-      }
-
-      contents.push('')
+    // Handle weighted values (A/B testing)
+    if (value.weightedValues) {
+      const weights = value.weightedValues
+        .sort((a: any, b: any) => b.weight - a.weight)
+        .map((wv: any) => {
+          const percent = ((wv.weight / 1000) * 100).toFixed(1)
+          const val = this.extractSimpleValue(wv.value)
+          return `${percent}% ${val}`
+        })
+      return weights.join(', ')
     }
 
-    this.log(contents.join('\n').trim())
+    // Handle provided values (ENV_VAR)
+    if (value.provided) {
+      let str = `${value.provided.lookup}`
+      if (value.confidential) {
+        str = `\`${str}\``
+      }
+      str += ' via ENV'
+      return str
+    }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const {key: _, ...evals} = evaluations
+    // Handle simple values
+    return this.extractSimpleValue(value)
+  }
 
-    return evals
+  private extractSimpleValue(value: any): string {
+    if (!value) return 'null'
+
+    if (value.type && value.value !== undefined) {
+      // Format the value based on type
+      if (value.type === 'string') {
+        return `"${value.value}"`
+      }
+      if (value.type === 'json') {
+        return JSON.stringify(value.value)
+      }
+      if (value.type === 'stringList') {
+        return JSON.stringify(value.value)
+      }
+      return String(value.value)
+    }
+
+    return JSON.stringify(value)
+  }
+
+  private async fetchEvaluationStats(
+    key: string,
+    flags: any,
+    environments: Environment[],
+  ): Promise<JsonObj | undefined> {
+    // Fetch stats for all environments (similar to original implementation)
+    const endTime = Date.now()
+    const startTime = endTime - 24 * 60 * 60 * 1000 // 24 hours ago
+    const timeInterval = 'HOURLY'
+
+    const statsPerEnv: JsonObj = {}
+
+    // Fetch stats for each environment
+    for (const env of environments) {
+      const queryParams = new URLSearchParams({
+        projectEnvId: env.id,
+        key,
+        timeInterval,
+        startTime: String(startTime),
+        endTime: String(endTime),
+      })
+
+      const request = await this.apiClient.get(`/evaluation-statistics/v1?${queryParams.toString()}`)
+
+      if (request.ok) {
+        const response = request.json as any
+        statsPerEnv[env.name] = response
+      }
+    }
+
+    if (Object.keys(statsPerEnv).length === 0) {
+      this.log('No evaluations found for the past 24 hours')
+      return {error: 'No evaluations found for the past 24 hours'}
+    }
+
+    this.displayEvaluationStats(statsPerEnv, environments)
+
+    return statsPerEnv
+  }
+
+  private displayEvaluationStats(statsPerEnv: JsonObj, environments: Environment[]): void {
+    this.log('Evaluations over the last 24 hours:\n')
+
+    const contents: string[] = []
+
+    for (const env of environments) {
+      const envStats = statsPerEnv[env.name] as any
+      if (!envStats || !envStats.intervals) continue
+
+      let totalEvaluations = 0
+      const valueBreakdown: Map<string, number> = new Map()
+
+      // Aggregate data across all intervals for this environment
+      for (const interval of envStats.intervals) {
+        if (interval.data) {
+          for (const dataPoint of interval.data) {
+            totalEvaluations += dataPoint.count || 0
+
+            let valueKey = 'unknown'
+            if (dataPoint.selectedValue) {
+              valueKey = this.extractSimpleValue(dataPoint.selectedValue)
+            }
+
+            valueBreakdown.set(valueKey, (valueBreakdown.get(valueKey) || 0) + (dataPoint.count || 0))
+          }
+        }
+      }
+
+      if (totalEvaluations > 0) {
+        contents.push(`${env.name}: ${totalEvaluations.toLocaleString()}`)
+
+        const sortedValues = Array.from(valueBreakdown.entries()).sort((a, b) => b[1] - a[1])
+
+        for (const [value, count] of sortedValues) {
+          const percentage = Math.round((count / totalEvaluations) * 100)
+          contents.push(`- ${percentage}% - ${value}`)
+        }
+
+        contents.push('')
+      }
+    }
+
+    if (contents.length > 0) {
+      this.log(contents.join('\n').trim())
+      this.log('')
+    } else {
+      this.log('No evaluations found for the past 24 hours')
+      this.log('')
+    }
   }
 }
-
-const percent = (value: number) => `${Math.round(value * 100)}%`
