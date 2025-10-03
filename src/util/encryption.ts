@@ -1,12 +1,17 @@
 import {encryption} from '@reforge-com/node'
 
 import type {APICommand} from '../index.js'
-import {Result, failure, success} from '../result.js'
 import type {Secret} from './secret-flags.js'
+
+import {Result, failure, success} from '../result.js'
 
 /**
  * Creates an encrypted ConfigValue using the new v1 API endpoints
- * Returns Result<ConfigValue> for compatibility with existing code
+ * @param command - The APICommand instance for API calls and logging
+ * @param value - The plaintext value to encrypt
+ * @param secret - Secret configuration containing key name
+ * @param environmentId - Environment ID to fetch encryption key for (empty string for default)
+ * @returns Result<ConfigValue> with encrypted value or error
  */
 export async function makeConfidentialValue(
   command: APICommand,
@@ -32,7 +37,7 @@ export async function makeConfidentialValue(
 
   // Check environment-specific config first
   if (keyConfig.environments && environmentId) {
-    const envConfig = keyConfig.environments.find((env: any) => env.id === parseInt(environmentId, 10))
+    const envConfig = keyConfig.environments.find((env: any) => env.id === Number.parseInt(environmentId, 10))
     if (envConfig?.rules?.[0]?.value?.provided?.lookup) {
       envVar = envConfig.rules[0].value.provided.lookup
     }

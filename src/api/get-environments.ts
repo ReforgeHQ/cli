@@ -1,12 +1,12 @@
 import type {APICommand} from '../index.js'
 
 export interface Environment {
+  active?: boolean
+  deletedAt?: number | null
   id: string
   name: string
-  deletedAt?: number | null
   protected?: boolean
   type?: string
-  active?: boolean
 }
 
 interface ProjectEnvironmentsResponse {

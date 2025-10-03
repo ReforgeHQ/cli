@@ -8,8 +8,8 @@ const CONFIG_FILE = path.join(REFORGE_DIR, 'config')
 
 export interface TokenData {
   accessToken: string
-  refreshToken: string
   expiresAt: number
+  refreshToken: string
 }
 
 export interface AuthConfig {
@@ -83,7 +83,7 @@ export const loadAuthConfig = async (): Promise<AuthConfig | null> => {
     }
 
     // Parse profiles
-    const profileRegex = /\[profile\s+(\w+)\]\s*\n\s*workspace\s*=\s*([^\s#]+)(?:\s*#\s*(.+))?/g
+    const profileRegex = /\[profile\s+(\w+)]\s*\n\s*workspace\s*=\s*([^\s#]+)(?:\s*#\s*(.+))?/g
     let match
 
     while ((match = profileRegex.exec(data)) !== null) {
@@ -103,9 +103,7 @@ export const loadAuthConfig = async (): Promise<AuthConfig | null> => {
   }
 }
 
-export const getActiveProfile = (profileArg?: string): string => {
-  return profileArg || process.env.REFORGE_PROFILE || 'default'
-}
+export const getActiveProfile = (profileArg?: string): string => profileArg || process.env.REFORGE_PROFILE || 'default'
 
 export const clearAuth = async (): Promise<void> => {
   try {

@@ -6,17 +6,17 @@ import getEnvironment from '../ui/get-environment.js'
 import nameArg from '../util/name-arg.js'
 
 interface EvaluationMetadata {
-  configRowIndex: number
   conditionalValueIndex: number
-  type: string
+  configRowIndex: number
   id: number
+  type: string
   valueType: string
 }
 
 interface Evaluation {
+  metadata: EvaluationMetadata
   type: string
   value: string
-  metadata: EvaluationMetadata
 }
 
 interface EvaluationResponse {
@@ -67,11 +67,11 @@ export default class Get extends APICommand {
     }
 
     interface ConfigMetadata {
+      description: string
       id: number
-      type: string
       key: string
       name: string
-      description: string
+      type: string
       version: number
     }
 

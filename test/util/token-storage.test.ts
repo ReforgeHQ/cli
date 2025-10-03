@@ -27,10 +27,10 @@ describe('token-storage', () => {
 
   afterEach(() => {
     // Restore original HOME
-    if (originalHome !== undefined) {
-      process.env.HOME = originalHome
-    } else {
+    if (originalHome === undefined) {
       delete process.env.HOME
+    } else {
+      process.env.HOME = originalHome
     }
 
     // Clean up test directory

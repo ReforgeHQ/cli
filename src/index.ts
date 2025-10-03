@@ -33,15 +33,6 @@ export abstract class BaseCommand extends Command {
 
   public static enableJsonFlag = true
 
-  protected async catch(err: Error & {exitCode?: number; code?: string}): Promise<any> {
-    // Override oclif's default error handling to suppress stack traces
-    // Log the error message without stack trace
-    this.log(err.message)
-
-    // Exit without calling super.catch which would show the stack trace
-    this.exit(err.exitCode || 1)
-  }
-
   public err = (error: Error | object | string, json?: JsonObj): never => {
     if (this.jsonEnabled()) {
       throw json ?? error
@@ -87,6 +78,15 @@ export abstract class BaseCommand extends Command {
     } else {
       this.logToStderr(typeof category === 'string' ? category : JSON.stringify(category))
     }
+  }
+
+  protected async catch(err: {exitCode?: number; code?: string} & Error): Promise<any> {
+    // Override oclif's default error handling to suppress stack traces
+    // Log the error message without stack trace
+    this.log(err.message)
+
+    // Exit without calling super.catch which would show the stack trace
+    this.exit(err.exitCode || 1)
   }
 
   public async init(): Promise<void> {
@@ -135,7 +135,7 @@ export abstract class APICommand extends BaseCommand {
 
     const {flags} = await this.parse()
 
-    this.rawApiClient = await rawGetClient(this, flags['sdk-key'], flags['profile'])
+    this.rawApiClient = await rawGetClient(this, flags['sdk-key'], flags.profile)
 
     // If we have an SDK key, use it to get the environment
     if (flags['sdk-key']) {

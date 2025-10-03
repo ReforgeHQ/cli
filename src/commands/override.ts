@@ -2,19 +2,19 @@ import {Flags} from '@oclif/core'
 
 import {APICommand} from '../index.js'
 import {JsonObj} from '../result.js'
+import getEnvironment from '../ui/get-environment.js'
+import getString from '../ui/get-string.js'
 import autocomplete from '../util/autocomplete.js'
 import {checkmark} from '../util/color.js'
-import getString from '../ui/get-string.js'
-import nameArg from '../util/name-arg.js'
 import isInteractive from '../util/is-interactive.js'
-import getEnvironment from '../ui/get-environment.js'
+import nameArg from '../util/name-arg.js'
 
 interface ConfigMetadata {
+  description: string
   id: number
-  type: string
   key: string
   name: string
-  description: string
+  type: string
   valueType: string
   version: number
 }
@@ -157,20 +157,37 @@ export default class Override extends APICommand {
 
     // Parse the value based on type
     let parsedValue: any = value
-    if (type === 'stringList') {
+    switch (type) {
+    case 'stringList': {
       parsedValue = {values: value.split(',')}
-    } else if (type === 'bool') {
+    
+    break;
+    }
+    case 'bool': {
       parsedValue = value.toLowerCase() === 'true'
-    } else if (type === 'int') {
-      parsedValue = parseInt(value, 10)
-    } else if (type === 'double') {
-      parsedValue = parseFloat(value)
-    } else if (type === 'json') {
+    
+    break;
+    }
+    case 'int': {
+      parsedValue = Number.parseInt(value, 10)
+    
+    break;
+    }
+    case 'double': {
+      parsedValue = Number.parseFloat(value)
+    
+    break;
+    }
+    case 'json': {
       try {
         parsedValue = JSON.parse(value)
       } catch {
         return this.err(`Invalid JSON value: ${value}`)
       }
+    
+    break;
+    }
+    // No default
     }
 
     const request = await this.apiClient.post('/internal/ops/v1/assign-variant', {

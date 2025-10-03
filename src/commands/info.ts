@@ -1,11 +1,11 @@
 import {Flags} from '@oclif/core'
 
+import {type Environment, getEnvironments} from '../api/get-environments.js'
 import {APICommand} from '../index.js'
-import {getEnvironments, type Environment} from '../api/get-environments.js'
 import {JsonObj} from '../result.js'
 import autocomplete from '../util/autocomplete.js'
-import nameArg from '../util/name-arg.js'
 import isInteractive from '../util/is-interactive.js'
+import nameArg from '../util/name-arg.js'
 
 export default class Info extends APICommand {
   static args = {...nameArg}
@@ -94,94 +94,55 @@ export default class Info extends APICommand {
     return {[key]: json}
   }
 
-  private parseConfig(config: any, environments: Environment[], url: string) {
+  private displayEvaluationStats(statsPerEnv: JsonObj, environments: Environment[]): void {
+    this.log('Evaluations over the last 24 hours:\n')
+
     const contents: string[] = []
-    const json: JsonObj = {}
 
-    // Collect all environment configs including default
-    const allEnvConfigs = []
+    for (const env of environments) {
+      const envStats = statsPerEnv[env.name] as any
+      if (!envStats || !envStats.intervals) continue
 
-    // Add default config as a special environment
-    if (config.default) {
-      allEnvConfigs.push({
-        id: null,
-        name: 'Default',
-        rules: config.default.rules,
-      })
-    }
+      let totalEvaluations = 0
+      const valueBreakdown: Map<string, number> = new Map()
 
-    // Add environment-specific configs
-    if (config.environments) {
-      for (const envConfig of config.environments) {
-        const env = environments.find((e) => e.id === envConfig.id)
-        allEnvConfigs.push({
-          id: envConfig.id,
-          name: env?.name || envConfig.id,
-          rules: envConfig.rules,
-        })
-      }
-    }
+      // Aggregate data across all intervals for this environment
+      for (const interval of envStats.intervals) {
+        if (interval.data) {
+          for (const dataPoint of interval.data) {
+            totalEvaluations += dataPoint.count || 0
 
-    // Display all configs
-    for (const envConfig of allEnvConfigs) {
-      if (contents.length > 0) {
-        contents.push('') // blank line between environments
-      }
+            let valueKey = 'unknown'
+            if (dataPoint.selectedValue) {
+              valueKey = this.extractSimpleValue(dataPoint.selectedValue)
+            }
 
-      contents.push(`${envConfig.name}:`)
-
-      if (envConfig.rules && envConfig.rules.length > 0) {
-        for (const rule of envConfig.rules) {
-          const value = this.formatValue(rule.value)
-          if (rule.criteria && rule.criteria.length > 0) {
-            contents.push(`  - [conditional]: ${value}`)
-          } else {
-            contents.push(`  - ${value}`)
+            valueBreakdown.set(valueKey, (valueBreakdown.get(valueKey) || 0) + (dataPoint.count || 0))
           }
         }
-      } else {
-        contents.push(`  - [no rules]`)
       }
 
-      const envUrl = envConfig.id ? `${url}?environment=${envConfig.id}` : url
-      json[envConfig.name] = {
-        url: envUrl,
-        rules: envConfig.rules,
+      if (totalEvaluations > 0) {
+        contents.push(`${env.name}: ${totalEvaluations.toLocaleString()}`)
+
+        const sortedValues = [...valueBreakdown.entries()].sort((a, b) => b[1] - a[1])
+
+        for (const [value, count] of sortedValues) {
+          const percentage = Math.round((count / totalEvaluations) * 100)
+          contents.push(`- ${percentage}% - ${value}`)
+        }
+
+        contents.push('')
       }
     }
 
-    this.log(contents.join('\n').trim())
-
-    return json
-  }
-
-  private formatValue(value: any): string {
-    if (!value) return 'null'
-
-    // Handle weighted values (A/B testing)
-    if (value.weightedValues) {
-      const weights = value.weightedValues
-        .sort((a: any, b: any) => b.weight - a.weight)
-        .map((wv: any) => {
-          const percent = ((wv.weight / 1000) * 100).toFixed(1)
-          const val = this.extractSimpleValue(wv.value)
-          return `${percent}% ${val}`
-        })
-      return weights.join(', ')
+    if (contents.length > 0) {
+      this.log(contents.join('\n').trim())
+      this.log('')
+    } else {
+      this.log('No evaluations found for the past 24 hours')
+      this.log('')
     }
-
-    // Handle provided values (ENV_VAR)
-    if (value.provided) {
-      let str = `${value.provided.lookup}`
-      if (value.confidential) {
-        str = `\`${str}\``
-      }
-      str += ' via ENV'
-      return str
-    }
-
-    // Handle simple values
-    return this.extractSimpleValue(value)
   }
 
   private extractSimpleValue(value: any): string {
@@ -244,54 +205,93 @@ export default class Info extends APICommand {
     return statsPerEnv
   }
 
-  private displayEvaluationStats(statsPerEnv: JsonObj, environments: Environment[]): void {
-    this.log('Evaluations over the last 24 hours:\n')
+  private formatValue(value: any): string {
+    if (!value) return 'null'
 
+    // Handle weighted values (A/B testing)
+    if (value.weightedValues) {
+      const weights = value.weightedValues
+        .sort((a: any, b: any) => b.weight - a.weight)
+        .map((wv: any) => {
+          const percent = ((wv.weight / 1000) * 100).toFixed(1)
+          const val = this.extractSimpleValue(wv.value)
+          return `${percent}% ${val}`
+        })
+      return weights.join(', ')
+    }
+
+    // Handle provided values (ENV_VAR)
+    if (value.provided) {
+      let str = `${value.provided.lookup}`
+      if (value.confidential) {
+        str = `\`${str}\``
+      }
+      str += ' via ENV'
+      return str
+    }
+
+    // Handle simple values
+    return this.extractSimpleValue(value)
+  }
+
+  private parseConfig(config: any, environments: Environment[], url: string) {
     const contents: string[] = []
+    const json: JsonObj = {}
 
-    for (const env of environments) {
-      const envStats = statsPerEnv[env.name] as any
-      if (!envStats || !envStats.intervals) continue
+    // Collect all environment configs including default
+    const allEnvConfigs = []
 
-      let totalEvaluations = 0
-      const valueBreakdown: Map<string, number> = new Map()
+    // Add default config as a special environment
+    if (config.default) {
+      allEnvConfigs.push({
+        id: null,
+        name: 'Default',
+        rules: config.default.rules,
+      })
+    }
 
-      // Aggregate data across all intervals for this environment
-      for (const interval of envStats.intervals) {
-        if (interval.data) {
-          for (const dataPoint of interval.data) {
-            totalEvaluations += dataPoint.count || 0
+    // Add environment-specific configs
+    if (config.environments) {
+      for (const envConfig of config.environments) {
+        const env = environments.find((e) => e.id === envConfig.id)
+        allEnvConfigs.push({
+          id: envConfig.id,
+          name: env?.name || envConfig.id,
+          rules: envConfig.rules,
+        })
+      }
+    }
 
-            let valueKey = 'unknown'
-            if (dataPoint.selectedValue) {
-              valueKey = this.extractSimpleValue(dataPoint.selectedValue)
-            }
+    // Display all configs
+    for (const envConfig of allEnvConfigs) {
+      if (contents.length > 0) {
+        contents.push('') // blank line between environments
+      }
 
-            valueBreakdown.set(valueKey, (valueBreakdown.get(valueKey) || 0) + (dataPoint.count || 0))
+      contents.push(`${envConfig.name}:`)
+
+      if (envConfig.rules && envConfig.rules.length > 0) {
+        for (const rule of envConfig.rules) {
+          const value = this.formatValue(rule.value)
+          if (rule.criteria && rule.criteria.length > 0) {
+            contents.push(`  - [conditional]: ${value}`)
+          } else {
+            contents.push(`  - ${value}`)
           }
         }
+      } else {
+        contents.push(`  - [no rules]`)
       }
 
-      if (totalEvaluations > 0) {
-        contents.push(`${env.name}: ${totalEvaluations.toLocaleString()}`)
-
-        const sortedValues = Array.from(valueBreakdown.entries()).sort((a, b) => b[1] - a[1])
-
-        for (const [value, count] of sortedValues) {
-          const percentage = Math.round((count / totalEvaluations) * 100)
-          contents.push(`- ${percentage}% - ${value}`)
-        }
-
-        contents.push('')
+      const envUrl = envConfig.id ? `${url}?environment=${envConfig.id}` : url
+      json[envConfig.name] = {
+        url: envUrl,
+        rules: envConfig.rules,
       }
     }
 
-    if (contents.length > 0) {
-      this.log(contents.join('\n').trim())
-      this.log('')
-    } else {
-      this.log('No evaluations found for the past 24 hours')
-      this.log('')
-    }
+    this.log(contents.join('\n').trim())
+
+    return json
   }
 }

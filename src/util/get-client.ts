@@ -20,8 +20,8 @@ const getClient = async (command: APICommand, sdkKey?: string, profile?: string)
     const tokens = await loadTokens()
 
     command.verboseLog('OAuth auth', {
-      hasAuthConfig: !!authConfig,
-      hasAccessToken: !!tokens?.accessToken,
+      hasAuthConfig: Boolean(authConfig),
+      hasAccessToken: Boolean(tokens?.accessToken),
     })
 
     if (authConfig && tokens?.accessToken) {
@@ -31,7 +31,7 @@ const getClient = async (command: APICommand, sdkKey?: string, profile?: string)
 
       command.verboseLog('Profile lookup', {
         activeProfile,
-        hasProfileData: !!profileData,
+        hasProfileData: Boolean(profileData),
         workspaceId: profileData?.workspace,
       })
 
@@ -43,8 +43,8 @@ const getClient = async (command: APICommand, sdkKey?: string, profile?: string)
           .find((ws) => ws.id === profileData.workspace)
 
         command.verboseLog('JWT lookup', {
-          foundWorkspace: !!workspace,
-          hasAuthzJwt: !!workspace?.authz_jwt,
+          foundWorkspace: Boolean(workspace),
+          hasAuthzJwt: Boolean(workspace?.authz_jwt),
         })
 
         if (workspace) {

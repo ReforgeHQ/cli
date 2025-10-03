@@ -1,8 +1,6 @@
 const DEFAULT_DOMAIN = 'reforge.com'
 
-export const getDomain = (): string => {
-  return process.env.REFORGE_DOMAIN || DEFAULT_DOMAIN
-}
+export const getDomain = (): string => process.env.REFORGE_DOMAIN || DEFAULT_DOMAIN
 
 export const getLaunchApiUrl = (domain?: string): string => {
   const actualDomain = domain || getDomain()

@@ -1,6 +1,7 @@
 import * as crypto from 'node:crypto'
 import * as http from 'node:http'
 import * as https from 'node:https'
+
 import {getIdApiUrl} from './domain-urls.js'
 
 const CLIENT_ID = 'reforge-cli-public'
@@ -12,14 +13,14 @@ const FALLBACK_PORTS = [8765, 8766, 8767, 8768, 8769, 8770]
 
 export interface OAuthTokenResponse {
   access_token: string
-  refresh_token: string
   expires_in: number
+  refresh_token: string
 }
 
 export interface WorkspaceInfo {
+  authz_jwt: string
   id: string
   name: string
-  authz_jwt: string
 }
 
 export interface OrganizationInfo {
@@ -34,18 +35,12 @@ export interface IntrospectionResponse {
   organizations: OrganizationInfo[]
 }
 
-const getRedirectUri = (port: number): string => {
-  return `http://${CALLBACK_HOST}:${port}${CALLBACK_PATH}`
-}
+const getRedirectUri = (port: number): string => `http://${CALLBACK_HOST}:${port}${CALLBACK_PATH}`
 
 // Generate PKCE code verifier and challenge
-const generateCodeVerifier = (): string => {
-  return crypto.randomBytes(32).toString('base64url')
-}
+const generateCodeVerifier = (): string => crypto.randomBytes(32).toString('base64url')
 
-const generateCodeChallenge = (verifier: string): string => {
-  return crypto.createHash('sha256').update(verifier).digest('base64url')
-}
+const generateCodeChallenge = (verifier: string): string => crypto.createHash('sha256').update(verifier).digest('base64url')
 
 export const generateAuthUrl = (
   port: number,
@@ -67,12 +62,9 @@ export const generateAuthUrl = (
   return `${idUrl}/oauth/authorize?${params.toString()}`
 }
 
-export const createCodeVerifier = (): string => {
-  return generateCodeVerifier()
-}
+export const createCodeVerifier = (): string => generateCodeVerifier()
 
-const tryStartServer = (port: number): Promise<{port: number; server: http.Server} | null> => {
-  return new Promise((resolve) => {
+const tryStartServer = (port: number): Promise<{port: number; server: http.Server} | null> => new Promise((resolve) => {
     const server = http.createServer()
 
     const onError = () => {
@@ -90,7 +82,6 @@ const tryStartServer = (port: number): Promise<{port: number; server: http.Serve
 
     server.listen(port, CALLBACK_HOST)
   })
-}
 
 const findAvailablePort = async (): Promise<{port: number; server: http.Server}> => {
   for (const port of FALLBACK_PORTS) {
@@ -115,8 +106,7 @@ export const startCallbackServer = async (): Promise<{
 
   console.log(`Listening for OAuth callback on port ${port}...`)
 
-  const waitForCallback = (): Promise<string> => {
-    return new Promise((resolve, reject) => {
+  const waitForCallback = (): Promise<string> => new Promise((resolve, reject) => {
       // Set up request handler now that we have a port
       server.on('request', (req, res) => {
         if (req.url?.startsWith(CALLBACK_PATH)) {
@@ -149,7 +139,6 @@ export const startCallbackServer = async (): Promise<{
         }
       })
     })
-  }
 
   return {
     close: () => server.close(),

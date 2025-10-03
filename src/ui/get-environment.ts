@@ -1,7 +1,7 @@
 import type {Environment} from '../api/get-environments.js'
 
-import {APICommand} from '../index.js'
 import {getEnvironments} from '../api/get-environments.js'
+import {APICommand} from '../index.js'
 import {JsonObj} from '../result.js'
 import autocomplete from '../util/autocomplete.js'
 import isInteractive from '../util/is-interactive.js'

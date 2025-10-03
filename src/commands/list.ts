@@ -1,14 +1,13 @@
 import {Flags} from '@oclif/core'
-import {ConfigType} from '@reforge-com/node'
 
 import {APICommand} from '../index.js'
 
 interface ConfigMetadata {
+  description: string
   id: number
-  type: string
   key: string
   name: string
-  description: string
+  type: string
   version: number
 }
 
