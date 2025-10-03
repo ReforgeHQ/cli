@@ -21,7 +21,7 @@ export default class Mcp extends BaseCommand {
   static examples = [
     '<%= config.bin %> <%= command.id %>',
     '<%= config.bin %> <%= command.id %> --editor cursor',
-    '<%= config.bin %> <%= command.id %> --url https://local-launch.goatsofreforge.com:3003/api/v1/mcp',
+    '<%= config.bin %> <%= command.id %> --url http://local-launch.goatsofreforge.com:3003/api/v1/mcp',
   ]
 
   static flags = {
@@ -108,7 +108,7 @@ export default class Mcp extends BaseCommand {
     }
 
     // Get servers config section
-    const serversConfig = getServersConfig(editorConfig, selectedEditor, configPathType)
+    const serversConfig = getServersConfig(editorConfig)
 
     // Check for existing Reforge entries
     const existingReforgeEntries = Object.keys(serversConfig).filter(key =>

@@ -1,14 +1,7 @@
 import {homedir} from 'node:os'
 import {join} from 'node:path'
 
-export const SupportedEditors = [
-  'cursor',
-  'vscode',
-  'claude',
-  'claude-code',
-  'codeium',
-  'windsurf',
-] as const
+export const SupportedEditors = ['claude-code', 'codeium'] as const
 export type SupportedEditor = (typeof SupportedEditors)[number]
 
 type ConfigPaths = {
@@ -24,27 +17,11 @@ type ConfigPaths = {
 }
 
 export const ConfigPaths: Record<SupportedEditor, ConfigPaths> = {
-  cursor: {
-    name: 'Cursor',
-    global: '~/.cursor/mcp.json',
-    local: '.cursor/mcp.json',
-  },
-  vscode: {
-    name: 'Visual Studio Code',
-    global: {
-      mac: '~/Library/Application Support/Code/User/settings.json',
-      linux: '~/.config/Code/User/settings.json',
-      windows: '@/Code/User/settings.json',
-    },
-    local: '.vscode/mcp.json',
-  },
-  claude: {
-    name: 'Claude Desktop',
-    global: {
-      mac: '~/Library/Application Support/Claude/claude_desktop_config.json',
-      windows: '@/Claude/claude_desktop_config.json',
-    },
-  },
+  // cursor: {
+  //   name: 'Cursor',
+  //   global: '~/.cursor/mcp.json',
+  //   local: '.cursor/mcp.json',
+  // },
   'claude-code': {
     name: 'Claude Code',
     global: '~/.claude.json',
@@ -56,10 +33,6 @@ export const ConfigPaths: Record<SupportedEditor, ConfigPaths> = {
       windows: '@/Codeium/mcp_config.json',
       linux: '~/.config/codeium/mcp_config.json',
     },
-  },
-  windsurf: {
-    name: 'Windsurf',
-    global: '~/.codeium/windsurf/mcp_config.json',
   },
 }
 
@@ -98,21 +71,9 @@ export function resolveConfigPath(editor: SupportedEditor, local = false): strin
   }
 }
 
-export function getServersConfig(
-  editorConfig: any,
-  selectedEditor: SupportedEditor,
-  configPathType: 'global' | 'local',
-): any {
-  if (selectedEditor === 'vscode') {
-    if (configPathType === 'global') {
-      editorConfig.mcp = editorConfig.mcp || {}
-      editorConfig.mcp.servers = editorConfig.mcp.servers || {}
-      return editorConfig.mcp.servers
-    } else {
-      editorConfig.servers = editorConfig.servers || {}
-      return editorConfig.servers
-    }
+export function getServersConfig(editorConfig: Record<string, unknown>): Record<string, unknown> {
+  if (!editorConfig.mcpServers) {
+    editorConfig.mcpServers = {}
   }
-  editorConfig.mcpServers = editorConfig.mcpServers || {}
-  return editorConfig.mcpServers
+  return editorConfig.mcpServers as Record<string, unknown>
 }
