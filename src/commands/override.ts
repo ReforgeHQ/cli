@@ -1,15 +1,27 @@
 import {Flags} from '@oclif/core'
 
-import type {Config} from '../reforge-common/src/types.js'
-
 import {APICommand} from '../index.js'
-import {overrideFor} from '../reforge.js'
-import {valueTypeStringForConfig} from '../reforge-common/src/valueType.js'
 import {JsonObj} from '../result.js'
-import getKey from '../ui/get-key.js'
-import getValue from '../ui/get-value.js'
+import autocomplete from '../util/autocomplete.js'
 import {checkmark} from '../util/color.js'
+import getString from '../ui/get-string.js'
 import nameArg from '../util/name-arg.js'
+import isInteractive from '../util/is-interactive.js'
+import getEnvironment from '../ui/get-environment.js'
+
+interface ConfigMetadata {
+  id: number
+  type: string
+  key: string
+  name: string
+  description: string
+  valueType: string
+  version: number
+}
+
+interface ConfigMetadataResponse {
+  configs: ConfigMetadata[]
+}
 
 export default class Override extends APICommand {
   static args = {...nameArg}
@@ -24,6 +36,7 @@ export default class Override extends APICommand {
   ]
 
   static flags = {
+    environment: Flags.string({description: 'environment to override in'}),
     remove: Flags.boolean({default: false, description: 'remove your override (if present)'}),
     value: Flags.string({description: 'value to use for your override'}),
   }
@@ -35,69 +48,136 @@ export default class Override extends APICommand {
       this.err('remove and value flags are mutually exclusive')
     }
 
-    const {key, reforge} = await getKey({
-      args,
+    // Fetch all configs from metadata endpoint
+    const metadataRequest = await this.apiClient.get('/all-config-types/v1/metadata')
+
+    if (!metadataRequest.ok) {
+      const errorMsg = metadataRequest.error?.error || `Failed to fetch configs: ${metadataRequest.status}`
+      return this.err(errorMsg, {serverError: metadataRequest.error})
+    }
+
+    const metadataResponse = metadataRequest.json as unknown as ConfigMetadataResponse
+    const configs = metadataResponse.configs
+
+    // Get the environment
+    const environment = await getEnvironment({
       command: this,
       flags,
-      message: 'Which item would you like to override?',
+      message: 'Which environment would you like to override in?',
+      providedEnvironment: flags.environment,
     })
 
-    if (!key || !reforge) {
+    if (!environment) {
       return
     }
 
-    if (flags.remove) {
-      return this.removeOverride(key)
+    // Get the key - from args or prompt
+    let key = args.name
+
+    if (!key && isInteractive(flags)) {
+      const configKeys = configs.map((c) => c.key)
+      const selectedKey = await autocomplete({
+        message: 'Which item would you like to override?',
+        source: configKeys,
+      })
+      if (selectedKey) {
+        key = selectedKey
+      }
     }
 
-    const config = reforge.raw(key)
+    if (!key) {
+      return this.err('Key is required')
+    }
+
+    const config = configs.find((c) => c.key === key)
 
     if (!config) {
       return this.err(`Could not find config named ${key}`)
     }
 
-    const value = await getValue({desiredValue: flags.value, flags, key, message: 'Override value', reforge})
+    this.verboseLog('Selected config:', config)
 
-    if (value.ok) {
-      return this.setOverride(config, value.value)
+    if (flags.remove) {
+      return this.removeOverride(key, environment.id, config.version)
     }
 
-    this.resultMessage(value)
+    // Get the value
+    let value = flags.value
+
+    if (!value && isInteractive(flags)) {
+      value = await getString({
+        allowBlank: false,
+        message: 'Override value',
+      })
+    }
+
+    if (!value) {
+      return this.err('Value is required')
+    }
+
+    return this.setOverride(config, value, environment.id)
   }
 
-  private async removeOverride(key: string): Promise<void> {
-    const override = overrideFor({currentEnvironmentId: this.currentEnvironment.id, key})
-
-    if (!override) {
-      this.log(`No override found for ${key}`)
-      return
-    }
-
-    const request = await this.apiClient.post('/api/v2/config/remove-variant', {
+  private async removeOverride(key: string, environmentId: string, currentVersionId: number): Promise<void> {
+    const request = await this.apiClient.post('/internal/ops/v1/remove-variant', {
       configKey: key,
-      variant: override,
+      currentVersionId,
+      environmentId,
     })
 
     if (request.ok) {
-      this.log('Override removed')
+      this.log(`${checkmark} Override removed`)
       return
     }
 
     this.err(`Failed to remove override: ${request.status}`, {key, serverError: request.error})
   }
 
-  private async setOverride(config: Config, value: string): Promise<JsonObj | void> {
-    const {key} = config
+  private async setOverride(
+    config: ConfigMetadata,
+    value: string,
+    environmentId: string,
+  ): Promise<JsonObj | void> {
+    const {key, valueType, version} = config
 
-    const type = valueTypeStringForConfig(config)
-
-    if (!type) {
-      return this.err(`Could not find type for config named ${key}`)
+    // Map the valueType to the format expected by the API
+    const typeMapping: Record<string, string> = {
+      bool: 'bool',
+      string: 'string',
+      int: 'int',
+      double: 'double',
+      string_list: 'stringList',
+      json: 'json',
+      limit_definition: 'limitDefinition',
+      duration: 'duration',
+      int_range: 'intRange',
     }
 
-    const request = await this.apiClient.post('/api/v2/config/assign-variant', {
+    const type = typeMapping[valueType.toLowerCase()] || valueType
+
+    // Parse the value based on type
+    let parsedValue: any = value
+    if (type === 'stringList') {
+      parsedValue = {values: value.split(',')}
+    } else if (type === 'bool') {
+      parsedValue = value.toLowerCase() === 'true'
+    } else if (type === 'int') {
+      parsedValue = parseInt(value, 10)
+    } else if (type === 'double') {
+      parsedValue = parseFloat(value)
+    } else if (type === 'json') {
+      try {
+        parsedValue = JSON.parse(value)
+      } catch {
+        return this.err(`Invalid JSON value: ${value}`)
+      }
+    }
+
+    const request = await this.apiClient.post('/internal/ops/v1/assign-variant', {
       configKey: key,
-      variant: {[type]: type === 'stringList' ? {values: value.split(',')} : value},
+      currentVersionId: version,
+      environmentId,
+      variant: {[type]: parsedValue},
     })
 
     if (request.ok) {
