@@ -39,10 +39,10 @@ export abstract class BaseCommand extends Command {
     }
 
     if (typeof error === 'string') {
-      return this.error(error)
+      return this.error(error, {code: 'ERR', exit: 1})
     }
 
-    this.error(this.toErrorJson(error))
+    this.error(this.toErrorJson(error), {code: 'ERR', exit: 1})
   }
 
   public isVerbose!: boolean
@@ -80,6 +80,15 @@ export abstract class BaseCommand extends Command {
     }
   }
 
+  protected async catch(err: {exitCode?: number; code?: string} & Error): Promise<void> {
+    // Override oclif's default error handling to suppress stack traces
+    // Log the error message without stack trace
+    this.log(err.message)
+
+    // Exit without calling super.catch which would show the stack trace
+    this.exit(err.exitCode || 1)
+  }
+
   public async init(): Promise<void> {
     await super.init()
 
@@ -96,7 +105,14 @@ export abstract class APICommand extends BaseCommand {
       description: 'Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)',
       env: 'REFORGE_SDK_KEY',
       helpGroup: 'GLOBAL',
-      required: true,
+      hidden: true,
+      required: false,
+    }),
+    profile: Flags.string({
+      char: 'p',
+      description: 'Profile to use (defaults to ENV var REFORGE_PROFILE or "default")',
+      helpGroup: 'GLOBAL',
+      required: false,
     }),
   }
 
@@ -109,6 +125,8 @@ export abstract class APICommand extends BaseCommand {
       get: async (path: string) => unwrapRequest(this, this.rawApiClient.get(path)),
 
       post: async (path: string, payload: unknown) => unwrapRequest(this, this.rawApiClient.post(path, payload)),
+
+      put: async (path: string, payload: unknown) => unwrapRequest(this, this.rawApiClient.put(path, payload)),
     }
   }
 
@@ -117,13 +135,15 @@ export abstract class APICommand extends BaseCommand {
 
     const {flags} = await this.parse()
 
-    // We want to handle the sdk-key being explicitly blank.
-    // If it is truly absent then the `required: true` will catch it.
-    if (!flags['sdk-key']) {
-      this.error('SDK key is required', {exit: 401})
-    }
+    this.rawApiClient = await rawGetClient(this, flags['sdk-key'], flags.profile)
 
-    this.rawApiClient = rawGetClient(this, flags['sdk-key'])
-    this.currentEnvironment = getProjectEnvFromSdkKey(flags['sdk-key'])
+    // If we have an SDK key, use it to get the environment
+    if (flags['sdk-key']) {
+      this.currentEnvironment = getProjectEnvFromSdkKey(flags['sdk-key'])
+    } else {
+      // For JWT-based auth, we'll need to get environment info from the token
+      // For now, set a placeholder - this should be enhanced later
+      this.currentEnvironment = {id: 'unknown', projectId: 0}
+    }
   }
 }

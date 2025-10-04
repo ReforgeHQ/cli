@@ -1,10 +1,4 @@
 import {Flags} from '@oclif/core'
-import {encryption} from '@reforge-com/node'
-
-import {APICommand} from '../index.js'
-import {getConfigFromApi} from '../reforge-common/src/api/getConfigFromApi.js'
-import {ConfigValue} from '../reforge-common/src/types.js'
-import {Result, failure, success} from '../result.js'
 
 const secretFlags = (secretDescription: string) => ({
   secret: Flags.boolean({default: false, description: secretDescription}),
@@ -23,86 +17,5 @@ export const parsedSecretFlags = (flags: {secret: boolean; 'secret-key-name': st
   keyName: flags['secret-key-name'],
   selected: flags.secret,
 })
-
-// Returns true if _any_ value in the config is encrypted
-export const isConfigEncrypted = async (command: APICommand, key: string): Promise<boolean> => {
-  const rawConfig = await getConfigFromApi({
-    client: command.rawApiClient,
-    errorLog: command.verboseLog,
-    key,
-  })
-
-  if (!rawConfig) {
-    return false
-  }
-
-  if (!rawConfig.rows) {
-    return false
-  }
-
-  return rawConfig.rows.some((row) => row.values.some((value) => value.value?.decryptWith))
-}
-
-export const makeConfidentialValue = async (
-  command: APICommand,
-  value: string,
-  secret: Secret,
-  environmentId: string,
-): Promise<Result<ConfigValue>> => {
-  const rawConfig = await getConfigFromApi({
-    client: command.rawApiClient,
-    errorLog: command.verboseLog,
-    key: secret.keyName,
-  })
-
-  if (!rawConfig) {
-    return failure(`Failed to create secret: ${secret.keyName} not found`, {
-      phase: 'finding-secret',
-    })
-  }
-
-  if (!rawConfig.rows) {
-    return failure(`Failed to create secret: ${secret.keyName} has no rows`, {
-      phase: 'finding-secret',
-    })
-  }
-
-  const secretKeyRow =
-    rawConfig.rows.find((row) => (row.projectEnvId ?? '') === environmentId) ??
-    rawConfig.rows.find((row) => (row.projectEnvId ?? '') === '')
-
-  const envVar = secretKeyRow?.values[0]?.value?.provided?.lookup
-
-  if (!envVar) {
-    return failure(
-      `Failed to create secret: ${secret.keyName} not found for environmentId ${environmentId} or default env`,
-      {
-        phase: 'finding-secret',
-      },
-    )
-  }
-
-  const secretKey = process.env[envVar]
-
-  command.verboseLog(`Using env var ${envVar} to encrypt secret`)
-
-  if (typeof secretKey !== 'string') {
-    return failure(`Failed to create secret: env var ${envVar} is not present`, {
-      phase: 'finding-secret',
-    })
-  }
-
-  if (secretKey.length !== 64) {
-    return failure(`Secret key is too short. ${secret.keyName} must be 64 characters.`, {
-      phase: 'finding-secret',
-    })
-  }
-
-  return success({
-    confidential: true,
-    decryptWith: secret.keyName,
-    string: encryption.encrypt(value, secretKey),
-  })
-}
 
 export default secretFlags

@@ -1,8 +1,7 @@
-import type {Client} from '../reforge-common/src/api/client.js'
-import type {Environment} from '../reforge-common/src/api/getEnvironmentsFromApi.js'
+import type {Environment} from '../api/get-environments.js'
 
+import {getEnvironments} from '../api/get-environments.js'
 import {APICommand} from '../index.js'
-import {getEnvironmentsFromApi} from '../reforge-common/src/api/getEnvironmentsFromApi.js'
 import {JsonObj} from '../result.js'
 import autocomplete from '../util/autocomplete.js'
 import isInteractive from '../util/is-interactive.js'
@@ -11,14 +10,12 @@ const defaultEnvironmentName = '[Default]'
 
 const getEnvironment = async ({
   allowDefaultEnvironment = false,
-  client,
   command,
   flags,
   message,
   providedEnvironment,
 }: {
   allowDefaultEnvironment?: boolean
-  client: Client
   command: APICommand
   flags: JsonObj
   message: string
@@ -28,7 +25,7 @@ const getEnvironment = async ({
     command.err("'environment' is required when interactive mode isn't available.")
   }
 
-  const environments = await getEnvironmentsFromApi({client, log: command.verboseLog})
+  const environments = await getEnvironments(command)
 
   command.verboseLog({environments})
 

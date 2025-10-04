@@ -2,13 +2,13 @@ import {Args, Flags} from '@oclif/core'
 import {ProvidedSource} from '@reforge-com/node'
 
 import {APICommand} from '../index.js'
-import {initReforge} from '../reforge.js'
-import {ConfigType, ConfigValue, ConfigValueType, NewConfig} from '../reforge-common/src/types.js'
+import {ConfigValue, ConfigValueType} from '../reforge-common/src/types.js'
 import {JsonObj} from '../result.js'
 import getValue from '../ui/get-value.js'
 import {TYPE_MAPPING, coerceBool, coerceIntoType} from '../util/coerce.js'
 import {checkmark} from '../util/color.js'
-import secretFlags, {makeConfidentialValue, parsedSecretFlags} from '../util/secret-flags.js'
+import {makeConfidentialValue} from '../util/encryption.js'
+import secretFlags, {parsedSecretFlags} from '../util/secret-flags.js'
 
 export default class Create extends APICommand {
   static args = {
@@ -46,8 +46,6 @@ export default class Create extends APICommand {
 
     const key = args.name
 
-    const reforge = await initReforge(this, flags)
-
     const secret = parsedSecretFlags(flags)
 
     if (flags['env-var'] && flags.value) {
@@ -77,7 +75,13 @@ export default class Create extends APICommand {
         },
       }
     } else {
-      const valueInput = await getValue({desiredValue: flags.value, flags, message: 'Default value', reforge})
+      const valueInput = await getValue({
+        desiredValue: flags.value,
+        flags,
+        message: 'Default value',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        reforge: undefined as any,
+      })
 
       if (valueInput.ok) {
         const rawValue = valueInput.value
@@ -109,21 +113,25 @@ export default class Create extends APICommand {
       configValue.confidential = true
     }
 
-    const newConfig: Omit<NewConfig, 'allowableValues'> = {
-      configType: ConfigType.Config,
+    // Map to CreateConfigRequestDto structure
+    const createConfigRequest = {
       key: args.name,
-      projectId: this.currentEnvironment.projectId,
-      rows: [
-        {
-          properties: {},
-          values: [{criteria: [], value: configValue}],
-        },
-      ],
+      type: 'config',
+      valueType: this.mapValueTypeToString(valueType),
       sendToClientSdk: false,
-      valueType,
+      default: {
+        rules: [
+          {
+            criteria: [],
+            value: this.mapConfigValueToDto(configValue, valueType),
+          },
+        ],
+      },
     }
 
-    const request = await this.apiClient.post('/api/v2/config/', newConfig)
+    this.verboseLog('POST /configs/v1', createConfigRequest)
+
+    const request = await this.apiClient.post('/configs/v1', createConfigRequest)
 
     if (!request.ok) {
       const errMsg =
@@ -146,24 +154,46 @@ export default class Create extends APICommand {
 
     const defaultValue = coerceBool(rawDefault ?? 'false')
 
-    const recipePaylod = {
-      defaultValue,
+    // Create flag with true and false variants
+    const createFlagRequest = {
       key,
+      type: 'feature_flag',
+      valueType: 'bool',
+      sendToClientSdk: true,
+      variants: [
+        {
+          value: {
+            type: 'bool',
+            value: true,
+          },
+          name: 'True',
+          description: 'Enabled',
+        },
+        {
+          value: {
+            type: 'bool',
+            value: false,
+          },
+          name: 'False',
+          description: 'Disabled',
+        },
+      ],
+      default: {
+        rules: [
+          {
+            criteria: [],
+            value: {
+              type: 'bool',
+              value: defaultValue,
+            },
+          },
+        ],
+      },
     }
 
-    const recipeRequest = await this.apiClient.post('/api/v2/config-recipes/feature-flag/boolean', recipePaylod)
+    this.verboseLog('POST /flags/v1', createFlagRequest)
 
-    if (!recipeRequest.ok) {
-      return this.err(`Failed to create boolean flag recipe: ${recipeRequest.status}`, {
-        key,
-        phase: 'recipe',
-        serverError: recipeRequest.error,
-      })
-    }
-
-    const payload = recipeRequest.json
-
-    const request = await this.apiClient.post('/api/v2/config/', payload)
+    const request = await this.apiClient.post('/flags/v1', createFlagRequest)
 
     if (!request.ok) {
       const errMsg =
@@ -177,5 +207,71 @@ export default class Create extends APICommand {
     const response = request.json
 
     return this.ok(`${checkmark} Created boolean flag: ${key}`, {key, ...response})
+  }
+
+  private mapConfigValueToDto(configValue: ConfigValue, valueType: ConfigValueType): Record<string, unknown> {
+    const dto: Record<string, unknown> = {
+      type: this.mapValueTypeToString(valueType),
+    }
+
+    // Handle provided (env-var) values
+    if (configValue.provided) {
+      return {
+        ...dto,
+        provided: {
+          source: configValue.provided.source,
+          lookup: configValue.provided.lookup,
+        },
+      }
+    }
+
+    // Extract the actual value based on type
+    let value: unknown
+    if (configValue.bool !== undefined) {
+      value = configValue.bool
+    } else if (configValue.string !== undefined) {
+      value = configValue.string
+    } else if (configValue.int !== undefined) {
+      value = configValue.int
+    } else if (configValue.double !== undefined) {
+      value = configValue.double
+    } else if (configValue.stringList !== undefined) {
+      value = configValue.stringList.values
+    } else if (configValue.json !== undefined) {
+      value = configValue.json
+    } else if (configValue.duration !== undefined) {
+      value = configValue.duration
+    } else if (configValue.intRange !== undefined) {
+      value = configValue.intRange
+    }
+
+    dto.value = value
+
+    if (configValue.confidential) {
+      dto.confidential = true
+    }
+
+    if (configValue.decryptWith) {
+      dto.decryptWith = configValue.decryptWith
+    }
+
+    return dto
+  }
+
+  private mapValueTypeToString(valueType: ConfigValueType): string {
+    const mapping: Partial<Record<ConfigValueType, string>> = {
+      [ConfigValueType.Bool]: 'bool',
+      [ConfigValueType.String]: 'string',
+      [ConfigValueType.Int]: 'int',
+      [ConfigValueType.Double]: 'double',
+      [ConfigValueType.StringList]: 'string_list',
+      [ConfigValueType.Json]: 'json',
+      [ConfigValueType.LimitDefinition]: 'limit_definition',
+      [ConfigValueType.Duration]: 'duration',
+      [ConfigValueType.IntRange]: 'int_range',
+      [ConfigValueType.Bytes]: 'bytes',
+      [ConfigValueType.LogLevel]: 'log_level',
+    }
+    return mapping[valueType] || 'string'
   }
 }

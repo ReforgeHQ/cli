@@ -23,7 +23,6 @@ export default class Download extends APICommand {
     const {flags} = await this.parse(Download)
 
     const environment = await getEnvironment({
-      client: this.rawApiClient,
       command: this,
       flags,
       message: 'Which environment would you like to download?',
@@ -36,7 +35,7 @@ export default class Download extends APICommand {
 
     this.verboseLog({environment})
 
-    const download = await this.apiClient.get(`/api/v2/configs/download?envId=${environment.id}`)
+    const download = await this.apiClient.get(`/all-config-types/v1/download?envId=${environment.id}`)
 
     if (download.ok) {
       return this.writeFile(download, environment)

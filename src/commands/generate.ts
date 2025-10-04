@@ -134,8 +134,6 @@ Example:
     const {flags} = await this.parse(Generate)
 
     this.verboseLog('=== GENERATE COMMAND START ===')
-    this.verboseLog(`SDK Key: ${this.rawApiClient ? 'Set (hidden)' : 'Not set'}`)
-    this.verboseLog(`Environment: ${this.currentEnvironment}`)
     this.verboseLog(`Base API URL: ${process.env.REFORGE_API_URL || 'Default'}`)
 
     try {

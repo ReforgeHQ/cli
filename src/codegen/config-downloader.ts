@@ -8,7 +8,7 @@ export class ConfigDownloader {
 
   async downloadConfig(): Promise<ConfigFile> {
     try {
-      const response = (await this.command.apiClient.get('/api/v1/configs/download-unfiltered')) as RequestResult
+      const response = (await this.command.apiClient.get('/all-config-types/v1/download-all-envs')) as RequestResult
 
       if (!response.ok) {
         throw new Error(`Failed to download config: ${response.status}`)
