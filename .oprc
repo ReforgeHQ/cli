@@ -1,2 +1,3 @@
-export PREFAB_API_KEY=op://Private/prefab-env-vars/PREFAB_INTEGRATION_TEST_API_KEY
-export PREFAB_INTEGRATION_TEST_ENCRYPTION_KEY=op://Private/prefab-env-vars/PREFAB_INTEGRATION_TEST_ENCRYPTION_KEY
+export PREFAB_API_KEY=op://Employee/ReforgePrefabEnvVarsPersonal/PREFAB_API_KEY
+export PREFAB_INTEGRATION_TEST_ENCRYPTION_KEY=op://Engineering/ReforgePrefabEnvVars/PREFAB_INTEGRATION_TEST_ENCRYPTION_KEY
+export NPM_AUTH_TOKEN=op//Employee/ReforgePrefabEnvVars/NPM_AUTH_TOKEN
