@@ -1,10 +1,10 @@
-import {Flags, ux} from '@oclif/core'
+import {Flags} from '@oclif/core'
 import {parse as parseJSON, stringify as stringifyJSON} from 'comment-json'
 import {existsSync, mkdirSync, readFileSync, writeFileSync} from 'node:fs'
 import {dirname, join, relative} from 'node:path'
 
 import {BaseCommand} from '../index.js'
-import {ConfigPaths, getServersConfig, resolveConfigPath, SupportedEditor, SupportedEditors} from '../services/mcp.js'
+import {ConfigPaths, SupportedEditor, SupportedEditors, getServersConfig, resolveConfigPath} from '../services/mcp.js'
 import autocomplete from '../util/autocomplete.js'
 import {green} from '../util/color.js'
 import isInteractive from '../util/is-interactive.js'
@@ -85,10 +85,10 @@ export default class Mcp extends BaseCommand {
     this.log(`Configuring ${ConfigPaths[selectedEditor].name} at ${displayConfigPath}`)
 
     // Read/Parse existing config
-    let editorConfig: any = {}
+    let editorConfig: Record<string, unknown> = {}
     if (existsSync(configPath)) {
       try {
-        const content = readFileSync(configPath, 'utf-8')
+        const content = readFileSync(configPath, 'utf8')
         editorConfig = parseJSON(content)
         this.log(`✓ Read existing configuration`)
       } catch (error) {
@@ -133,7 +133,7 @@ export default class Mcp extends BaseCommand {
     }
 
     // Construct MCP endpoint URL and config
-    const mcpUrl = flags['url'] || 'https://launch.reforge.com/api/v1/mcp'
+    const mcpUrl = flags.url || 'https://launch.reforge.com/api/v1/mcp'
 
     if (selectedEditor === 'claude-code') {
       serversConfig[targetEntryKey] = {
