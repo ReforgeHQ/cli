@@ -79,7 +79,8 @@ export default class Create extends APICommand {
         desiredValue: flags.value,
         flags,
         message: 'Default value',
-        reforge: undefined as unknown,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        reforge: undefined as any,
       })
 
       if (valueInput.ok) {

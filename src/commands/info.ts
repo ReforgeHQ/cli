@@ -223,7 +223,8 @@ export default class Info extends APICommand {
 
     // Handle provided values (ENV_VAR)
     if (value.provided) {
-      let str = `${value.provided.lookup}`
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let str = `${(value.provided as any).lookup}`
       if (value.confidential) {
         str = `\`${str}\``
       }
@@ -235,7 +236,8 @@ export default class Info extends APICommand {
     return this.extractSimpleValue(value)
   }
 
-  private parseConfig(config: Record<string, unknown>, environments: Environment[], url: string) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private parseConfig(config: any, environments: Environment[], url: string) {
     const contents: string[] = []
     const json: JsonObj = {}
 

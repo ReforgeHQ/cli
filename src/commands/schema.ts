@@ -35,7 +35,8 @@ export default class Schema extends APICommand {
         })
       }
 
-      const response = getRequest.json as Record<string, unknown>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const response = getRequest.json as any
       const schemaData = response.default?.rules?.[0]?.value?.schema
 
       if (!schemaData) {
