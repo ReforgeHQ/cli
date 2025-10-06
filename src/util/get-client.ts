@@ -8,11 +8,19 @@ import {getActiveProfile, loadAuthConfig, loadTokens} from '../util/token-storag
 import version from '../version.js'
 
 let clientInstance: Client | undefined
+let cachedWorkspaceId: string | undefined
 
 const getClient = async (command: APICommand, sdkKey?: string, profile?: string) => {
-  if (clientInstance) return clientInstance
+  // If client exists, still set workspaceId on command if available
+  if (clientInstance) {
+    if (cachedWorkspaceId) {
+      command.workspaceId = cachedWorkspaceId
+    }
+    return clientInstance
+  }
 
   let jwt: string | undefined
+  let workspaceId: string | undefined
 
   // If no API key provided, try to get JWT from OAuth tokens
   if (!sdkKey) {
@@ -37,6 +45,8 @@ const getClient = async (command: APICommand, sdkKey?: string, profile?: string)
       })
 
       if (profileData) {
+        workspaceId = profileData.workspace
+
         // Call identity endpoint to get fresh authz JWT for the active workspace
         const introspection = await introspectToken(tokens.accessToken)
         const workspace = introspection.organizations
@@ -58,6 +68,12 @@ const getClient = async (command: APICommand, sdkKey?: string, profile?: string)
     if (!jwt) {
       command.error('No authentication found. Please run `reforge login`.', {exit: 401})
     }
+  }
+
+  // Store workspaceId on the command for use in building URLs and cache it
+  if (workspaceId) {
+    command.workspaceId = workspaceId
+    cachedWorkspaceId = workspaceId
   }
 
   clientInstance = new Client({

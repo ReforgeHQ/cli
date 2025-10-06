@@ -132,6 +132,8 @@ export abstract class APICommand extends BaseCommand {
 
   public rawApiClient!: Client
 
+  public workspaceId?: string
+
   get apiClient() {
     return {
       get: async (path: string) => unwrapRequest(this, this.rawApiClient.get(path)),

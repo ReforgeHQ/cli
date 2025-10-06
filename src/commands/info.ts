@@ -79,7 +79,11 @@ export default class Info extends APICommand {
     const environments = await getEnvironments(this)
 
     const appUrl = getAppUrl()
-    const url = `${appUrl}/account/projects/124/configs/${key}`
+    // Use new URL format: /workspaces/{workspaceId}/flags/{key}
+    if (!this.workspaceId) {
+      return this.err('Workspace ID not found. Please run `reforge login`.')
+    }
+    const url = `${appUrl}/workspaces/${this.workspaceId}/flags/${key}`
 
     this.log(url)
     this.log('')
