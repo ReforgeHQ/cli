@@ -68,13 +68,6 @@ workspace = workspace-123 # Test Organization - Test Workspace
 `
   fs.writeFileSync(configFile, configContent)
 
-  // Set test domain
-  process.env.REFORGE_DOMAIN = 'goatsofreforge.com'
-
-  // Set test encryption key (64 character hex string)
-  process.env.REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY =
-    '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'
-
   return {tokensFile, configFile}
 }
 
@@ -90,8 +83,6 @@ export const cleanupTestAuth = () => {
   try {
     if (fs.existsSync(tokensFile)) fs.unlinkSync(tokensFile)
     if (fs.existsSync(configFile)) fs.unlinkSync(configFile)
-    delete process.env.REFORGE_DOMAIN
-    delete process.env.REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY
   } catch {
     // Ignore cleanup errors
   }
