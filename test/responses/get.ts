@@ -9,7 +9,8 @@ import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js
  */
 
 // GET /all-config-types/v1/metadata - list all configs
-const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/metadata', () => HttpResponse.json({
+const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/metadata', () =>
+  HttpResponse.json({
     configs: [
       {
         key: 'my-string-list-key',
@@ -30,12 +31,15 @@ const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-type
         description: 'A secret config',
       },
     ],
-  }))
+  }),
+)
 
 // GET /environments/v1 - list environments
-const environmentsHandler = http.get('https://api.goatsofreforge.com/environments/v1', () => HttpResponse.json({
+const environmentsHandler = http.get('https://api.goatsofreforge.com/environments/v1', () =>
+  HttpResponse.json({
     environments: [{id: '', name: '[default]', active: true, protected: false}],
-  }))
+  }),
+)
 
 // GET /evaluation/v1/eval - evaluate a config
 const evaluationHandler = http.get('https://api.goatsofreforge.com/evaluation/v1/eval', ({request}) => {

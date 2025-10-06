@@ -28,7 +28,9 @@ export const downloadStub: JsonObj = {
 }
 
 // GET /environments/v1 - list environments
-const environmentsHandler = http.get('https://api.goatsofreforge.com/environments/v1', () => HttpResponse.json(environmentResponse))
+const environmentsHandler = http.get('https://api.goatsofreforge.com/environments/v1', () =>
+  HttpResponse.json(environmentResponse),
+)
 
 // GET /all-config-types/v1/download - download config
 const downloadHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/download', ({request}) => {

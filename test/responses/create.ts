@@ -225,7 +225,8 @@ const configsV1Handler = http.post('https://api.goatsofreforge.com/configs/v1', 
 // GET /all-config-types/v1/config/:key - get encryption key config
 const encryptionKeyHandler = http.get(
   'https://api.goatsofreforge.com/all-config-types/v1/config/reforge.secrets.encryption.key',
-  () => HttpResponse.json({
+  () =>
+    HttpResponse.json({
       key: 'reforge.secrets.encryption.key',
       type: 'config',
       valueType: 'string',

@@ -30,9 +30,13 @@ export const mockIdentityResponse = {
  * MSW handlers for identity endpoint
  * Supports both default reforge.com and test goatsofreforge.com domains
  */
-export const identityHandler = http.get('https://id.reforge.com/api/oauth/identity', () => HttpResponse.json(mockIdentityResponse))
+export const identityHandler = http.get('https://id.reforge.com/api/oauth/identity', () =>
+  HttpResponse.json(mockIdentityResponse),
+)
 
-export const identityHandlerTestDomain = http.get('https://id.goatsofreforge.com/api/oauth/identity', () => HttpResponse.json(mockIdentityResponse))
+export const identityHandlerTestDomain = http.get('https://id.goatsofreforge.com/api/oauth/identity', () =>
+  HttpResponse.json(mockIdentityResponse),
+)
 
 /**
  * Setup authentication files for tests

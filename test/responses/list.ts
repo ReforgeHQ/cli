@@ -9,7 +9,8 @@ import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js
  */
 
 // GET /all-config-types/v1/metadata - list all configs
-const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/metadata', () => HttpResponse.json({
+const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/metadata', () =>
+  HttpResponse.json({
     configs: [
       {
         key: 'feature-flag.integer',
@@ -48,6 +49,7 @@ const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-type
         description: 'A string list config',
       },
     ],
-  }))
+  }),
+)
 
 export const server = setupServer(identityHandler, identityHandlerTestDomain, metadataHandler)
