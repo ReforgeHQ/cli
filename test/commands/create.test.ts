@@ -49,19 +49,29 @@ describe('create', () => {
       .catch((error) => {
         expect(error.message).to.contain(`Failed to create boolean flag: already.in.use already exists`)
       })
-      .it('returns an error if the flag exists')
+      .it('returns an error if the flag exists', () => {
+        // Error assertion done in catch block
+      })
 
     test
       .command(['create', 'brand.new.flag', '--type=boolean-flag', '--value=cake', '--verbose'])
       .catch((error) => {
         expect(error.message).to.contain(`Invalid default value for boolean: cake`)
       })
-      .it('returns an error if the value is not a boolean')
+      .it('returns an error if the value is not a boolean', () => {
+        // Error assertion done in catch block
+      })
 
     test
+      .stderr()
       .command(['create', 'already.in.use', '--type=boolean-flag', '--json'])
-      .catch(/.*/)
-      .it('returns a JSON error if the flag exists')
+      .catch((error: any) => {
+        const message = error?.message || error?.oclif?.exit || String(error)
+        expect(message).to.be.a('string')
+      })
+      .it('returns a JSON error if the flag exists', () => {
+        // Error assertion done in catch block
+      })
   })
 
   describe('type=string', () => {
@@ -99,7 +109,9 @@ describe('create', () => {
       .catch((error) => {
         expect(error.message).to.contain(`cannot specify both --env-var and --value`)
       })
-      .it('shows an error when provided a default and an env-var')
+      .it('shows an error when provided a default and an env-var', () => {
+        // Error assertion done in catch block
+      })
   })
 
   describe('type=int', () => {
@@ -115,7 +127,9 @@ describe('create', () => {
       .catch((error) => {
         expect(error.message).to.contain(`Invalid default value for int: hat`)
       })
-      .it('returns an error if the value is not an int')
+      .it('returns an error if the value is not an int', () => {
+        // Error assertion done in catch block
+      })
 
     test
       .stdout()
@@ -138,7 +152,9 @@ describe('create', () => {
       .catch((error) => {
         expect(error.message).to.contain(`Invalid default value for double: hat`)
       })
-      .it('returns an error if the value is not a double')
+      .it('returns an error if the value is not a double', () => {
+        // Error assertion done in catch block
+      })
   })
 
   describe('type=boolean', () => {
@@ -154,7 +170,9 @@ describe('create', () => {
       .catch((error) => {
         expect(error.message).to.contain(`Invalid default value for boolean: hat`)
       })
-      .it('returns an error if the value is not a boolean')
+      .it('returns an error if the value is not a boolean', () => {
+        // Error assertion done in catch block
+      })
   })
 
   describe('type=string-list', () => {
@@ -179,7 +197,9 @@ describe('create', () => {
       .catch((error) => {
         expect(error.message).to.contain(`Invalid default value for JSON: {not:valid}`)
       })
-      .it('returns an error if the value is not JSON')
+      .it('returns an error if the value is not JSON', () => {
+        // Error assertion done in catch block
+      })
   })
 
   describe('secret', () => {
@@ -196,7 +216,9 @@ describe('create', () => {
         .catch((error) => {
           expect(error.message).to.contain(`Failed to create secret: missing.secret.key not found`)
         })
-        .it('complains about the missing key')
+        .it('complains about the missing key', () => {
+          // Error assertion done in catch block
+        })
     })
 
     describe('type=string', () => {
@@ -215,7 +237,9 @@ describe('create', () => {
         .catch((error) => {
           expect(error.message).to.contain(`--secret flag only works with string type`)
         })
-        .it('errors')
+        .it('errors', () => {
+          // Error assertion done in catch block
+        })
     })
   })
 })

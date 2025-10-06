@@ -39,7 +39,9 @@ describe('schema', () => {
       .catch((error) => {
         expect(error.message).to.contain('Failed to get schema')
       })
-      .it('handles non-existent schema')
+      .it('handles non-existent schema', () => {
+        // Error assertion done in catch block
+      })
   })
 
   describe('set-zod', () => {
@@ -72,5 +74,7 @@ describe('schema', () => {
     .catch((error) => {
       expect(error.message).to.contain('No action specified. Try --get or --set-zod')
     })
-    .it('requires an action flag')
+    .it('requires an action flag', () => {
+      // Error assertion done in catch block
+    })
 })

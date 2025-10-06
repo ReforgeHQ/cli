@@ -45,7 +45,9 @@ describe('override', () => {
     .catch((error) => {
       expect(error.message).to.contain(`Failed to override value: 400 -- is pumpkin a valid double?`)
     })
-    .it('shows an error when the value type is wrong')
+    .it('shows an error when the value type is wrong', () => {
+      // Error assertion done in catch block
+    })
 
   test
     .stderr()
@@ -53,14 +55,18 @@ describe('override', () => {
     .catch((error) => {
       expect(error.message).to.contain(`Could not find config named this.does.not.exist`)
     })
-    .it('shows an error when the key does not exist')
+    .it('shows an error when the key does not exist', () => {
+      // Error assertion done in catch block
+    })
 
   test
     .command(['override', 'this.does.not.exist', '--value=true', '--remove'])
     .catch((error) => {
       expect(error.message).to.contain(`remove and value flags are mutually exclusive`)
     })
-    .it('shows an error when given remove and a value')
+    .it('shows an error when given remove and a value', () => {
+      // Error assertion done in catch block
+    })
 
   test
     .stdout()

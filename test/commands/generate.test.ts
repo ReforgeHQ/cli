@@ -60,7 +60,9 @@ describe('generate', () => {
     .catch((error) => {
       expect(error.message).to.include('Unsupported target: invalid')
     })
-    .it('handles invalid targets')
+    .it('handles invalid targets', () => {
+      // Error assertion done in catch block
+    })
 
   describe('local configuration file parsing', () => {
     test
@@ -189,7 +191,9 @@ describe('generate', () => {
       .catch((error) => {
         expect(error.message).to.include('Error reading reforge.config.json')
       })
-      .it('handles invalid JSON in config file')
+      .it('handles invalid JSON in config file', () => {
+        // Error assertion done in catch block
+      })
 
     test
       .do(() => {
@@ -208,7 +212,9 @@ describe('generate', () => {
       .catch((error) => {
         expect(error.message).to.include('Expected string, received number')
       })
-      .it('validates config schema and rejects invalid types')
+      .it('validates config schema and rejects invalid types', () => {
+        // Error assertion done in catch block
+      })
 
     test
       .stdout()
@@ -268,7 +274,9 @@ describe('generate', () => {
       .catch((error) => {
         expect(error.message).to.include('Error reading reforge.config.json')
       })
-      .it('handles case where config path is a directory')
+      .it('handles case where config path is a directory', () => {
+        // Error assertion done in catch block
+      })
   })
 
   after(() => {

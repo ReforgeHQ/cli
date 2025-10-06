@@ -46,12 +46,16 @@ describe('get', () => {
     .catch((error) => {
       expect(error.message).to.eql(`this-does-not-exist does not exist`)
     })
-    .it('shows an error if the key is invalid')
+    .it('shows an error if the key is invalid', () => {
+      // Error assertion done in catch block
+    })
 
   test
     .command(['get', '--no-interactive'])
     .catch((error) => {
       expect(error.message).to.eql('Key is required')
     })
-    .it("shows an error if no key is provided when things aren't interactive")
+    .it("shows an error if no key is provided when things aren't interactive", () => {
+      // Error assertion done in catch block
+    })
 })

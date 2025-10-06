@@ -126,7 +126,9 @@ describe('set-default', () => {
       .catch((error) => {
         expect(error.message).to.contain(`Could not find config named this.does.not.exist`)
       })
-      .it('shows an error when the key does not exist')
+      .it('shows an error when the key does not exist', () => {
+        // Error assertion done in catch block
+      })
 
     test
       .stderr()
@@ -134,7 +136,9 @@ describe('set-default', () => {
       .catch((error) => {
         expect(error.message).to.contain(`'cake' is not a valid value for feature-flag.simple`)
       })
-      .it("shows an error when the value isn't valid for the boolean key")
+      .it("shows an error when the value isn't valid for the boolean key", () => {
+        // Error assertion done in catch block
+      })
 
     test
       .stdout()
@@ -142,7 +146,9 @@ describe('set-default', () => {
       .catch((error) => {
         expect(error.message).to.contain(`Invalid default value for int: hello`)
       })
-      .it("shows an error when the value isn't valid for the int key")
+      .it("shows an error when the value isn't valid for the int key", () => {
+        // Error assertion done in catch block
+      })
   })
 
   describe('parsing errors', () => {
@@ -151,14 +157,18 @@ describe('set-default', () => {
       .catch((error) => {
         expect(error.message).to.eql("'name' argument is required when interactive mode isn't available.")
       })
-      .it("shows an error if no key is provided when things aren't interactive")
+      .it("shows an error if no key is provided when things aren't interactive", () => {
+        // Error assertion done in catch block
+      })
 
     test
       .command(['set-default', 'feature-flag.simple', '--no-interactive'])
       .catch((error) => {
         expect(error.message).to.eql("'environment' is required when interactive mode isn't available.")
       })
-      .it("shows an error if no environment is provided when things aren't interactive")
+      .it("shows an error if no environment is provided when things aren't interactive", () => {
+        // Error assertion done in catch block
+      })
 
     test
       .stderr()
@@ -173,6 +183,8 @@ describe('set-default', () => {
       .catch((error) => {
         expect(error.message).to.contain(`cannot specify both --env-var and --value`)
       })
-      .it('shows an error when provided a value and an env-var')
+      .it('shows an error when provided a value and an env-var', () => {
+        // Error assertion done in catch block
+      })
   })
 })

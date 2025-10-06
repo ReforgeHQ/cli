@@ -52,7 +52,9 @@ describe('download', () => {
       .stderr()
       .command(['download', '--environment=Production'])
       .catch(/Failed to download file. Status=500/)
-      .it('saves the file and returns a success message')
+      .it('saves the file and returns a success message', () => {
+        // Error assertion done in catch block
+      })
 
     test
       .stdout()
@@ -60,7 +62,9 @@ describe('download', () => {
       .catch((error) => {
         expect(error.message).to.include('something went wrong')
       })
-      .it('saves the file and returns JSON')
+      .it('saves the file and returns JSON', () => {
+        // Error assertion done in catch block
+      })
   })
 
   describe('when the provided environment is invalid', () => {
@@ -68,13 +72,17 @@ describe('download', () => {
       .stderr()
       .command(['download', '--environment=this.does.not.exist'])
       .catch(/Environment `this.does.not.exist` not found. Valid environments: Production, test/)
-      .it('saves the file and returns a success message')
+      .it('saves the file and returns a success message', () => {
+        // Error assertion done in catch block
+      })
 
     test
       .command(['download', '--environment=this.does.not.exist', '--json'])
       .catch(() => {
         // Environment validation error is handled by first test
       })
-      .it('saves the file and returns JSON')
+      .it('saves the file and returns JSON', () => {
+        // Error assertion done in catch block
+      })
   })
 })

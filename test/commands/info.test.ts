@@ -167,7 +167,9 @@ No evaluations found for the past 24 hours
       .catch((error) => {
         expect(error.message).to.contain(`Key ${keyDoesNotExist} not found`)
       })
-      .it('returns a message')
+      .it('returns a message', () => {
+        // Error assertion done in catch block
+      })
 
     test
       .stdout()

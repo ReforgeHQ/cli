@@ -74,7 +74,9 @@ describe('serve', () => {
       .catch((error) => {
         expect(error.message).to.contain(`File not found: ${doesNotExist}`)
       })
-      .it('shows an error when the file does not exist')
+      .it('shows an error when the file does not exist', () => {
+        // Error assertion done in catch block
+      })
 
     test
       .stderr()
@@ -85,7 +87,9 @@ describe('serve', () => {
           `Your download file seems invalid or corrupt. Please redownload your datafile.`,
         )
       })
-      .it('shows an error when the file is invalid')
+      .it('shows an error when the file is invalid', () => {
+        // Error assertion done in catch block
+      })
 
     test
       .stderr()
@@ -96,6 +100,8 @@ describe('serve', () => {
           `Your download file seems invalid or corrupt. Please redownload your datafile.`,
         )
       })
-      .it('shows an error when the file is invalid')
+      .it('shows an error when the file is invalid', () => {
+        // Error assertion done in catch block
+      })
   })
 })
