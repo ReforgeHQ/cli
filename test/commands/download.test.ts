@@ -3,8 +3,8 @@ import * as fs from 'node:fs'
 import * as path from 'node:path'
 
 import {resetClientCache} from '../../src/util/get-client.js'
-import {cleanupTestAuth, setupTestAuth} from '../test-auth-helper.js'
 import {downloadStub, server} from '../responses/download.js'
+import {cleanupTestAuth, setupTestAuth} from '../test-auth-helper.js'
 
 const expectedFileName = 'reforge.test.588.config.json'
 

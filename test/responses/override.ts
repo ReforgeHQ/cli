@@ -1,4 +1,4 @@
-import {http, HttpResponse, passthrough} from 'msw'
+import {HttpResponse, http, passthrough} from 'msw'
 import {setupServer} from 'msw/node'
 
 import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js'
@@ -49,8 +49,7 @@ const cannedResponses: CannedResponses = {
 }
 
 // GET /all-config-types/v1/metadata - list all configs
-const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/metadata', () => {
-  return HttpResponse.json({
+const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/metadata', () => HttpResponse.json({
     configs: [
       {
         description: 'A simple boolean feature flag',
@@ -89,19 +88,16 @@ const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-type
         version: 2,
       },
     ],
-  })
-})
+  }))
 
 // GET /environments/v1 - list environments
-const environmentsHandler = http.get('https://api.goatsofreforge.com/environments/v1', () => {
-  return HttpResponse.json({
+const environmentsHandler = http.get('https://api.goatsofreforge.com/environments/v1', () => HttpResponse.json({
     environments: [
       {id: '5', name: 'Development'},
       {id: '143', name: 'Production'},
       {id: '144', name: 'Staging'},
     ],
-  })
-})
+  }))
 
 // POST /internal/ops/v1/assign-variant - set override
 const assignVariantHandler = http.post(

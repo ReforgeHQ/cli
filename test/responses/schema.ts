@@ -1,4 +1,4 @@
-import {http, HttpResponse, passthrough} from 'msw'
+import {HttpResponse, http, passthrough} from 'msw'
 import {setupServer} from 'msw/node'
 
 import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js'

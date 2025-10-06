@@ -1,8 +1,8 @@
 import {expect, test} from '@oclif/test'
 
 import {resetClientCache} from '../../src/util/get-client.js'
-import {cleanupTestAuth, setupTestAuth} from '../test-auth-helper.js'
 import {server} from '../responses/get.js'
+import {cleanupTestAuth, setupTestAuth} from '../test-auth-helper.js'
 
 const validKey = 'my-string-list-key'
 const secretKey = 'a.secret.config.reforge'

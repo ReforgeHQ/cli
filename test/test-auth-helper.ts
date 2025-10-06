@@ -1,13 +1,13 @@
+import {HttpResponse, http} from 'msw'
 import * as fs from 'node:fs'
 import * as os from 'node:os'
 import * as path from 'node:path'
-
-import {http, HttpResponse} from 'msw'
 
 /**
  * Mock identity service response for tests
  */
 export const mockIdentityResponse = {
+  // eslint-disable-next-line camelcase
   authn_jwt: 'mock-authn-jwt',
   organizations: [
     {
@@ -16,6 +16,7 @@ export const mockIdentityResponse = {
       roles: ['admin'],
       workspaces: [
         {
+          // eslint-disable-next-line camelcase
           authz_jwt: 'mock-authz-jwt-workspace-123',
           id: 'workspace-123',
           name: 'Test Workspace',
@@ -29,17 +30,14 @@ export const mockIdentityResponse = {
  * MSW handlers for identity endpoint
  * Supports both default reforge.com and test goatsofreforge.com domains
  */
-export const identityHandler = http.get('https://id.reforge.com/api/oauth/identity', () => {
-  return HttpResponse.json(mockIdentityResponse)
-})
+export const identityHandler = http.get('https://id.reforge.com/api/oauth/identity', () => HttpResponse.json(mockIdentityResponse))
 
-export const identityHandlerTestDomain = http.get('https://id.goatsofreforge.com/api/oauth/identity', () => {
-  return HttpResponse.json(mockIdentityResponse)
-})
+export const identityHandlerTestDomain = http.get('https://id.goatsofreforge.com/api/oauth/identity', () => HttpResponse.json(mockIdentityResponse))
 
 /**
  * Setup authentication files for tests
  * Creates actual token and config files in ~/.reforge/
+ * @returns Object containing paths to created token and config files
  */
 export const setupTestAuth = () => {
   const reforgeDir = path.join(os.homedir(), '.reforge')
@@ -52,7 +50,7 @@ export const setupTestAuth = () => {
   // Write tokens file
   const mockTokens = {
     accessToken: 'mock-access-token',
-    expiresAt: Date.now() + 3600000, // 1 hour from now
+    expiresAt: Date.now() + 3_600_000, // 1 hour from now
     refreshToken: 'mock-refresh-token',
   }
   fs.writeFileSync(tokensFile, JSON.stringify(mockTokens, null, 2))
@@ -78,6 +76,7 @@ workspace = workspace-123 # Test Organization - Test Workspace
 
 /**
  * Cleanup authentication files after tests
+ * @returns void
  */
 export const cleanupTestAuth = () => {
   const reforgeDir = path.join(os.homedir(), '.reforge')

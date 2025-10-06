@@ -1,8 +1,8 @@
 import {expect, test} from '@oclif/test'
 
 import {resetClientCache} from '../../src/util/get-client.js'
-import {cleanupTestAuth, setupTestAuth} from '../test-auth-helper.js'
 import {server} from '../responses/override.js'
+import {cleanupTestAuth, setupTestAuth} from '../test-auth-helper.js'
 
 describe('override', () => {
   before(() => {

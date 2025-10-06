@@ -1,4 +1,4 @@
-import {http, HttpResponse, passthrough} from 'msw'
+import {HttpResponse, http, passthrough} from 'msw'
 import {setupServer} from 'msw/node'
 
 import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js'
@@ -225,8 +225,7 @@ const configsV1Handler = http.post('https://api.goatsofreforge.com/configs/v1', 
 // GET /all-config-types/v1/config/:key - get encryption key config
 const encryptionKeyHandler = http.get(
   'https://api.goatsofreforge.com/all-config-types/v1/config/reforge.secrets.encryption.key',
-  () => {
-    return HttpResponse.json({
+  () => HttpResponse.json({
       key: 'reforge.secrets.encryption.key',
       type: 'config',
       valueType: 'string',
@@ -243,16 +242,13 @@ const encryptionKeyHandler = http.get(
           },
         ],
       },
-    })
-  },
+    }),
 )
 
 // GET /all-config-types/v1/config/missing.secret.key - missing encryption key
 const missingEncryptionKeyHandler = http.get(
   'https://api.goatsofreforge.com/all-config-types/v1/config/missing.secret.key',
-  () => {
-    return HttpResponse.json({error: 'Config not found'}, {status: 404})
-  },
+  () => HttpResponse.json({error: 'Config not found'}, {status: 404}),
 )
 
 export const server = setupServer(

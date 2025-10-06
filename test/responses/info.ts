@@ -1,4 +1,4 @@
-import {http, HttpResponse} from 'msw'
+import {HttpResponse, http} from 'msw'
 import {setupServer} from 'msw/node'
 
 import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js'
@@ -139,8 +139,7 @@ const confidentialConfig = {
 }
 
 // GET /all-config-types/v1/metadata - list all configs
-const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/metadata', () => {
-  return HttpResponse.json({
+const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/metadata', () => HttpResponse.json({
     configs: [
       {
         key: keyWithEvaluations,
@@ -171,8 +170,7 @@ const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-type
         description: '',
       },
     ],
-  })
-})
+  }))
 
 // GET /all-config-types/v1/config/:key - get full config
 const configHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/config/:key', ({params}) => {
@@ -198,14 +196,12 @@ const configHandler = http.get('https://api.goatsofreforge.com/all-config-types/
 })
 
 // GET /environments/v1 - list environments
-const environmentsHandler = http.get('https://api.goatsofreforge.com/environments/v1', () => {
-  return HttpResponse.json({
+const environmentsHandler = http.get('https://api.goatsofreforge.com/environments/v1', () => HttpResponse.json({
     environments: [
       {id: '588', name: 'jeffrey', active: true, protected: false},
       {id: '143', name: 'Production', active: true, protected: false},
     ],
-  })
-})
+  }))
 
 // GET /evaluation-statistics/v1 - evaluation stats
 const evaluationStatsHandler = http.get('https://api.goatsofreforge.com/evaluation-statistics/v1', ({request}) => {

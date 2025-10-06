@@ -1,11 +1,10 @@
-import {http, HttpResponse} from 'msw'
+import {HttpResponse, http} from 'msw'
 import {setupServer} from 'msw/node'
 
 import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js'
 
 // GET /all-config-types/v1/download-all-envs - download all configs
-const downloadAllEnvsHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/download-all-envs', () => {
-  return HttpResponse.json({
+const downloadAllEnvsHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/download-all-envs', () => HttpResponse.json({
     configs: [
       {
         key: 'test.config',
@@ -40,7 +39,6 @@ const downloadAllEnvsHandler = http.get('https://api.goatsofreforge.com/all-conf
         },
       },
     ],
-  })
-})
+  }))
 
 export const server = setupServer(identityHandler, identityHandlerTestDomain, downloadAllEnvsHandler)

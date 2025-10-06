@@ -2,6 +2,7 @@ import {HttpResponse, http} from 'msw'
 import {setupServer} from 'msw/node'
 
 import type {JsonObj} from '../../src/result.js'
+
 import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js'
 
 const environmentResponse = {
@@ -27,9 +28,7 @@ export const downloadStub: JsonObj = {
 }
 
 // GET /environments/v1 - list environments
-const environmentsHandler = http.get('https://api.goatsofreforge.com/environments/v1', () => {
-  return HttpResponse.json(environmentResponse)
-})
+const environmentsHandler = http.get('https://api.goatsofreforge.com/environments/v1', () => HttpResponse.json(environmentResponse))
 
 // GET /all-config-types/v1/download - download config
 const downloadHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/download', ({request}) => {

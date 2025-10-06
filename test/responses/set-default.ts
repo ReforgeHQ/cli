@@ -1,4 +1,4 @@
-import {http, HttpResponse} from 'msw'
+import {HttpResponse, http} from 'msw'
 import {setupServer} from 'msw/node'
 
 import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js'
@@ -9,8 +9,7 @@ import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js
  */
 
 // GET /all-config-types/v1/metadata - list all configs
-const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/metadata', () => {
-  return HttpResponse.json({
+const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/metadata', () => HttpResponse.json({
     configs: [
       {
         key: 'feature-flag.simple',
@@ -67,25 +66,21 @@ const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-type
         description: 'Encryption key for secrets',
       },
     ],
-  })
-})
+  }))
 
 // GET /environments/v1 - list environments
-const environmentsHandler = http.get('https://api.goatsofreforge.com/environments/v1', () => {
-  return HttpResponse.json({
+const environmentsHandler = http.get('https://api.goatsofreforge.com/environments/v1', () => HttpResponse.json({
     environments: [
       {id: '5', name: 'Development', active: true, protected: false},
       {id: '6', name: 'Staging', active: true, protected: false},
       {id: '7', name: 'Production', active: true, protected: true},
     ],
-  })
-})
+  }))
 
 // GET /all-config-types/v1/config/:key - get encryption key config
 const encryptionKeyHandler = http.get(
   'https://api.goatsofreforge.com/all-config-types/v1/config/reforge.secrets.encryption.key',
-  () => {
-    return HttpResponse.json({
+  () => HttpResponse.json({
       key: 'reforge.secrets.encryption.key',
       type: 'config',
       valueType: 'string',
@@ -118,15 +113,13 @@ const encryptionKeyHandler = http.get(
           ],
         },
       ],
-    })
-  },
+    }),
 )
 
 // GET /all-config-types/v1/config/feature-flag.simple - get feature flag details (not encrypted)
 const featureFlagDetailsHandler = http.get(
   'https://api.goatsofreforge.com/all-config-types/v1/config/feature-flag.simple',
-  () => {
-    return HttpResponse.json({
+  () => HttpResponse.json({
       key: 'feature-flag.simple',
       type: 'feature_flag',
       valueType: 'bool',
@@ -141,15 +134,13 @@ const featureFlagDetailsHandler = http.get(
           },
         ],
       },
-    })
-  },
+    }),
 )
 
 // GET /all-config-types/v1/config/jeffreys.test.key.reforge - get string config details (not encrypted)
 const jeffreysTestKeyDetailsHandler = http.get(
   'https://api.goatsofreforge.com/all-config-types/v1/config/jeffreys.test.key.reforge',
-  () => {
-    return HttpResponse.json({
+  () => HttpResponse.json({
       key: 'jeffreys.test.key.reforge',
       type: 'config',
       valueType: 'string',
@@ -164,15 +155,13 @@ const jeffreysTestKeyDetailsHandler = http.get(
           },
         ],
       },
-    })
-  },
+    }),
 )
 
 // GET /all-config-types/v1/config/jeffreys.test.int - get int config details (not encrypted)
 const jeffreysTestIntDetailsHandler = http.get(
   'https://api.goatsofreforge.com/all-config-types/v1/config/jeffreys.test.int',
-  () => {
-    return HttpResponse.json({
+  () => HttpResponse.json({
       key: 'jeffreys.test.int',
       type: 'config',
       valueType: 'int',
@@ -187,13 +176,11 @@ const jeffreysTestIntDetailsHandler = http.get(
           },
         ],
       },
-    })
-  },
+    }),
 )
 
 // GET /all-config-types/v1/config/test.json - get json config details (not encrypted)
-const testJsonDetailsHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/config/test.json', () => {
-  return HttpResponse.json({
+const testJsonDetailsHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/config/test.json', () => HttpResponse.json({
     key: 'test.json',
     type: 'config',
     valueType: 'json',
@@ -208,14 +195,12 @@ const testJsonDetailsHandler = http.get('https://api.goatsofreforge.com/all-conf
         },
       ],
     },
-  })
-})
+  }))
 
 // GET /all-config-types/v1/config/robocop-secret - get robocop secret (has encrypted values)
 const robocopSecretHandler = http.get(
   'https://api.goatsofreforge.com/all-config-types/v1/config/robocop-secret',
-  () => {
-    return HttpResponse.json({
+  () => HttpResponse.json({
       key: 'robocop-secret',
       type: 'config',
       valueType: 'string',
@@ -232,8 +217,7 @@ const robocopSecretHandler = http.get(
           },
         ],
       },
-    })
-  },
+    }),
 )
 
 // POST /internal/ops/v1/set-default - set default value
@@ -246,23 +230,19 @@ const setDefaultHandler = http.post('https://api.goatsofreforge.com/internal/ops
   }
 
   // Check for invalid boolean values
-  if (body.configKey === 'feature-flag.simple') {
-    if (body.value?.string) {
+  if (body.configKey === 'feature-flag.simple' && body.value?.string) {
       // String value for boolean flag is invalid
       return HttpResponse.json(
         {error: `'${body.value.string}' is not a valid value for feature-flag.simple`},
         {status: 400},
       )
     }
-  }
 
   // Check for invalid int values
-  if (body.configKey === 'jeffreys.test.int') {
-    if (body.value?.int === undefined && body.value?.string !== undefined) {
+  if (body.configKey === 'jeffreys.test.int' && body.value?.int === undefined && body.value?.string !== undefined) {
       // Non-integer value for int config
       return HttpResponse.json({error: `Invalid default value for int: ${body.value.string}`}, {status: 400})
     }
-  }
 
   // Success response
   return HttpResponse.json({

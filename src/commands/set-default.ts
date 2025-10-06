@@ -117,6 +117,7 @@ export default class SetDefault extends APICommand {
     if (!secret.selected) {
       const configDetailsRequest = await this.apiClient.get(`/all-config-types/v1/config/${encodeURIComponent(key)}`)
       if (configDetailsRequest.ok) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const configDetails = configDetailsRequest.json as any
         this.verboseLog('Config details:', configDetails)
 

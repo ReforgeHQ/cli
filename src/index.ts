@@ -2,7 +2,7 @@ export {run} from '@oclif/core'
 import {Command, Flags} from '@oclif/core'
 
 import {Client} from './reforge-common/src/api/client.js'
-import {ProjectEnvId, getProjectEnvFromSdkKey} from './reforge-common/src/getProjectEnvFromSdkKey.js'
+import {ProjectEnvId} from './reforge-common/src/getProjectEnvFromSdkKey.js'
 import {JsonObj, Result} from './result.js'
 import rawGetClient, {unwrapRequest} from './util/get-client.js'
 

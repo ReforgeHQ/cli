@@ -5,10 +5,10 @@ import * as path from 'node:path'
 import type {JsonObj} from '../result.js'
 
 import {APICommand} from '../index.js'
+import {getProjectEnvFromSdkKey} from '../reforge-common/src/getProjectEnvFromSdkKey.js'
 import getEnvironment from '../ui/get-environment.js'
 import {checkmark} from '../util/color.js'
 import getClient from '../util/get-client.js'
-import {getProjectEnvFromSdkKey} from '../reforge-common/src/getProjectEnvFromSdkKey.js'
 
 export default class Download extends APICommand {
   static description = `Download a Datafile for a given environment

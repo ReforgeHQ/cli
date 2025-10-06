@@ -285,6 +285,187 @@ export default class Info extends APICommand {
     return this.transformEvaluationStatsForJson(statsPerEnv, environments, startTime, endTime)
   }
 
+  private formatValue(value: Record<string, unknown>, includeQuotes: boolean = true): string {
+    if (!value) return 'null'
+
+    // Handle encrypted values
+    if (value.decryptWith) {
+      return '[encrypted]'
+    }
+
+    // Handle confidential values
+    if (value.confidential) {
+      return '[confidential]'
+    }
+
+    // Handle weighted values (A/B testing)
+    if (Array.isArray(value.weightedValues)) {
+      const weights = value.weightedValues
+        .sort((a: Record<string, unknown>, b: Record<string, unknown>) => (b.weight as number) - (a.weight as number))
+        .map((wv: Record<string, unknown>) => {
+          const percent = (((wv.weight as number) / 1000) * 100).toFixed(1)
+          const val = this.extractSimpleValue(wv.value as Record<string, unknown>)
+          return `${percent}% ${val}`
+        })
+      return weights.join(', ')
+    }
+
+    // Handle provided values (ENV_VAR)
+    if (value.provided) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let str = `${(value.provided as any).lookup}`
+      if (value.confidential) {
+        str = `\`${str}\``
+      }
+      str += ' via ENV'
+      return str
+    }
+
+    // Handle simple values
+    // For config display, extract raw value without quotes
+    if (!includeQuotes) {
+      // Old format: {type: 'string', value: 'abc'}
+      if (value.type && value.value !== undefined) {
+        if (value.type === 'stringList' && Array.isArray(value.value)) {
+          return value.value.join(',')
+        }
+        return String(value.value)
+      }
+      // New format: {string: 'abc'}
+      if (value.string !== undefined) return String(value.string)
+      if (value.bool !== undefined) return String(value.bool)
+      if (value.int !== undefined || value.double !== undefined) return String(value.int || value.double)
+      if (value.stringList !== undefined && Array.isArray(value.stringList)) {
+        return value.stringList.join(',')
+      }
+      if (value.json !== undefined) return JSON.stringify(value.json)
+    }
+
+    return this.extractSimpleValue(value)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private hasNonTrivialCriteria(rule: any): boolean {
+    if (!rule.criteria || rule.criteria.length === 0) return false
+    // ALWAYS_TRUE is not a real criteria - treat it as unconditional
+    if (rule.criteria.length === 1 && rule.criteria[0].operator === 'ALWAYS_TRUE') return false
+    return true
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private parseConfig(config: any, environments: Environment[], url: string) {
+    const contents: string[] = []
+    const json: JsonObj = {}
+
+    // Collect all environment configs including default
+    const allEnvConfigs = []
+
+    // Add default config as a special environment
+    if (config.default) {
+      allEnvConfigs.push({
+        id: null,
+        name: 'Default',
+        rules: config.default.rules,
+      })
+    }
+
+    // Add environment-specific configs
+    if (config.environments) {
+      for (const envConfig of config.environments) {
+        const env = environments.find((e) => e.id === envConfig.id)
+        allEnvConfigs.push({
+          id: envConfig.id,
+          name: env?.name || envConfig.id,
+          rules: envConfig.rules,
+        })
+      }
+    }
+
+    // Display all configs
+    for (const envConfig of allEnvConfigs) {
+      let displayValue: string
+
+      if (!envConfig.rules || envConfig.rules.length === 0) {
+        // No rules means inherit from default
+        displayValue = '[inherit]'
+      } else if (envConfig.name === 'Default') {
+        // For Default environment, show the unconditional fallback value
+        // Find the ALWAYS_TRUE rule (usually the last rule)
+        const fallbackRule = envConfig.rules.find(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (r: any) => r.criteria?.length === 1 && r.criteria[0].operator === 'ALWAYS_TRUE',
+        )
+        displayValue = fallbackRule
+          ? this.formatValue(fallbackRule.value, false)
+          : this.formatValue(envConfig.rules[0].value, false)
+      } else {
+        // For non-default environments with rules
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const hasConditionalRules = envConfig.rules.some((r: any) => this.hasNonTrivialCriteria(r))
+
+        if (hasConditionalRules) {
+          // Has conditional rules - show [override] with the conditional value
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const overrideRule = envConfig.rules.find((r: any) => this.hasNonTrivialCriteria(r))
+          if (overrideRule) {
+            const overrideValue = this.formatValue(overrideRule.value, false)
+            displayValue = `[override] \`${overrideValue}\``
+          } else {
+            displayValue = '[see rules]'
+          }
+        } else {
+          // Only has unconditional rules (ALWAYS_TRUE) - show [see rules] to indicate env has custom config
+          displayValue = '[see rules]'
+        }
+      }
+
+      contents.push(`- ${envConfig.name}: ${displayValue}`)
+
+      const envUrl = envConfig.id ? `${url}?environment=${envConfig.id}` : `${url}?environment=undefined`
+      json[envConfig.name] = {
+        url: envUrl,
+      }
+
+      // Add value to JSON based on rule structure
+      if (envConfig.rules && envConfig.rules.length > 0) {
+        if (envConfig.name === 'Default') {
+          // For Default, show the unconditional fallback value
+          const fallbackRule = envConfig.rules.find(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (r: any) => r.criteria?.length === 1 && r.criteria[0].operator === 'ALWAYS_TRUE',
+          )
+          const valueToShow = fallbackRule ? fallbackRule.value.value : envConfig.rules[0].value.value
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ;(json[envConfig.name] as any).value = valueToShow
+        } else {
+          // For non-default environments
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const hasConditionalRules = envConfig.rules.some((r: any) => this.hasNonTrivialCriteria(r))
+
+          // Always show [see rules] for non-default envs with rules
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ;(json[envConfig.name] as any).value = '[see rules]'
+
+          // If there are conditional rules, also add override info
+          if (hasConditionalRules) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const overrideRule = envConfig.rules.find((r: any) => hasNonTrivialCriteria(r))
+            if (overrideRule) {
+              // Extract just the value without formatting
+              const overrideValue = overrideRule.value.value
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              ;(json[envConfig.name] as any).override = overrideValue
+            }
+          }
+        }
+      }
+    }
+
+    this.log(contents.join('\n').trim())
+
+    return json
+  }
+
   private transformEvaluationStatsForJson(
     statsPerEnv: JsonObj,
     environments: Environment[],
@@ -385,186 +566,5 @@ export default class Info extends APICommand {
     }
 
     return value
-  }
-
-  private formatValue(value: Record<string, unknown>, includeQuotes: boolean = true): string {
-    if (!value) return 'null'
-
-    // Handle encrypted values
-    if (value.decryptWith) {
-      return '[encrypted]'
-    }
-
-    // Handle confidential values
-    if (value.confidential) {
-      return '[confidential]'
-    }
-
-    // Handle weighted values (A/B testing)
-    if (Array.isArray(value.weightedValues)) {
-      const weights = value.weightedValues
-        .sort((a: Record<string, unknown>, b: Record<string, unknown>) => (b.weight as number) - (a.weight as number))
-        .map((wv: Record<string, unknown>) => {
-          const percent = (((wv.weight as number) / 1000) * 100).toFixed(1)
-          const val = this.extractSimpleValue(wv.value as Record<string, unknown>)
-          return `${percent}% ${val}`
-        })
-      return weights.join(', ')
-    }
-
-    // Handle provided values (ENV_VAR)
-    if (value.provided) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let str = `${(value.provided as any).lookup}`
-      if (value.confidential) {
-        str = `\`${str}\``
-      }
-      str += ' via ENV'
-      return str
-    }
-
-    // Handle simple values
-    // For config display, extract raw value without quotes
-    if (!includeQuotes) {
-      // Old format: {type: 'string', value: 'abc'}
-      if (value.type && value.value !== undefined) {
-        if (value.type === 'stringList' && Array.isArray(value.value)) {
-          return value.value.join(',')
-        }
-        return String(value.value)
-      }
-      // New format: {string: 'abc'}
-      if (value.string !== undefined) return String(value.string)
-      if (value.bool !== undefined) return String(value.bool)
-      if (value.int !== undefined || value.double !== undefined) return String(value.int || value.double)
-      if (value.stringList !== undefined && Array.isArray(value.stringList)) {
-        return value.stringList.join(',')
-      }
-      if (value.json !== undefined) return JSON.stringify(value.json)
-    }
-
-    return this.extractSimpleValue(value)
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private parseConfig(config: any, environments: Environment[], url: string) {
-    const contents: string[] = []
-    const json: JsonObj = {}
-
-    // Collect all environment configs including default
-    const allEnvConfigs = []
-
-    // Add default config as a special environment
-    if (config.default) {
-      allEnvConfigs.push({
-        id: null,
-        name: 'Default',
-        rules: config.default.rules,
-      })
-    }
-
-    // Add environment-specific configs
-    if (config.environments) {
-      for (const envConfig of config.environments) {
-        const env = environments.find((e) => e.id === envConfig.id)
-        allEnvConfigs.push({
-          id: envConfig.id,
-          name: env?.name || envConfig.id,
-          rules: envConfig.rules,
-        })
-      }
-    }
-
-    // Display all configs
-    for (const envConfig of allEnvConfigs) {
-      let displayValue: string
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const hasNonTrivialCriteria = (rule: any) => {
-        if (!rule.criteria || rule.criteria.length === 0) return false
-        // ALWAYS_TRUE is not a real criteria - treat it as unconditional
-        if (rule.criteria.length === 1 && rule.criteria[0].operator === 'ALWAYS_TRUE') return false
-        return true
-      }
-
-      if (!envConfig.rules || envConfig.rules.length === 0) {
-        // No rules means inherit from default
-        displayValue = '[inherit]'
-      } else if (envConfig.name === 'Default') {
-        // For Default environment, show the unconditional fallback value
-        // Find the ALWAYS_TRUE rule (usually the last rule)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const fallbackRule = envConfig.rules.find(
-          (r: any) => r.criteria?.length === 1 && r.criteria[0].operator === 'ALWAYS_TRUE',
-        )
-        displayValue = fallbackRule
-          ? this.formatValue(fallbackRule.value, false)
-          : this.formatValue(envConfig.rules[0].value, false)
-      } else {
-        // For non-default environments with rules
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const hasConditionalRules = envConfig.rules.some((r: any) => hasNonTrivialCriteria(r))
-
-        if (hasConditionalRules) {
-          // Has conditional rules - show [override] with the conditional value
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const overrideRule = envConfig.rules.find((r: any) => hasNonTrivialCriteria(r))
-          if (overrideRule) {
-            const overrideValue = this.formatValue(overrideRule.value, false)
-            displayValue = `[override] \`${overrideValue}\``
-          } else {
-            displayValue = '[see rules]'
-          }
-        } else {
-          // Only has unconditional rules (ALWAYS_TRUE) - show [see rules] to indicate env has custom config
-          displayValue = '[see rules]'
-        }
-      }
-
-      contents.push(`- ${envConfig.name}: ${displayValue}`)
-
-      const envUrl = envConfig.id ? `${url}?environment=${envConfig.id}` : `${url}?environment=undefined`
-      json[envConfig.name] = {
-        url: envUrl,
-      }
-
-      // Add value to JSON based on rule structure
-      if (envConfig.rules && envConfig.rules.length > 0) {
-        if (envConfig.name === 'Default') {
-          // For Default, show the unconditional fallback value
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const fallbackRule = envConfig.rules.find(
-            (r: any) => r.criteria?.length === 1 && r.criteria[0].operator === 'ALWAYS_TRUE',
-          )
-          const valueToShow = fallbackRule ? fallbackRule.value.value : envConfig.rules[0].value.value
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ;(json[envConfig.name] as any).value = valueToShow
-        } else {
-          // For non-default environments
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const hasConditionalRules = envConfig.rules.some((r: any) => hasNonTrivialCriteria(r))
-
-          // Always show [see rules] for non-default envs with rules
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ;(json[envConfig.name] as any).value = '[see rules]'
-
-          // If there are conditional rules, also add override info
-          if (hasConditionalRules) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const overrideRule = envConfig.rules.find((r: any) => hasNonTrivialCriteria(r))
-            if (overrideRule) {
-              // Extract just the value without formatting
-              const overrideValue = overrideRule.value.value
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              ;(json[envConfig.name] as any).override = overrideValue
-            }
-          }
-        }
-      }
-    }
-
-    this.log(contents.join('\n').trim())
-
-    return json
   }
 }

@@ -1,7 +1,6 @@
 import {expect, test} from '@oclif/test'
 
 import {resetClientCache} from '../../src/util/get-client.js'
-import {cleanupTestAuth, setupTestAuth} from '../test-auth-helper.js'
 import {
   confidentialKey,
   keyWithEvaluations,
@@ -10,6 +9,7 @@ import {
   secretKey,
   server,
 } from '../responses/info.js'
+import {cleanupTestAuth, setupTestAuth} from '../test-auth-helper.js'
 
 const keyDoesNotExist = 'this.does.not.exist'
 
