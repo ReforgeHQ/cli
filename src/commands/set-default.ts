@@ -39,7 +39,7 @@ export default class SetDefault extends APICommand {
   public async run(): Promise<JsonObj | void> {
     const {args, flags} = await this.parse(SetDefault)
 
-    const secret = parsedSecretFlags(flags)
+    let secret = parsedSecretFlags(flags)
 
     if (flags['env-var'] && flags.value) {
       return this.err('cannot specify both --env-var and --value')
@@ -103,6 +103,29 @@ export default class SetDefault extends APICommand {
     }
 
     this.verboseLog('Selected config:', config)
+
+    // Check if existing config has encrypted values
+    if (!secret.selected) {
+      const configDetailsRequest = await this.apiClient.get(`/all-config-types/v1/config/${encodeURIComponent(key)}`)
+      if (configDetailsRequest.ok) {
+        const configDetails = configDetailsRequest.json as any
+        this.verboseLog('Config details:', configDetails)
+
+        // Check if any existing rules have encrypted values
+        if (configDetails.default?.rules) {
+          for (const rule of configDetails.default.rules) {
+            if (rule.value?.decryptWith) {
+              this.verboseLog('Auto-detected encryption from existing config')
+              secret = {
+                keyName: secret.keyName,
+                selected: true,
+              }
+              break
+            }
+          }
+        }
+      }
+    }
 
     // Get the environment
     const environment = await getEnvironment({

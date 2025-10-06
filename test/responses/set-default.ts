@@ -122,6 +122,98 @@ const encryptionKeyHandler = http.get(
   },
 )
 
+// GET /all-config-types/v1/config/feature-flag.simple - get feature flag details (not encrypted)
+const featureFlagDetailsHandler = http.get(
+  'https://api.staging-prefab.cloud/all-config-types/v1/config/feature-flag.simple',
+  () => {
+    return HttpResponse.json({
+      key: 'feature-flag.simple',
+      type: 'feature_flag',
+      valueType: 'bool',
+      default: {
+        rules: [
+          {
+            criteria: [],
+            value: {
+              type: 'bool',
+              value: false,
+            },
+          },
+        ],
+      },
+    })
+  },
+)
+
+// GET /all-config-types/v1/config/jeffreys.test.key.reforge - get string config details (not encrypted)
+const jeffreysTestKeyDetailsHandler = http.get(
+  'https://api.staging-prefab.cloud/all-config-types/v1/config/jeffreys.test.key.reforge',
+  () => {
+    return HttpResponse.json({
+      key: 'jeffreys.test.key.reforge',
+      type: 'config',
+      valueType: 'string',
+      default: {
+        rules: [
+          {
+            criteria: [],
+            value: {
+              type: 'string',
+              value: 'default value',
+            },
+          },
+        ],
+      },
+    })
+  },
+)
+
+// GET /all-config-types/v1/config/jeffreys.test.int - get int config details (not encrypted)
+const jeffreysTestIntDetailsHandler = http.get(
+  'https://api.staging-prefab.cloud/all-config-types/v1/config/jeffreys.test.int',
+  () => {
+    return HttpResponse.json({
+      key: 'jeffreys.test.int',
+      type: 'config',
+      valueType: 'int',
+      default: {
+        rules: [
+          {
+            criteria: [],
+            value: {
+              type: 'int',
+              value: 42,
+            },
+          },
+        ],
+      },
+    })
+  },
+)
+
+// GET /all-config-types/v1/config/test.json - get json config details (not encrypted)
+const testJsonDetailsHandler = http.get(
+  'https://api.staging-prefab.cloud/all-config-types/v1/config/test.json',
+  () => {
+    return HttpResponse.json({
+      key: 'test.json',
+      type: 'config',
+      valueType: 'json',
+      default: {
+        rules: [
+          {
+            criteria: [],
+            value: {
+              type: 'json',
+              value: {test: 'data'},
+            },
+          },
+        ],
+      },
+    })
+  },
+)
+
 // GET /all-config-types/v1/config/robocop-secret - get robocop secret (has encrypted values)
 const robocopSecretHandler = http.get(
   'https://api.staging-prefab.cloud/all-config-types/v1/config/robocop-secret',
@@ -187,6 +279,10 @@ export const server = setupServer(
   metadataHandler,
   environmentsHandler,
   encryptionKeyHandler,
+  featureFlagDetailsHandler,
+  jeffreysTestKeyDetailsHandler,
+  jeffreysTestIntDetailsHandler,
+  testJsonDetailsHandler,
   robocopSecretHandler,
   setDefaultHandler,
 )
