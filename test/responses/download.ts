@@ -2,7 +2,7 @@ import {HttpResponse, http} from 'msw'
 import {setupServer} from 'msw/node'
 
 import type {JsonObj} from '../../src/result.js'
-import {identityHandler} from '../test-auth-helper.js'
+import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js'
 
 const environmentResponse = {
   environments: [
@@ -43,4 +43,4 @@ const downloadHandler = http.get('https://api.staging-prefab.cloud/all-config-ty
   return HttpResponse.json({message: 'something went wrong'}, {status: 500})
 })
 
-export const server = setupServer(identityHandler, environmentsHandler, downloadHandler)
+export const server = setupServer(identityHandler, identityHandlerTestDomain, environmentsHandler, downloadHandler)

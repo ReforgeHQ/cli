@@ -1,7 +1,7 @@
 import {http, HttpResponse} from 'msw'
 import {setupServer} from 'msw/node'
 
-import {identityHandler} from '../test-auth-helper.js'
+import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js'
 
 /**
  * Mock responses for get command tests
@@ -85,4 +85,10 @@ const evaluationHandler = http.get('https://api.staging-prefab.cloud/evaluation/
   return HttpResponse.json({error: 'Config not found'}, {status: 404})
 })
 
-export const server = setupServer(identityHandler, metadataHandler, environmentsHandler, evaluationHandler)
+export const server = setupServer(
+  identityHandler,
+  identityHandlerTestDomain,
+  metadataHandler,
+  environmentsHandler,
+  evaluationHandler,
+)

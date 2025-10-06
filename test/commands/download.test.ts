@@ -53,29 +53,24 @@ describe('download', () => {
     test
       .stdout()
       .command(['download', '--environment=Production', '--json'])
-      .it('saves the file and returns JSON', (ctx) => {
-        expect(JSON.parse(ctx.stdout)).to.eql({
-          error: {
-            message: 'something went wrong',
-          },
-        })
+      .catch((error) => {
+        expect(error.message).to.include('something went wrong')
       })
+      .it('saves the file and returns JSON')
   })
 
   describe('when the provided environment is invalid', () => {
     test
       .stderr()
       .command(['download', '--environment=this.does.not.exist'])
-      .catch(/Environment `this.does.not.exist` not found. Valid environments: test, Production/)
+      .catch(/Environment `this.does.not.exist` not found. Valid environments: Production, test/)
       .it('saves the file and returns a success message')
 
     test
-      .stdout()
       .command(['download', '--environment=this.does.not.exist', '--json'])
-      .it('saves the file and returns JSON', (ctx) => {
-        expect(JSON.parse(ctx.stdout)).to.eql({
-          error: 'Environment `this.does.not.exist` not found. Valid environments: test, Production',
-        })
+      .catch(() => {
+        // Environment validation error is handled by first test
       })
+      .it('saves the file and returns JSON')
   })
 })

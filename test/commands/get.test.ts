@@ -18,27 +18,27 @@ describe('get', () => {
   })
   test
     .stdout()
-    .command(['get', validKey])
+    .command(['get', validKey, '--environment=[default]'])
     .it('returns a value for a valid name', (ctx) => {
       expect(ctx.stdout).to.eql("[ 'a', 'b', 'c' ]\n")
     })
 
   test
     .stdout()
-    .command(['get', validKey, '--json'])
+    .command(['get', validKey, '--json', '--environment=[default]'])
     .it('returns JSON for a value for a valid name', (ctx) => {
       expect(JSON.parse(ctx.stdout)).to.eql({[validKey]: ['a', 'b', 'c']})
     })
 
   test
     .stdout()
-    .command(['get', secretKey])
+    .command(['get', secretKey, '--environment=[default]'])
     .it('decrypts a secret', (ctx) => {
       expect(ctx.stdout).to.eql('hello.world\n')
     })
 
   test
-    .command(['get', 'this-does-not-exist'])
+    .command(['get', 'this-does-not-exist', '--environment=[default]'])
     .catch((error) => {
       expect(error.message).to.eql(`this-does-not-exist does not exist`)
     })
@@ -47,7 +47,7 @@ describe('get', () => {
   test
     .command(['get', '--no-interactive'])
     .catch((error) => {
-      expect(error.message).to.eql("'name' argument is required when interactive mode isn't available.")
+      expect(error.message).to.eql('Key is required')
     })
     .it("shows an error if no key is provided when things aren't interactive")
 })

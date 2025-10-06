@@ -1,7 +1,7 @@
 import {http, HttpResponse} from 'msw'
 import {setupServer} from 'msw/node'
 
-import {identityHandler} from '../test-auth-helper.js'
+import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js'
 
 /**
  * Mock responses for set-default command tests
@@ -276,6 +276,7 @@ const setDefaultHandler = http.post('https://api.staging-prefab.cloud/internal/o
 
 export const server = setupServer(
   identityHandler,
+  identityHandlerTestDomain,
   metadataHandler,
   environmentsHandler,
   encryptionKeyHandler,
