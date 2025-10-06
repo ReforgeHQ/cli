@@ -89,7 +89,11 @@ export default class Mcp extends BaseCommand {
     if (existsSync(configPath)) {
       try {
         const content = readFileSync(configPath, 'utf8')
-        editorConfig = parseJSON(content)
+        const parsed = parseJSON(content)
+        editorConfig = (parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {}) as Record<
+          string,
+          unknown
+        >
         this.log(`✓ Read existing configuration`)
       } catch (error) {
         return this.error(`Failed to parse configuration file: ${error}`)
