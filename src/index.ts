@@ -113,13 +113,6 @@ export abstract class BaseCommand extends Command {
 export abstract class APICommand extends BaseCommand {
   static baseFlags = {
     ...globalFlags,
-    'sdk-key': Flags.string({
-      description: 'Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)',
-      env: 'REFORGE_SDK_KEY',
-      helpGroup: 'GLOBAL',
-      hidden: true,
-      required: false,
-    }),
     profile: Flags.string({
       char: 'p',
       description: 'Profile to use (defaults to ENV var REFORGE_PROFILE or "default")',
@@ -149,15 +142,10 @@ export abstract class APICommand extends BaseCommand {
 
     const {flags} = await this.parse()
 
-    this.rawApiClient = await rawGetClient(this, flags['sdk-key'], flags.profile)
+    this.rawApiClient = await rawGetClient(this, undefined, flags.profile)
 
-    // If we have an SDK key, use it to get the environment
-    if (flags['sdk-key']) {
-      this.currentEnvironment = getProjectEnvFromSdkKey(flags['sdk-key'])
-    } else {
-      // For JWT-based auth, we'll need to get environment info from the token
-      // For now, set a placeholder - this should be enhanced later
-      this.currentEnvironment = {id: 'unknown', projectId: 0}
-    }
+    // For JWT-based auth, we'll need to get environment info from the token
+    // For now, set a placeholder - this should be enhanced later
+    this.currentEnvironment = {id: 'unknown', projectId: 0}
   }
 }
