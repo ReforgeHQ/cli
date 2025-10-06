@@ -81,11 +81,16 @@ export abstract class BaseCommand extends Command {
   }
 
   protected async catch(err: {exitCode?: number; code?: string} & Error): Promise<void> {
-    // Override oclif's default error handling to suppress stack traces
-    // Log the error message without stack trace
-    this.log(err.message)
+    // Override oclif's default error handling to suppress stack traces in production
+    // but preserve error messages for tests
 
-    // Exit without calling super.catch which would show the stack trace
+    // In test environment, re-throw with message
+    if (process.env.NODE_ENV === 'test') {
+      throw err
+    }
+
+    // In production, log the error message without stack trace
+    this.log(err.message)
     this.exit(err.exitCode || 1)
   }
 
