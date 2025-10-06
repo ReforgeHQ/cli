@@ -2,6 +2,7 @@ import {expect, test} from '@oclif/test'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 
+import {resetClientCache} from '../../src/util/get-client.js'
 import {cleanupTestAuth, setupTestAuth} from '../test-auth-helper.js'
 import {server} from '../responses/generate.js'
 
@@ -15,6 +16,7 @@ describe('generate', () => {
 
   afterEach(() => {
     server.resetHandlers()
+    resetClientCache()
     try {
       // Clean up any test config files (could be file or directory)
       if (fs.existsSync(configPath)) {

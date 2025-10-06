@@ -139,7 +139,7 @@ const confidentialConfig = {
 }
 
 // GET /all-config-types/v1/metadata - list all configs
-const metadataHandler = http.get('https://api.staging-prefab.cloud/all-config-types/v1/metadata', () => {
+const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/metadata', () => {
   return HttpResponse.json({
     configs: [
       {key: keyWithEvaluations, type: 'config', valueType: 'string_list', version: 1, id: 1, name: 'My String List', description: ''},
@@ -151,7 +151,7 @@ const metadataHandler = http.get('https://api.staging-prefab.cloud/all-config-ty
 })
 
 // GET /all-config-types/v1/config/:key - get full config
-const configHandler = http.get('https://api.staging-prefab.cloud/all-config-types/v1/config/:key', ({params}) => {
+const configHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/config/:key', ({params}) => {
   const key = params.key as string
 
   if (key === keyWithEvaluations) {
@@ -174,7 +174,7 @@ const configHandler = http.get('https://api.staging-prefab.cloud/all-config-type
 })
 
 // GET /environments/v1 - list environments
-const environmentsHandler = http.get('https://api.staging-prefab.cloud/environments/v1', () => {
+const environmentsHandler = http.get('https://api.goatsofreforge.com/environments/v1', () => {
   return HttpResponse.json({
     environments: [
       {id: '588', name: 'jeffrey', active: true, protected: false},
@@ -184,7 +184,7 @@ const environmentsHandler = http.get('https://api.staging-prefab.cloud/environme
 })
 
 // GET /evaluation-statistics/v1 - evaluation stats
-const evaluationStatsHandler = http.get('https://api.staging-prefab.cloud/evaluation-statistics/v1', ({request}) => {
+const evaluationStatsHandler = http.get('https://api.goatsofreforge.com/evaluation-statistics/v1', ({request}) => {
   const url = new URL(request.url)
   const key = url.searchParams.get('key')
   const envId = url.searchParams.get('projectEnvId')

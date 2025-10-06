@@ -1,7 +1,7 @@
 import {http, HttpResponse} from 'msw'
 import {setupServer} from 'msw/node'
 
-import {identityHandler} from '../test-auth-helper.js'
+import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js'
 
 /**
  * Mock responses for list command tests
@@ -9,7 +9,7 @@ import {identityHandler} from '../test-auth-helper.js'
  */
 
 // GET /all-config-types/v1/metadata - list all configs
-const metadataHandler = http.get('https://api.staging-prefab.cloud/all-config-types/v1/metadata', () => {
+const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/metadata', () => {
   return HttpResponse.json({
     configs: [
       {
@@ -52,4 +52,4 @@ const metadataHandler = http.get('https://api.staging-prefab.cloud/all-config-ty
   })
 })
 
-export const server = setupServer(identityHandler, metadataHandler)
+export const server = setupServer(identityHandler, identityHandlerTestDomain, metadataHandler)

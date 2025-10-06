@@ -5,7 +5,7 @@ import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js
 import {CannedResponses, getCannedResponse} from '../test-helper.js'
 
 const cannedResponses: CannedResponses = {
-  'https://api.staging-prefab.cloud/api/v2/config/assign-variant': [
+  'https://api.goatsofreforge.com/api/v2/config/assign-variant': [
     [
       {configKey: 'feature-flag.simple', variant: {bool: 'true'}},
       {response: {message: '', newId: '17002327855857830'}},
@@ -39,7 +39,7 @@ const cannedResponses: CannedResponses = {
       400,
     ],
   ],
-  'https://api.staging-prefab.cloud/api/v2/config/remove-variant': [
+  'https://api.goatsofreforge.com/api/v2/config/remove-variant': [
     [
       {configKey: 'jeffreys.test.key.reforge', variant: {string: 'my.override'}},
       {message: '', newId: '17545727831235982'},
@@ -49,7 +49,7 @@ const cannedResponses: CannedResponses = {
 }
 
 // GET /all-config-types/v1/metadata - list all configs
-const metadataHandler = http.get('https://api.staging-prefab.cloud/all-config-types/v1/metadata', () => {
+const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/metadata', () => {
   return HttpResponse.json({
     configs: [
       {
@@ -93,7 +93,7 @@ const metadataHandler = http.get('https://api.staging-prefab.cloud/all-config-ty
 })
 
 // GET /environments/v1 - list environments
-const environmentsHandler = http.get('https://api.staging-prefab.cloud/environments/v1', () => {
+const environmentsHandler = http.get('https://api.goatsofreforge.com/environments/v1', () => {
   return HttpResponse.json({
     environments: [
       {id: '5', name: 'Development'},
@@ -104,7 +104,7 @@ const environmentsHandler = http.get('https://api.staging-prefab.cloud/environme
 })
 
 // POST /internal/ops/v1/assign-variant - set override
-const assignVariantHandler = http.post('https://api.staging-prefab.cloud/internal/ops/v1/assign-variant', async ({request}) => {
+const assignVariantHandler = http.post('https://api.goatsofreforge.com/internal/ops/v1/assign-variant', async ({request}) => {
   const body = (await request.json()) as any
 
   // Check for invalid double value (NaN becomes null in JSON)
@@ -122,7 +122,7 @@ const assignVariantHandler = http.post('https://api.staging-prefab.cloud/interna
 })
 
 // POST /internal/ops/v1/remove-variant - remove override
-const removeVariantHandler = http.post('https://api.staging-prefab.cloud/internal/ops/v1/remove-variant', async ({request}) => {
+const removeVariantHandler = http.post('https://api.goatsofreforge.com/internal/ops/v1/remove-variant', async ({request}) => {
   const body = (await request.json()) as any
 
   // Check if config has an override (jeffreys.test.key.reforge does, my-double-key doesn't)
@@ -146,8 +146,8 @@ export const server = setupServer(
   environmentsHandler,
   assignVariantHandler,
   removeVariantHandler,
-  http.get('https://api.staging-prefab.cloud/api/v2/configs/0', () => passthrough()),
-  http.post('https://api.staging-prefab.cloud/api/v2/*', async ({request}) =>
+  http.get('https://api.goatsofreforge.com/api/v2/configs/0', () => passthrough()),
+  http.post('https://api.goatsofreforge.com/api/v2/*', async ({request}) =>
     getCannedResponse(request, cannedResponses).catch(console.error),
   ),
 )

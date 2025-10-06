@@ -9,7 +9,7 @@ import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js
  */
 
 // GET /all-config-types/v1/metadata - list all configs
-const metadataHandler = http.get('https://api.staging-prefab.cloud/all-config-types/v1/metadata', () => {
+const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/metadata', () => {
   return HttpResponse.json({
     configs: [
       {
@@ -35,14 +35,14 @@ const metadataHandler = http.get('https://api.staging-prefab.cloud/all-config-ty
 })
 
 // GET /environments/v1 - list environments
-const environmentsHandler = http.get('https://api.staging-prefab.cloud/environments/v1', () => {
+const environmentsHandler = http.get('https://api.goatsofreforge.com/environments/v1', () => {
   return HttpResponse.json({
     environments: [{id: '', name: '[default]', active: true, protected: false}],
   })
 })
 
 // GET /evaluation/v1/eval - evaluate a config
-const evaluationHandler = http.get('https://api.staging-prefab.cloud/evaluation/v1/eval', ({request}) => {
+const evaluationHandler = http.get('https://api.goatsofreforge.com/evaluation/v1/eval', ({request}) => {
   const url = new URL(request.url)
   const key = url.searchParams.get('key')
 

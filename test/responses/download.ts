@@ -27,12 +27,12 @@ export const downloadStub: JsonObj = {
 }
 
 // GET /environments/v1 - list environments
-const environmentsHandler = http.get('https://api.staging-prefab.cloud/environments/v1', () => {
+const environmentsHandler = http.get('https://api.goatsofreforge.com/environments/v1', () => {
   return HttpResponse.json(environmentResponse)
 })
 
 // GET /all-config-types/v1/download - download config
-const downloadHandler = http.get('https://api.staging-prefab.cloud/all-config-types/v1/download', ({request}) => {
+const downloadHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/download', ({request}) => {
   const url = new URL(request.url)
   const envId = url.searchParams.get('envId')
 

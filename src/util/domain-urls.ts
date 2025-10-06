@@ -9,7 +9,7 @@ export const getLaunchApiUrl = (domain?: string): string => {
   }
 
   const actualDomain = domain || getDomain()
-  return `https://launch.${actualDomain}`
+  return `https://api.${actualDomain}`
 }
 
 export const getIdApiUrl = (domain?: string): string => {

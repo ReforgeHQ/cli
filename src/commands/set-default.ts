@@ -53,6 +53,15 @@ export default class SetDefault extends APICommand {
       console.warn("Note: --confidential is implied when using --secret, so you don't need to specify both.")
     }
 
+    // Validate required arguments before making API calls
+    if (!args.name && !isInteractive(flags)) {
+      return this.err("'name' argument is required when interactive mode isn't available.")
+    }
+
+    if (!flags.environment && !isInteractive(flags)) {
+      return this.err("'environment' is required when interactive mode isn't available.")
+    }
+
     // Fetch all configs from metadata endpoint
     const metadataRequest = await this.apiClient.get('/all-config-types/v1/metadata')
 

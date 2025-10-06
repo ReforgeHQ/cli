@@ -1,5 +1,6 @@
 import {expect, test} from '@oclif/test'
 
+import {resetClientCache} from '../../src/util/get-client.js'
 import {cleanupTestAuth, setupTestAuth} from '../test-auth-helper.js'
 import {server} from '../responses/create.js'
 
@@ -8,7 +9,10 @@ describe('create', () => {
     setupTestAuth()
     server.listen()
   })
-  afterEach(() => server.resetHandlers())
+  afterEach(() => {
+    server.resetHandlers()
+    resetClientCache()
+  })
   after(() => {
     server.close()
     cleanupTestAuth()

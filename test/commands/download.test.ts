@@ -2,6 +2,7 @@ import {expect, test} from '@oclif/test'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 
+import {resetClientCache} from '../../src/util/get-client.js'
 import {cleanupTestAuth, setupTestAuth} from '../test-auth-helper.js'
 import {downloadStub, server} from '../responses/download.js'
 
@@ -15,7 +16,10 @@ describe('download', () => {
     fs.rmSync(expectedFileName, {force: true})
     server.listen()
   })
-  afterEach(() => server.resetHandlers())
+  afterEach(() => {
+    server.resetHandlers()
+    resetClientCache()
+  })
   after(() => {
     server.close()
     cleanupTestAuth()

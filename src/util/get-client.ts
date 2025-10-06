@@ -2,6 +2,7 @@ import type {JsonObj, RequestResult} from '../result.js'
 
 import {APICommand} from '../index.js'
 import {Client} from '../reforge-common/src/api/client.js'
+import {getLaunchApiUrl} from '../util/domain-urls.js'
 import jsonMaybe from '../util/json-maybe.js'
 import {introspectToken} from '../util/oauth-client.js'
 import {getActiveProfile, loadAuthConfig, loadTokens} from '../util/token-storage.js'
@@ -9,6 +10,11 @@ import version from '../version.js'
 
 let clientInstance: Client | undefined
 let cachedWorkspaceId: string | undefined
+
+export const resetClientCache = () => {
+  clientInstance = undefined
+  cachedWorkspaceId = undefined
+}
 
 const getClient = async (command: APICommand, sdkKey?: string, profile?: string) => {
   // If client exists, still set workspaceId on command if available
@@ -80,7 +86,7 @@ const getClient = async (command: APICommand, sdkKey?: string, profile?: string)
   clientInstance = new Client({
     jwt,
     sdkKey,
-    apiUrl: process.env.REFORGE_API_URL,
+    apiUrl: getLaunchApiUrl(),
     clientIdentifier: `cli-${version}`,
     log: command.verboseLog,
   })
