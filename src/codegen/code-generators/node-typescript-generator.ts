@@ -34,7 +34,7 @@ export class NodeTypeScriptGenerator extends BaseTypescriptGenerator {
     type ContextObj = Record<string, Record<string, unknown>>
 
     export class ReforgeTypesafeNode {
-      constructor(private reforge: Reforge) { }
+      constructor(public reforge: Reforge) { }
 
       get<K extends keyof TypedNodeServerConfigurationRaw>(key: K, contexts?: Contexts | ContextObj): TypedNodeServerConfigurationRaw[K] {
         return this.reforge.get(key, contexts) as TypedNodeServerConfigurationRaw[K]
