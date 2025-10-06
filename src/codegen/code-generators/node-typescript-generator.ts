@@ -36,8 +36,8 @@ export class NodeTypeScriptGenerator extends BaseTypescriptGenerator {
     export class ReforgeTypesafeNode {
       constructor(private reforge: Reforge) { }
 
-      async get<K extends keyof TypedNodeServerConfigurationRaw>(key: K, contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationRaw[K]> {
-        return this.reforge.get(key, contexts) as Promise<TypedNodeServerConfigurationRaw[K]>
+      get<K extends keyof TypedNodeServerConfigurationRaw>(key: K, contexts?: Contexts | ContextObj): TypedNodeServerConfigurationRaw[K] {
+        return this.reforge.get(key, contexts) as TypedNodeServerConfigurationRaw[K]
       }
 
       ${this.generateAccessorMethods().join('\n\n      ') || '// No methods generated'}
@@ -78,15 +78,15 @@ export class NodeTypeScriptGenerator extends BaseTypescriptGenerator {
         const returnValue = new ZodToTypescriptReturnValueMapper().resolveType(config.schema)
 
         return stripIndent`
-          async ${methodName}(contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationAccessor['${config.key}']> {
-                  const raw = await this.get('${config.key}', contexts)
+          ${methodName}(contexts?: Contexts | ContextObj): TypedNodeServerConfigurationAccessor['${config.key}'] {
+                  const raw = this.get('${config.key}', contexts)
                   return ${returnValue}
                 }
           `
       }
 
       return stripIndent`
-        async ${methodName}(contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationAccessor['${config.key}']> {
+        ${methodName}(contexts?: Contexts | ContextObj): TypedNodeServerConfigurationAccessor['${config.key}'] {
                 return this.get('${config.key}', contexts)
               }
           `

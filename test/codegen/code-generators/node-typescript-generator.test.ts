@@ -310,8 +310,8 @@ describe('NodeTypeScriptGenerator', () => {
       export class ReforgeTypesafeNode {
         constructor(private reforge: Reforge) { }
 
-        async get<K extends keyof TypedNodeServerConfigurationRaw>(key: K, contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationRaw[K]> {
-          return this.reforge.get(key, contexts) as Promise<TypedNodeServerConfigurationRaw[K]>
+        get<K extends keyof TypedNodeServerConfigurationRaw>(key: K, contexts?: Contexts | ContextObj): TypedNodeServerConfigurationRaw[K] {
+          return this.reforge.get(key, contexts) as TypedNodeServerConfigurationRaw[K]
         }
 
         // No methods generated
@@ -395,15 +395,15 @@ describe('NodeTypeScriptGenerator', () => {
       export class ReforgeTypesafeNode {
         constructor(private reforge: Reforge) { }
 
-        async get<K extends keyof TypedNodeServerConfigurationRaw>(key: K, contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationRaw[K]> {
-          return this.reforge.get(key, contexts) as Promise<TypedNodeServerConfigurationRaw[K]>
+        get<K extends keyof TypedNodeServerConfigurationRaw>(key: K, contexts?: Contexts | ContextObj): TypedNodeServerConfigurationRaw[K] {
+          return this.reforge.get(key, contexts) as TypedNodeServerConfigurationRaw[K]
         }
 
-        async config1(contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationAccessor['config1']> {
+        config1(contexts?: Contexts | ContextObj): TypedNodeServerConfigurationAccessor['config1'] {
           return this.get('config1', contexts)
         }
 
-        async flag1(contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationAccessor['flag1']> {
+        flag1(contexts?: Contexts | ContextObj): TypedNodeServerConfigurationAccessor['flag1'] {
           return this.get('flag1', contexts)
         }
       }
@@ -440,12 +440,12 @@ describe('NodeTypeScriptGenerator', () => {
       export class ReforgeTypesafeNode {
         constructor(private reforge: Reforge) { }
 
-        async get<K extends keyof TypedNodeServerConfigurationRaw>(key: K, contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationRaw[K]> {
-          return this.reforge.get(key, contexts) as Promise<TypedNodeServerConfigurationRaw[K]>
+        get<K extends keyof TypedNodeServerConfigurationRaw>(key: K, contexts?: Contexts | ContextObj): TypedNodeServerConfigurationRaw[K] {
+          return this.reforge.get(key, contexts) as TypedNodeServerConfigurationRaw[K]
         }
 
-        async config1(contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationAccessor['config1']> {
-          const raw = await this.get('config1', contexts)
+        config1(contexts?: Contexts | ContextObj): TypedNodeServerConfigurationAccessor['config1'] {
+          const raw = this.get('config1', contexts)
           return (params) => Mustache.render(raw ?? "", params)
         }
       }
@@ -482,11 +482,11 @@ describe('NodeTypeScriptGenerator', () => {
       export class ReforgeTypesafeNode {
         constructor(private reforge: Reforge) { }
 
-        async get<K extends keyof TypedNodeServerConfigurationRaw>(key: K, contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationRaw[K]> {
-          return this.reforge.get(key, contexts) as Promise<TypedNodeServerConfigurationRaw[K]>
+        get<K extends keyof TypedNodeServerConfigurationRaw>(key: K, contexts?: Contexts | ContextObj): TypedNodeServerConfigurationRaw[K] {
+          return this.reforge.get(key, contexts) as TypedNodeServerConfigurationRaw[K]
         }
 
-        async config1(contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationAccessor['config1']> {
+        config1(contexts?: Contexts | ContextObj): TypedNodeServerConfigurationAccessor['config1'] {
           return this.get('config1', contexts)
         }
       }
@@ -529,15 +529,15 @@ describe('NodeTypeScriptGenerator', () => {
       export class ReforgeTypesafeNode {
         constructor(private reforge: Reforge) { }
 
-        async get<K extends keyof TypedNodeServerConfigurationRaw>(key: K, contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationRaw[K]> {
-          return this.reforge.get(key, contexts) as Promise<TypedNodeServerConfigurationRaw[K]>
+        get<K extends keyof TypedNodeServerConfigurationRaw>(key: K, contexts?: Contexts | ContextObj): TypedNodeServerConfigurationRaw[K] {
+          return this.reforge.get(key, contexts) as TypedNodeServerConfigurationRaw[K]
         }
 
-        async _1Config(contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationAccessor['1config']> {
+        _1Config(contexts?: Contexts | ContextObj): TypedNodeServerConfigurationAccessor['1config'] {
           return this.get('1config', contexts)
         }
 
-        async _1Flag(contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationAccessor['1flag']> {
+        _1Flag(contexts?: Contexts | ContextObj): TypedNodeServerConfigurationAccessor['1flag'] {
           return this.get('1flag', contexts)
         }
       }
@@ -604,31 +604,31 @@ describe('NodeTypeScriptGenerator', () => {
       export class ReforgeTypesafeNode {
         constructor(private reforge: Reforge) { }
 
-        async get<K extends keyof TypedNodeServerConfigurationRaw>(key: K, contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationRaw[K]> {
-          return this.reforge.get(key, contexts) as Promise<TypedNodeServerConfigurationRaw[K]>
+        get<K extends keyof TypedNodeServerConfigurationRaw>(key: K, contexts?: Contexts | ContextObj): TypedNodeServerConfigurationRaw[K] {
+          return this.reforge.get(key, contexts) as TypedNodeServerConfigurationRaw[K]
         }
 
-        async dotNotationKey(contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationAccessor['dot.notation.key']> {
+        dotNotationKey(contexts?: Contexts | ContextObj): TypedNodeServerConfigurationAccessor['dot.notation.key'] {
           return this.get('dot.notation.key', contexts)
         }
 
-        async kebabCaseKey(contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationAccessor['kebab-case-key']> {
+        kebabCaseKey(contexts?: Contexts | ContextObj): TypedNodeServerConfigurationAccessor['kebab-case-key'] {
           return this.get('kebab-case-key', contexts)
         }
 
-        async keyWithSpecial(contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationAccessor['key_with_$_special']> {
+        keyWithSpecial(contexts?: Contexts | ContextObj): TypedNodeServerConfigurationAccessor['key_with_$_special'] {
           return this.get('key_with_$_special', contexts)
         }
 
-        async keyWithSlashes(contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationAccessor['key/with/slashes']> {
+        keyWithSlashes(contexts?: Contexts | ContextObj): TypedNodeServerConfigurationAccessor['key/with/slashes'] {
           return this.get('key/with/slashes', contexts)
         }
 
-        async snakeCaseKey(contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationAccessor['snake_case_key']> {
+        snakeCaseKey(contexts?: Contexts | ContextObj): TypedNodeServerConfigurationAccessor['snake_case_key'] {
           return this.get('snake_case_key', contexts)
         }
 
-        async upperCaseKey(contexts?: Contexts | ContextObj): Promise<TypedNodeServerConfigurationAccessor['UPPER_CASE_KEY']> {
+        upperCaseKey(contexts?: Contexts | ContextObj): TypedNodeServerConfigurationAccessor['UPPER_CASE_KEY'] {
           return this.get('UPPER_CASE_KEY', contexts)
         }
       }`)
