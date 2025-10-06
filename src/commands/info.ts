@@ -449,7 +449,7 @@ export default class Info extends APICommand {
           // If there are conditional rules, also add override info
           if (hasConditionalRules) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const overrideRule = envConfig.rules.find((r: any) => hasNonTrivialCriteria(r))
+            const overrideRule = envConfig.rules.find((r: any) => this.hasNonTrivialCriteria(r))
             if (overrideRule) {
               // Extract just the value without formatting
               const overrideValue = overrideRule.value.value
