@@ -1,11 +1,18 @@
 import {expect, test} from '@oclif/test'
 
+import {cleanupTestAuth, setupTestAuth} from '../test-auth-helper.js'
 import {server} from '../responses/set-default.js'
 
 describe('set-default', () => {
-  before(() => server.listen())
+  before(() => {
+    setupTestAuth()
+    server.listen()
+  })
   afterEach(() => server.resetHandlers())
-  after(() => server.close())
+  after(() => {
+    server.close()
+    cleanupTestAuth()
+  })
 
   describe('success', () => {
     test

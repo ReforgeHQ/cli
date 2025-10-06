@@ -118,10 +118,6 @@ export default class SetDefault extends APICommand {
       return
     }
 
-    if (!environment.id) {
-      return this.err('Environment ID is required for this endpoint')
-    }
-
     const {confidential} = flags
 
     // Get the value
@@ -139,6 +135,7 @@ export default class SetDefault extends APICommand {
         confidential,
         config,
         envVar: flags['env-var'],
+        environment,
         environmentId: environment.id,
         key,
         secret,
@@ -168,6 +165,7 @@ export default class SetDefault extends APICommand {
     return this.submitChange({
       confidential,
       config,
+      environment,
       environmentId: environment.id,
       key,
       secret,
@@ -179,6 +177,7 @@ export default class SetDefault extends APICommand {
     confidential,
     config,
     envVar,
+    environment,
     environmentId,
     key,
     secret,
@@ -186,6 +185,7 @@ export default class SetDefault extends APICommand {
   }: {
     confidential: boolean
     config: {valueType: string; version: number}
+    environment: {id: string; name: string}
     environmentId: string
     key: string
     secret: Secret
@@ -231,12 +231,19 @@ export default class SetDefault extends APICommand {
             break
           }
           case 'bool': {
-            parsedValue = value.toLowerCase() === 'true'
+            const lowerValue = value.toLowerCase()
+            if (lowerValue !== 'true' && lowerValue !== 'false') {
+              return this.err(`'${value}' is not a valid value for ${key}`)
+            }
+            parsedValue = lowerValue === 'true'
 
             break
           }
           case 'int': {
             parsedValue = Number.parseInt(value, 10)
+            if (Number.isNaN(parsedValue)) {
+              return this.err(`Invalid default value for int: ${value}`)
+            }
 
             break
           }
@@ -279,7 +286,7 @@ export default class SetDefault extends APICommand {
     const payload = {
       configKey: key,
       currentVersionId: config.version,
-      environmentId: Number.parseInt(environmentId, 10),
+      environmentId: environmentId ? Number.parseInt(environmentId, 10) : 0,
       value: configValue,
     }
 
@@ -290,7 +297,15 @@ export default class SetDefault extends APICommand {
     if (request.ok) {
       this.log(`${checkmark} ${successMessage}`)
 
-      return {key, success: true, value}
+      return {
+        environment: {
+          id: environmentId,
+          name: environment.name,
+        },
+        key,
+        success: true,
+        value,
+      }
     }
 
     this.verboseLog(request.error)

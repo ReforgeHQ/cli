@@ -27,8 +27,9 @@ export const mockIdentityResponse = {
 
 /**
  * MSW handler for identity endpoint
+ * Uses reforge.com domain (default)
  */
-export const identityHandler = http.get('https://id.prefab.cloud/api/oauth/identity', () => {
+export const identityHandler = http.get('https://id.reforge.com/api/oauth/identity', () => {
   return HttpResponse.json(mockIdentityResponse)
 })
 
