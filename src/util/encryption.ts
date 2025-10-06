@@ -24,7 +24,10 @@ export async function makeConfidentialValue(
   const configRequest = await command.apiClient.get(`/all-config-types/v1/config/${encodeURIComponent(secret.keyName)}`)
 
   if (!configRequest.ok) {
-    return failure(`Failed to fetch encryption key config ${secret.keyName}: ${configRequest.status}`, {
+    const message = configRequest.status === 404
+      ? `Failed to create secret: ${secret.keyName} not found`
+      : `Failed to fetch encryption key config ${secret.keyName}: ${configRequest.status}`
+    return failure(message, {
       phase: 'finding-secret',
     })
   }

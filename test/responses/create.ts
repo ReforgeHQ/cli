@@ -1,6 +1,7 @@
-import {http, passthrough} from 'msw'
+import {http, HttpResponse, passthrough} from 'msw'
 import {setupServer} from 'msw/node'
 
+import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js'
 import {CannedResponses, SECRET_VALUE, getCannedResponse} from '../test-helper.js'
 
 const recipeResponse = (key: string, defaultValue: boolean = false) => ({
@@ -200,7 +201,70 @@ const cannedResponses: CannedResponses = {
   ],
 }
 
+// V1 API handlers
+const flagsV1Handler = http.post('https://api.staging-prefab.cloud/flags/v1', async ({request}) => {
+  const body = (await request.json()) as any
+
+  if (body.key === 'already.in.use') {
+    return new Response(JSON.stringify(conflictResponse), {status: 409})
+  }
+
+  return new Response(JSON.stringify(successResponse), {status: 200})
+})
+
+const configsV1Handler = http.post('https://api.staging-prefab.cloud/configs/v1', async ({request}) => {
+  const body = (await request.json()) as any
+
+  if (body.key === 'already.in.use') {
+    return new Response(JSON.stringify(conflictResponse), {status: 409})
+  }
+
+  return new Response(JSON.stringify(successResponse), {status: 200})
+})
+
+// GET /all-config-types/v1/config/:key - get encryption key config
+const encryptionKeyHandler = http.get(
+  'https://api.staging-prefab.cloud/all-config-types/v1/config/reforge.secrets.encryption.key',
+  () => {
+    return HttpResponse.json({
+      key: 'reforge.secrets.encryption.key',
+      type: 'config',
+      valueType: 'string',
+      default: {
+        rules: [
+          {
+            criteria: [],
+            value: {
+              provided: {
+                source: 'ENV_VAR',
+                lookup: 'REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY',
+              },
+            },
+          },
+        ],
+      },
+    })
+  },
+)
+
+// GET /all-config-types/v1/config/missing.secret.key - missing encryption key
+const missingEncryptionKeyHandler = http.get(
+  'https://api.staging-prefab.cloud/all-config-types/v1/config/missing.secret.key',
+  () => {
+    return HttpResponse.json(
+      {error: 'Config not found'},
+      {status: 404}
+    )
+  },
+)
+
 export const server = setupServer(
+  identityHandler,
+  identityHandlerTestDomain,
+  flagsV1Handler,
+  configsV1Handler,
+  encryptionKeyHandler,
+  missingEncryptionKeyHandler,
   http.get('https://api.staging-prefab.cloud/api/v2/configs/0', () => passthrough()),
 
   http.get('https://api.staging-prefab.cloud/api/v2/*', async ({request}) =>

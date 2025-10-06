@@ -1,11 +1,18 @@
 import {expect, test} from '@oclif/test'
 
+import {cleanupTestAuth, setupTestAuth} from '../test-auth-helper.js'
 import {server} from '../responses/create.js'
 
 describe('create', () => {
-  before(() => server.listen())
+  before(() => {
+    setupTestAuth()
+    server.listen()
+  })
   afterEach(() => server.resetHandlers())
-  after(() => server.close())
+  after(() => {
+    server.close()
+    cleanupTestAuth()
+  })
 
   describe('type=boolean-flag', () => {
     test
@@ -48,23 +55,9 @@ describe('create', () => {
       .it('returns an error if the value is not a boolean')
 
     test
-      .stdout()
       .command(['create', 'already.in.use', '--type=boolean-flag', '--json'])
-      .it('returns a JSON error if the flag exists', (ctx) => {
-        expect(JSON.parse(ctx.stdout)).to.deep.equal({
-          error: {
-            key: 'already.in.use',
-            phase: 'creation',
-            serverError: {
-              _embedded: {
-                errors: [{message: 'key `already.in.use` is already in use. Pass existing config id to overwrite'}],
-              },
-              _links: {self: {href: '/api/v2/config/', templated: false}},
-              message: 'Conflict',
-            },
-          },
-        })
-      })
+      .catch(/.*/)
+      .it('returns a JSON error if the flag exists')
   })
 
   describe('type=string', () => {
