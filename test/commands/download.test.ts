@@ -2,6 +2,7 @@ import {expect, test} from '@oclif/test'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 
+import {cleanupTestAuth, setupTestAuth} from '../test-auth-helper.js'
 import {downloadStub, server} from '../responses/download.js'
 
 const expectedFileName = 'reforge.test.588.config.json'
@@ -10,11 +11,15 @@ const savedContent = () => JSON.parse(fs.readFileSync(expectedFileName).toString
 
 describe('download', () => {
   before(() => {
+    setupTestAuth()
     fs.rmSync(expectedFileName, {force: true})
     server.listen()
   })
   afterEach(() => server.resetHandlers())
-  after(() => server.close())
+  after(() => {
+    server.close()
+    cleanupTestAuth()
+  })
 
   describe('when the download server responds successfully', () => {
     test

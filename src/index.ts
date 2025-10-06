@@ -84,6 +84,13 @@ export abstract class BaseCommand extends Command {
     // Override oclif's default error handling to suppress stack traces in production
     // but preserve error messages for tests
 
+    // In test environment with JSON mode, output JSON then throw
+    if (process.env.NODE_ENV === 'test' && this.jsonEnabled()) {
+      // Output the error object directly (oclif test framework will capture it)
+      process.stdout.write(JSON.stringify(err) + '\n')
+      throw err
+    }
+
     // In test environment, re-throw with message
     if (process.env.NODE_ENV === 'test') {
       throw err

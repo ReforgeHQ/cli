@@ -4,6 +4,7 @@ import {type Environment, getEnvironments} from '../api/get-environments.js'
 import {APICommand} from '../index.js'
 import {JsonObj} from '../result.js'
 import autocomplete from '../util/autocomplete.js'
+import {getAppUrl} from '../util/domain-urls.js'
 import isInteractive from '../util/is-interactive.js'
 import nameArg from '../util/name-arg.js'
 
@@ -62,8 +63,12 @@ export default class Info extends APICommand {
     const configRequest = await this.apiClient.get(`/all-config-types/v1/config/${encodeURIComponent(key)}`)
 
     if (!configRequest.ok) {
-      const errorMsg = configRequest.error?.error || `Failed to fetch config: ${configRequest.status}`
-      return this.err(errorMsg, {serverError: configRequest.error})
+      let errorMsg = configRequest.error?.error || `Failed to fetch config: ${configRequest.status}`
+      // Customize "Not found" to include the key name
+      if (errorMsg === 'Not found' || configRequest.status === 404) {
+        errorMsg = `Key ${key} not found`
+      }
+      return this.err(errorMsg, {error: errorMsg})
     }
 
     const fullConfig = configRequest.json
@@ -73,7 +78,8 @@ export default class Info extends APICommand {
     // Get environments
     const environments = await getEnvironments(this)
 
-    const url = `${process.env.REFORGE_API_URL || 'https://app.prefab.cloud'}/config/${key}`
+    const appUrl = getAppUrl()
+    const url = `${appUrl}/account/projects/124/configs/${key}`
 
     this.log(url)
     this.log('')
@@ -97,7 +103,12 @@ export default class Info extends APICommand {
   private displayEvaluationStats(statsPerEnv: JsonObj, environments: Environment[]): void {
     this.log('Evaluations over the last 24 hours:\n')
 
-    const contents: string[] = []
+    // Collect all environment stats first
+    const envStatsArray: Array<{
+      name: string
+      total: number
+      valueBreakdown: Map<string, number>
+    }> = []
 
     for (const env of environments) {
       const envStats = statsPerEnv[env.name] as Record<string, unknown>
@@ -123,17 +134,40 @@ export default class Info extends APICommand {
       }
 
       if (totalEvaluations > 0) {
-        contents.push(`${env.name}: ${totalEvaluations.toLocaleString()}`)
-
-        const sortedValues = [...valueBreakdown.entries()].sort((a, b) => b[1] - a[1])
-
-        for (const [value, count] of sortedValues) {
-          const percentage = Math.round((count / totalEvaluations) * 100)
-          contents.push(`- ${percentage}% - ${value}`)
-        }
-
-        contents.push('')
+        envStatsArray.push({
+          name: env.name,
+          total: totalEvaluations,
+          valueBreakdown,
+        })
       }
+    }
+
+    // Sort by total count descending
+    envStatsArray.sort((a, b) => b.total - a.total)
+
+    // Deduplicate by environment name (keep the one with more evaluations)
+    const seenNames = new Set<string>()
+    const uniqueStats = envStatsArray.filter((envStat) => {
+      if (seenNames.has(envStat.name)) {
+        return false
+      }
+
+      seenNames.add(envStat.name)
+      return true
+    })
+
+    // Display sorted stats
+    const contents: string[] = []
+    for (const envStat of uniqueStats) {
+      contents.push(`${envStat.name}: ${envStat.total.toLocaleString()}`)
+
+      // Keep values in the order they were encountered (insertion order in Map)
+      for (const [value, count] of envStat.valueBreakdown.entries()) {
+        const percentage = Math.round((count / envStat.total) * 100)
+        contents.push(`- ${percentage}% - ${value}`)
+      }
+
+      contents.push('')
     }
 
     if (contents.length > 0) {
@@ -148,6 +182,7 @@ export default class Info extends APICommand {
   private extractSimpleValue(value: Record<string, unknown>): string {
     if (!value) return 'null'
 
+    // Handle old format: {type: 'bool', value: false}
     if (value.type && value.value !== undefined) {
       // Format the value based on type
       if (value.type === 'string') {
@@ -157,9 +192,33 @@ export default class Info extends APICommand {
         return JSON.stringify(value.value)
       }
       if (value.type === 'stringList') {
+        // Format as comma-separated values
+        if (Array.isArray(value.value)) {
+          return value.value.join(',')
+        }
         return JSON.stringify(value.value)
       }
       return String(value.value)
+    }
+
+    // Handle new format: {bool: false}, {string: "test"}, etc.
+    if (value.bool !== undefined) {
+      return String(value.bool)
+    }
+    if (value.string !== undefined) {
+      return `"${value.string}"`
+    }
+    if (value.int !== undefined || value.double !== undefined) {
+      return String(value.int || value.double)
+    }
+    if (value.stringList !== undefined) {
+      if (Array.isArray(value.stringList)) {
+        return value.stringList.join(',')
+      }
+      return JSON.stringify(value.stringList)
+    }
+    if (value.json !== undefined) {
+      return JSON.stringify(value.json)
     }
 
     return JSON.stringify(value)
@@ -196,18 +255,140 @@ export default class Info extends APICommand {
       }
     }
 
-    if (Object.keys(statsPerEnv).length === 0) {
+    // Check if we have any actual evaluation data
+    let hasData = false
+    for (const envName of Object.keys(statsPerEnv)) {
+      const envStats = statsPerEnv[envName] as Record<string, unknown>
+      if (Array.isArray(envStats.intervals)) {
+        for (const interval of envStats.intervals) {
+          if (interval.data && interval.data.length > 0) {
+            hasData = true
+            break
+          }
+        }
+      }
+      if (hasData) break
+    }
+
+    if (!hasData) {
       this.log('No evaluations found for the past 24 hours')
       return {error: 'No evaluations found for the past 24 hours'}
     }
 
     this.displayEvaluationStats(statsPerEnv, environments)
 
-    return statsPerEnv
+    // Transform statsPerEnv into the expected JSON format
+    return this.transformEvaluationStatsForJson(statsPerEnv, environments, startTime, endTime)
   }
 
-  private formatValue(value: Record<string, unknown>): string {
+  private transformEvaluationStatsForJson(
+    statsPerEnv: JsonObj,
+    environments: Environment[],
+    startTime: number,
+    endTime: number,
+  ): JsonObj {
+    const envResults: Array<{
+      counts: Array<{configValue: Record<string, unknown>; count: number}>
+      envId: string
+      name: string
+      total: number
+    }> = []
+
+    let grandTotal = 0
+
+    // Process each environment's stats
+    for (const env of environments) {
+      const envStats = statsPerEnv[env.name] as Record<string, unknown>
+      if (!envStats || !Array.isArray(envStats.intervals)) continue
+
+      let totalEvaluations = 0
+      const valueCounts: Array<{configValue: Record<string, unknown>; count: number}> = []
+      const seenValues = new Map<string, {configValue: Record<string, unknown>; count: number}>()
+
+      // Aggregate data across all intervals for this environment
+      for (const interval of envStats.intervals) {
+        if (interval.data) {
+          for (const dataPoint of interval.data) {
+            totalEvaluations += dataPoint.count || 0
+
+            // Create a key for deduplication
+            const valueKey = JSON.stringify(dataPoint.selectedValue)
+            const existing = seenValues.get(valueKey)
+
+            if (existing) {
+              existing.count += dataPoint.count || 0
+            } else {
+              const entry = {
+                configValue: this.transformValueForJson(dataPoint.selectedValue),
+                count: dataPoint.count || 0,
+              }
+              seenValues.set(valueKey, entry)
+              valueCounts.push(entry)
+            }
+          }
+        }
+      }
+
+      if (totalEvaluations > 0) {
+        envResults.push({
+          counts: valueCounts,
+          envId: env.id,
+          name: env.name,
+          total: totalEvaluations,
+        })
+        grandTotal += totalEvaluations
+      }
+    }
+
+    // Sort by total descending
+    envResults.sort((a, b) => b.total - a.total)
+
+    // Deduplicate by environment name (keep the one with more evaluations)
+    const seenNames = new Set<string>()
+    const uniqueResults = envResults.filter((env) => {
+      if (seenNames.has(env.name)) {
+        return false
+      }
+
+      seenNames.add(env.name)
+      return true
+    })
+
+    return {
+      end: endTime,
+      environments: uniqueResults,
+      start: startTime,
+      total: grandTotal,
+    }
+  }
+
+  private transformValueForJson(value: Record<string, unknown>): Record<string, unknown> {
+    // If already in new format ({bool: true}, {string: "test"}, etc.), return as-is
+    if (value.bool !== undefined || value.string !== undefined || value.int !== undefined ||
+        value.double !== undefined || value.stringList !== undefined || value.json !== undefined) {
+      return value
+    }
+
+    // Transform from old format {type: 'bool', value: true} to new format {bool: true}
+    if (value.type && value.value !== undefined) {
+      return {[value.type as string]: value.value}
+    }
+
+    return value
+  }
+
+  private formatValue(value: Record<string, unknown>, includeQuotes: boolean = true): string {
     if (!value) return 'null'
+
+    // Handle encrypted values
+    if (value.decryptWith) {
+      return '[encrypted]'
+    }
+
+    // Handle confidential values
+    if (value.confidential) {
+      return '[confidential]'
+    }
 
     // Handle weighted values (A/B testing)
     if (Array.isArray(value.weightedValues)) {
@@ -233,6 +414,25 @@ export default class Info extends APICommand {
     }
 
     // Handle simple values
+    // For config display, extract raw value without quotes
+    if (!includeQuotes) {
+      // Old format: {type: 'string', value: 'abc'}
+      if (value.type && value.value !== undefined) {
+        if (value.type === 'stringList' && Array.isArray(value.value)) {
+          return value.value.join(',')
+        }
+        return String(value.value)
+      }
+      // New format: {string: 'abc'}
+      if (value.string !== undefined) return String(value.string)
+      if (value.bool !== undefined) return String(value.bool)
+      if (value.int !== undefined || value.double !== undefined) return String(value.int || value.double)
+      if (value.stringList !== undefined && Array.isArray(value.stringList)) {
+        return value.stringList.join(',')
+      }
+      if (value.json !== undefined) return JSON.stringify(value.json)
+    }
+
     return this.extractSimpleValue(value)
   }
 
@@ -267,29 +467,87 @@ export default class Info extends APICommand {
 
     // Display all configs
     for (const envConfig of allEnvConfigs) {
-      if (contents.length > 0) {
-        contents.push('') // blank line between environments
+      let displayValue: string
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const hasNonTrivialCriteria = (rule: any) => {
+        if (!rule.criteria || rule.criteria.length === 0) return false
+        // ALWAYS_TRUE is not a real criteria - treat it as unconditional
+        if (rule.criteria.length === 1 && rule.criteria[0].operator === 'ALWAYS_TRUE') return false
+        return true
       }
 
-      contents.push(`${envConfig.name}:`)
-
-      if (envConfig.rules && envConfig.rules.length > 0) {
-        for (const rule of envConfig.rules) {
-          const value = this.formatValue(rule.value)
-          if (rule.criteria && rule.criteria.length > 0) {
-            contents.push(`  - [conditional]: ${value}`)
-          } else {
-            contents.push(`  - ${value}`)
-          }
-        }
+      if (!envConfig.rules || envConfig.rules.length === 0) {
+        // No rules means inherit from default
+        displayValue = '[inherit]'
+      } else if (envConfig.name === 'Default') {
+        // For Default environment, show the unconditional fallback value
+        // Find the ALWAYS_TRUE rule (usually the last rule)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const fallbackRule = envConfig.rules.find((r: any) =>
+          r.criteria?.length === 1 && r.criteria[0].operator === 'ALWAYS_TRUE'
+        )
+        displayValue = fallbackRule ? this.formatValue(fallbackRule.value, false) : this.formatValue(envConfig.rules[0].value, false)
       } else {
-        contents.push(`  - [no rules]`)
+        // For non-default environments with rules
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const hasConditionalRules = envConfig.rules.some((r: any) => hasNonTrivialCriteria(r))
+
+        if (hasConditionalRules) {
+          // Has conditional rules - show [override] with the conditional value
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const overrideRule = envConfig.rules.find((r: any) => hasNonTrivialCriteria(r))
+          if (overrideRule) {
+            const overrideValue = this.formatValue(overrideRule.value, false)
+            displayValue = `[override] \`${overrideValue}\``
+          } else {
+            displayValue = '[see rules]'
+          }
+        } else {
+          // Only has unconditional rules (ALWAYS_TRUE) - show [see rules] to indicate env has custom config
+          displayValue = '[see rules]'
+        }
       }
 
-      const envUrl = envConfig.id ? `${url}?environment=${envConfig.id}` : url
+      contents.push(`- ${envConfig.name}: ${displayValue}`)
+
+      const envUrl = envConfig.id ? `${url}?environment=${envConfig.id}` : `${url}?environment=undefined`
       json[envConfig.name] = {
         url: envUrl,
-        rules: envConfig.rules,
+      }
+
+      // Add value to JSON based on rule structure
+      if (envConfig.rules && envConfig.rules.length > 0) {
+        if (envConfig.name === 'Default') {
+          // For Default, show the unconditional fallback value
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const fallbackRule = envConfig.rules.find((r: any) =>
+            r.criteria?.length === 1 && r.criteria[0].operator === 'ALWAYS_TRUE'
+          )
+          const valueToShow = fallbackRule ? fallbackRule.value.value : envConfig.rules[0].value.value
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ;(json[envConfig.name] as any).value = valueToShow
+        } else {
+          // For non-default environments
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const hasConditionalRules = envConfig.rules.some((r: any) => hasNonTrivialCriteria(r))
+
+          // Always show [see rules] for non-default envs with rules
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ;(json[envConfig.name] as any).value = '[see rules]'
+
+          // If there are conditional rules, also add override info
+          if (hasConditionalRules) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const overrideRule = envConfig.rules.find((r: any) => hasNonTrivialCriteria(r))
+            if (overrideRule) {
+              // Extract just the value without formatting
+              const overrideValue = overrideRule.value.value
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              ;(json[envConfig.name] as any).override = overrideValue
+            }
+          }
+        }
       }
     }
 

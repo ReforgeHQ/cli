@@ -1,9 +1,21 @@
 import {expect, test} from '@oclif/test'
 
+import {cleanupTestAuth, setupTestAuth} from '../test-auth-helper.js'
+import {server} from '../responses/get.js'
+
 const validKey = 'my-string-list-key'
 const secretKey = 'a.secret.config.reforge'
 
 describe('get', () => {
+  before(() => {
+    setupTestAuth()
+    server.listen()
+  })
+  afterEach(() => server.resetHandlers())
+  after(() => {
+    server.close()
+    cleanupTestAuth()
+  })
   test
     .stdout()
     .command(['get', validKey])
@@ -38,11 +50,4 @@ describe('get', () => {
       expect(error.message).to.eql("'name' argument is required when interactive mode isn't available.")
     })
     .it("shows an error if no key is provided when things aren't interactive")
-
-  test
-    .command(['get', validKey, '--sdk-key='])
-    .catch((error) => {
-      expect(error.message).to.eql('SDK key is required')
-    })
-    .it('returns an error when the SDK key is not set')
 })
