@@ -130,6 +130,12 @@ export default class Override extends APICommand {
       return
     }
 
+    // Handle 404 case - no override exists to remove
+    if (request.status === 404) {
+      this.log(`No override found for ${key}`)
+      return
+    }
+
     this.err(`Failed to remove override: ${request.status}`, {key, serverError: request.error})
   }
 
