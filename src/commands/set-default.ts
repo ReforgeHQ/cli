@@ -93,7 +93,7 @@ export default class SetDefault extends APICommand {
     }
 
     if (!key) {
-      return this.err('Key is required')
+      return this.err("'name' argument is required when interactive mode isn't available.")
     }
 
     const config = configs.find((c) => c.key === key)

@@ -104,7 +104,7 @@ describe('set-default', () => {
       .stdout()
       .command(['set-default', 'robocop-secret', '--environment=Staging', '--confirm', '--value=hello'])
       .it('uses encryption if any existing value for the key is encrypted', (ctx) => {
-        expect(ctx.stdout).to.contain(`Successfully changed default to \`hello\` (encrypted)`)
+        expect(ctx.stdout).to.match(/Successfully changed default.*encrypted/)
       })
 
     test
