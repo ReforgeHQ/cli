@@ -2,10 +2,19 @@ import {expect, test} from '@oclif/test'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 
+import {cleanupTestAuth, setupTestAuth} from '../test-auth-helper.js'
+import {server} from '../responses/generate.js'
+
 describe('generate', () => {
   const configPath = path.join(process.cwd(), 'reforge.config.json')
 
+  before(() => {
+    setupTestAuth()
+    server.listen()
+  })
+
   afterEach(() => {
+    server.resetHandlers()
     try {
       // Clean up any test config files (could be file or directory)
       if (fs.existsSync(configPath)) {
@@ -258,5 +267,10 @@ describe('generate', () => {
         expect(error.message).to.include('Error reading reforge.config.json')
       })
       .it('handles case where config path is a directory')
+  })
+
+  after(() => {
+    server.close()
+    cleanupTestAuth()
   })
 })
