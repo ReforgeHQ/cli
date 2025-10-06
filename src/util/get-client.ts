@@ -48,6 +48,7 @@ const getClient = async (command: APICommand, sdkKey?: string, profile?: string)
         workspaceId = profileData.workspace
 
         // Call identity endpoint to get fresh authz JWT for the active workspace
+        // Domain is automatically picked up from REFORGE_DOMAIN env var via getIdApiUrl()
         const introspection = await introspectToken(tokens.accessToken)
         const workspace = introspection.organizations
           .flatMap((org) => org.workspaces)
