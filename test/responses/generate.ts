@@ -43,8 +43,4 @@ const downloadAllEnvsHandler = http.get('https://api.goatsofreforge.com/all-conf
   })
 })
 
-export const server = setupServer(
-  identityHandler,
-  identityHandlerTestDomain,
-  downloadAllEnvsHandler,
-)
+export const server = setupServer(identityHandler, identityHandlerTestDomain, downloadAllEnvsHandler)

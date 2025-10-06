@@ -368,8 +368,14 @@ export default class Info extends APICommand {
 
   private transformValueForJson(value: Record<string, unknown>): Record<string, unknown> {
     // If already in new format ({bool: true}, {string: "test"}, etc.), return as-is
-    if (value.bool !== undefined || value.string !== undefined || value.int !== undefined ||
-        value.double !== undefined || value.stringList !== undefined || value.json !== undefined) {
+    if (
+      value.bool !== undefined ||
+      value.string !== undefined ||
+      value.int !== undefined ||
+      value.double !== undefined ||
+      value.stringList !== undefined ||
+      value.json !== undefined
+    ) {
       return value
     }
 
@@ -488,10 +494,12 @@ export default class Info extends APICommand {
         // For Default environment, show the unconditional fallback value
         // Find the ALWAYS_TRUE rule (usually the last rule)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const fallbackRule = envConfig.rules.find((r: any) =>
-          r.criteria?.length === 1 && r.criteria[0].operator === 'ALWAYS_TRUE'
+        const fallbackRule = envConfig.rules.find(
+          (r: any) => r.criteria?.length === 1 && r.criteria[0].operator === 'ALWAYS_TRUE',
         )
-        displayValue = fallbackRule ? this.formatValue(fallbackRule.value, false) : this.formatValue(envConfig.rules[0].value, false)
+        displayValue = fallbackRule
+          ? this.formatValue(fallbackRule.value, false)
+          : this.formatValue(envConfig.rules[0].value, false)
       } else {
         // For non-default environments with rules
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -525,8 +533,8 @@ export default class Info extends APICommand {
         if (envConfig.name === 'Default') {
           // For Default, show the unconditional fallback value
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const fallbackRule = envConfig.rules.find((r: any) =>
-            r.criteria?.length === 1 && r.criteria[0].operator === 'ALWAYS_TRUE'
+          const fallbackRule = envConfig.rules.find(
+            (r: any) => r.criteria?.length === 1 && r.criteria[0].operator === 'ALWAYS_TRUE',
           )
           const valueToShow = fallbackRule ? fallbackRule.value.value : envConfig.rules[0].value.value
           // eslint-disable-next-line @typescript-eslint/no-explicit-any

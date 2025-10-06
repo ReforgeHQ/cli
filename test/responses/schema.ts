@@ -120,10 +120,7 @@ const getSchemaV1Handler = http.get('https://api.goatsofreforge.com/schemas/v1/s
   const {key} = params
 
   if (key === 'non.existent.schema') {
-    return HttpResponse.json(
-      {message: 'Not Found'},
-      {status: 404}
-    )
+    return HttpResponse.json({message: 'Not Found'}, {status: 404})
   }
 
   if (key === 'my.schema') {
@@ -175,7 +172,7 @@ const createSchemaV1Handler = http.post('https://api.goatsofreforge.com/schemas/
         },
         message: 'Conflict',
       },
-      {status: 409}
+      {status: 409},
     )
   }
 

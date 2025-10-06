@@ -192,27 +192,24 @@ const jeffreysTestIntDetailsHandler = http.get(
 )
 
 // GET /all-config-types/v1/config/test.json - get json config details (not encrypted)
-const testJsonDetailsHandler = http.get(
-  'https://api.goatsofreforge.com/all-config-types/v1/config/test.json',
-  () => {
-    return HttpResponse.json({
-      key: 'test.json',
-      type: 'config',
-      valueType: 'json',
-      default: {
-        rules: [
-          {
-            criteria: [],
-            value: {
-              type: 'json',
-              value: {test: 'data'},
-            },
+const testJsonDetailsHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/config/test.json', () => {
+  return HttpResponse.json({
+    key: 'test.json',
+    type: 'config',
+    valueType: 'json',
+    default: {
+      rules: [
+        {
+          criteria: [],
+          value: {
+            type: 'json',
+            value: {test: 'data'},
           },
-        ],
-      },
-    })
-  },
-)
+        },
+      ],
+    },
+  })
+})
 
 // GET /all-config-types/v1/config/robocop-secret - get robocop secret (has encrypted values)
 const robocopSecretHandler = http.get(

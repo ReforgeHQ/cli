@@ -142,10 +142,34 @@ const confidentialConfig = {
 const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/metadata', () => {
   return HttpResponse.json({
     configs: [
-      {key: keyWithEvaluations, type: 'config', valueType: 'string_list', version: 1, id: 1, name: 'My String List', description: ''},
-      {key: keyWithNoEvaluations, type: 'config', valueType: 'string', version: 1, id: 2, name: 'Jeffrey Test', description: ''},
+      {
+        key: keyWithEvaluations,
+        type: 'config',
+        valueType: 'string_list',
+        version: 1,
+        id: 1,
+        name: 'My String List',
+        description: '',
+      },
+      {
+        key: keyWithNoEvaluations,
+        type: 'config',
+        valueType: 'string',
+        version: 1,
+        id: 2,
+        name: 'Jeffrey Test',
+        description: '',
+      },
       {key: secretKey, type: 'config', valueType: 'string', version: 1, id: 3, name: 'Secret', description: ''},
-      {key: confidentialKey, type: 'config', valueType: 'string', version: 1, id: 4, name: 'Confidential', description: ''},
+      {
+        key: confidentialKey,
+        type: 'config',
+        valueType: 'string',
+        version: 1,
+        id: 4,
+        name: 'Confidential',
+        description: '',
+      },
     ],
   })
 })

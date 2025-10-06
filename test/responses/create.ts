@@ -251,10 +251,7 @@ const encryptionKeyHandler = http.get(
 const missingEncryptionKeyHandler = http.get(
   'https://api.goatsofreforge.com/all-config-types/v1/config/missing.secret.key',
   () => {
-    return HttpResponse.json(
-      {error: 'Config not found'},
-      {status: 404}
-    )
+    return HttpResponse.json({error: 'Config not found'}, {status: 404})
   },
 )
 

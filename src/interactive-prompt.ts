@@ -141,10 +141,7 @@ const promptForInput = async (arg: Arg, name: string, commandId: string) => {
   return value
 }
 
-const getArgs = async (
-  args: AvailableCommand['command']['args'],
-  commandId: string,
-): Promise<string[]> => {
+const getArgs = async (args: AvailableCommand['command']['args'], commandId: string): Promise<string[]> => {
   const requiredArgs = Object.keys(args)
 
   return Promise.all(
