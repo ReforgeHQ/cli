@@ -1,6 +1,7 @@
-import {http, passthrough} from 'msw'
+import {HttpResponse, http, passthrough} from 'msw'
 import {setupServer} from 'msw/node'
 
+import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js'
 import {CannedResponses, SECRET_VALUE, getCannedResponse} from '../test-helper.js'
 
 const recipeResponse = (key: string, defaultValue: boolean = false) => ({
@@ -48,7 +49,7 @@ const successResponse = {
 }
 
 const cannedResponses: CannedResponses = {
-  'https://api.staging-prefab.cloud/api/v2/config/': [
+  'https://api.goatsofreforge.com/api/v2/config/': [
     [createFlagRequest('brand.new.flag'), successResponse, 200],
     [createFlagRequest('already.in.use'), conflictResponse, 409],
     [createFlagRequest('new.with.different.default', true), conflictResponse, 200],
@@ -171,9 +172,9 @@ const cannedResponses: CannedResponses = {
     ],
   ],
 
-  'https://api.staging-prefab.cloud/api/v2/config/key/missing.secret.key': [[{}, {}, 404]],
+  'https://api.goatsofreforge.com/api/v2/config/key/missing.secret.key': [[{}, {}, 404]],
 
-  'https://api.staging-prefab.cloud/api/v2/config/key/reforge.secrets.encryption.key': [
+  'https://api.goatsofreforge.com/api/v2/config/key/reforge.secrets.encryption.key': [
     [
       {},
       {
@@ -193,21 +194,78 @@ const cannedResponses: CannedResponses = {
     ],
   ],
 
-  'https://api.staging-prefab.cloud/api/v2/config-recipes/feature-flag/boolean': [
+  'https://api.goatsofreforge.com/api/v2/config-recipes/feature-flag/boolean': [
     [{defaultValue: false, key: 'brand.new.flag'}, recipeResponse('brand.new.flag'), 200],
     [{defaultValue: false, key: 'already.in.use'}, recipeResponse('already.in.use'), 200],
     [{defaultValue: true, key: 'new.with.different.default'}, recipeResponse('new.with.different.default', true), 200],
   ],
 }
 
-export const server = setupServer(
-  http.get('https://api.staging-prefab.cloud/api/v2/configs/0', () => passthrough()),
+// V1 API handlers
+const flagsV1Handler = http.post('https://api.goatsofreforge.com/flags/v1', async ({request}) => {
+  const body = (await request.json()) as any
 
-  http.get('https://api.staging-prefab.cloud/api/v2/*', async ({request}) =>
+  if (body.key === 'already.in.use') {
+    return new Response(JSON.stringify(conflictResponse), {status: 409})
+  }
+
+  return new Response(JSON.stringify(successResponse), {status: 200})
+})
+
+const configsV1Handler = http.post('https://api.goatsofreforge.com/configs/v1', async ({request}) => {
+  const body = (await request.json()) as any
+
+  if (body.key === 'already.in.use') {
+    return new Response(JSON.stringify(conflictResponse), {status: 409})
+  }
+
+  return new Response(JSON.stringify(successResponse), {status: 200})
+})
+
+// GET /all-config-types/v1/config/:key - get encryption key config
+const encryptionKeyHandler = http.get(
+  'https://api.goatsofreforge.com/all-config-types/v1/config/reforge.secrets.encryption.key',
+  () =>
+    HttpResponse.json({
+      key: 'reforge.secrets.encryption.key',
+      type: 'config',
+      valueType: 'string',
+      default: {
+        rules: [
+          {
+            criteria: [],
+            value: {
+              provided: {
+                source: 'ENV_VAR',
+                lookup: 'REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY',
+              },
+            },
+          },
+        ],
+      },
+    }),
+)
+
+// GET /all-config-types/v1/config/missing.secret.key - missing encryption key
+const missingEncryptionKeyHandler = http.get(
+  'https://api.goatsofreforge.com/all-config-types/v1/config/missing.secret.key',
+  () => HttpResponse.json({error: 'Config not found'}, {status: 404}),
+)
+
+export const server = setupServer(
+  identityHandler,
+  identityHandlerTestDomain,
+  flagsV1Handler,
+  configsV1Handler,
+  encryptionKeyHandler,
+  missingEncryptionKeyHandler,
+  http.get('https://api.goatsofreforge.com/api/v2/configs/0', () => passthrough()),
+
+  http.get('https://api.goatsofreforge.com/api/v2/*', async ({request}) =>
     getCannedResponse(request, cannedResponses).catch(console.error),
   ),
 
-  http.post('https://api.staging-prefab.cloud/api/v2/*', async ({request}) =>
+  http.post('https://api.goatsofreforge.com/api/v2/*', async ({request}) =>
     getCannedResponse(request, cannedResponses).catch(console.error),
   ),
 )

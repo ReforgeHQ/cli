@@ -1,11 +1,22 @@
 import {expect, test} from '@oclif/test'
 
+import {resetClientCache} from '../../src/util/get-client.js'
 import {server} from '../responses/schema.js'
+import {cleanupTestAuth, setupTestAuth} from '../test-auth-helper.js'
 
 describe('schema', () => {
-  before(() => server.listen())
-  afterEach(() => server.resetHandlers())
-  after(() => server.close())
+  before(() => {
+    setupTestAuth()
+    server.listen()
+  })
+  afterEach(() => {
+    server.resetHandlers()
+    resetClientCache()
+  })
+  after(() => {
+    server.close()
+    cleanupTestAuth()
+  })
 
   describe('get', () => {
     test
@@ -28,7 +39,9 @@ describe('schema', () => {
       .catch((error) => {
         expect(error.message).to.contain('Failed to get schema')
       })
-      .it('handles non-existent schema')
+      .it('handles non-existent schema', () => {
+        // Error assertion done in catch block
+      })
   })
 
   describe('set-zod', () => {
@@ -61,5 +74,7 @@ describe('schema', () => {
     .catch((error) => {
       expect(error.message).to.contain('No action specified. Try --get or --set-zod')
     })
-    .it('requires an action flag')
+    .it('requires an action flag', () => {
+      // Error assertion done in catch block
+    })
 })

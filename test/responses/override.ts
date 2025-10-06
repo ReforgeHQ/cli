@@ -1,10 +1,11 @@
-import {http, passthrough} from 'msw'
+import {HttpResponse, http, passthrough} from 'msw'
 import {setupServer} from 'msw/node'
 
+import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js'
 import {CannedResponses, getCannedResponse} from '../test-helper.js'
 
 const cannedResponses: CannedResponses = {
-  'https://api.staging-prefab.cloud/api/v2/config/assign-variant': [
+  'https://api.goatsofreforge.com/api/v2/config/assign-variant': [
     [
       {configKey: 'feature-flag.simple', variant: {bool: 'true'}},
       {response: {message: '', newId: '17002327855857830'}},
@@ -38,7 +39,7 @@ const cannedResponses: CannedResponses = {
       400,
     ],
   ],
-  'https://api.staging-prefab.cloud/api/v2/config/remove-variant': [
+  'https://api.goatsofreforge.com/api/v2/config/remove-variant': [
     [
       {configKey: 'jeffreys.test.key.reforge', variant: {string: 'my.override'}},
       {message: '', newId: '17545727831235982'},
@@ -47,9 +48,106 @@ const cannedResponses: CannedResponses = {
   ],
 }
 
+// GET /all-config-types/v1/metadata - list all configs
+const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/metadata', () =>
+  HttpResponse.json({
+    configs: [
+      {
+        description: 'A simple boolean feature flag',
+        id: 1001,
+        key: 'feature-flag.simple',
+        name: 'Simple Feature Flag',
+        type: 'feature_flag',
+        valueType: 'bool',
+        version: 1,
+      },
+      {
+        description: 'A test double config',
+        id: 1002,
+        key: 'my-double-key',
+        name: 'My Double Key',
+        type: 'config',
+        valueType: 'double',
+        version: 1,
+      },
+      {
+        description: 'A test string list config',
+        id: 1003,
+        key: 'my-string-list-key',
+        name: 'My String List Key',
+        type: 'config',
+        valueType: 'string_list',
+        version: 1,
+      },
+      {
+        description: 'A test string config',
+        id: 1004,
+        key: 'jeffreys.test.key.reforge',
+        name: "Jeffrey's Test Key",
+        type: 'config',
+        valueType: 'string',
+        version: 2,
+      },
+    ],
+  }),
+)
+
+// GET /environments/v1 - list environments
+const environmentsHandler = http.get('https://api.goatsofreforge.com/environments/v1', () =>
+  HttpResponse.json({
+    environments: [
+      {id: '5', name: 'Development'},
+      {id: '143', name: 'Production'},
+      {id: '144', name: 'Staging'},
+    ],
+  }),
+)
+
+// POST /internal/ops/v1/assign-variant - set override
+const assignVariantHandler = http.post(
+  'https://api.goatsofreforge.com/internal/ops/v1/assign-variant',
+  async ({request}) => {
+    const body = (await request.json()) as any
+
+    // Check for invalid double value (NaN becomes null in JSON)
+    if (body.configKey === 'my-double-key' && body.variant?.double === null) {
+      return HttpResponse.json({error: 'Invalid double value'}, {status: 400})
+    }
+
+    return HttpResponse.json({
+      success: true,
+      newVersionId: (body.currentVersionId || 1) + 1,
+    })
+  },
+)
+
+// POST /internal/ops/v1/remove-variant - remove override
+const removeVariantHandler = http.post(
+  'https://api.goatsofreforge.com/internal/ops/v1/remove-variant',
+  async ({request}) => {
+    const body = (await request.json()) as any
+
+    // Check if config has an override (jeffreys.test.key.reforge does, my-double-key doesn't)
+    if (body.configKey === 'my-double-key') {
+      return HttpResponse.json({message: 'No override found for my-double-key'}, {status: 404})
+    }
+
+    return HttpResponse.json({
+      success: true,
+      newVersionId: (body.currentVersionId || 1) + 1,
+    })
+  },
+)
+
 export const server = setupServer(
-  http.get('https://api.staging-prefab.cloud/api/v2/configs/0', () => passthrough()),
-  http.post('https://api.staging-prefab.cloud/api/v2/*', async ({request}) =>
+  identityHandler,
+  identityHandlerTestDomain,
+  metadataHandler,
+  environmentsHandler,
+  assignVariantHandler,
+  removeVariantHandler,
+  http.get('https://api.goatsofreforge.com/api/v2/configs/0', () => passthrough()),
+  http.post('https://api.goatsofreforge.com/api/v2/*', async ({request}) =>
     getCannedResponse(request, cannedResponses).catch(console.error),
   ),
 )

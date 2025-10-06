@@ -1,140 +1,286 @@
-import {http, passthrough} from 'msw'
+import {HttpResponse, http} from 'msw'
 import {setupServer} from 'msw/node'
 
-import {CannedResponses, getCannedResponse} from '../test-helper.js'
+import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js'
 
 export const keyWithEvaluations = 'my-string-list-key'
 export const keyWithNoEvaluations = 'jeffreys.test.key.reforge'
 export const secretKey = 'a.secret.config'
 export const confidentialKey = 'a.confidential.config'
 
-const noEvaluationsResponse = (key: string) => ({end: 1_700_059_396_635, key, start: 1_699_972_996_635, total: 0})
-
 export const rawSecret = `875247386844c18c58a97c--b307b97a8288ac9da3ce0cf2--7ab0c32e044869e355586ed653a435de`
 
-const rawConfigResponseForKeyWithEvaluations = {
-  changedBy: {sdkKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
-  configType: 'CONFIG',
+// v1 config response structure for keyWithEvaluations
+const configWithEvaluations = {
   key: keyWithEvaluations,
-  projectId: '124',
-  rows: [{values: [{value: {stringList: {values: ['a', 'b', 'c']}}}]}],
-  valueType: 'STRING',
-}
-
-const rawSecretConfigResponse = {
-  changedBy: {sdkKeyId: '315', email: '', userId: '4'},
-  configType: 'CONFIG',
-  draftId: '539',
-  id: '17017173800583163',
-  key: secretKey,
-  projectId: '124',
-  rows: [{values: [{value: {decryptWith: 'reforge.secrets.encryption.key', string: rawSecret}}]}],
-  valueType: 'STRING',
-}
-
-const rawConfidentialConfigResponse = {
-  changedBy: {sdkKeyId: '315', email: '', userId: '4'},
-  configType: 'CONFIG',
-  draftId: '539',
-  id: '17017173800583163',
-  key: confidentialKey,
-  projectId: '124',
-  rows: [{values: [{value: {confidential: true, string: 'hello world'}}]}],
-  valueType: 'STRING',
-}
-
-const rawEvaluationResponse = {
-  end: 1_700_061_992_151,
-  environments: {
-    '2': {counts: [{configValue: {bool: false}, count: 7}], name: 'Development', total: 7},
-    '3': {counts: [{configValue: {bool: true}, count: 17_138}], name: 'Staging', total: 17_138},
-    '4': {
-      counts: [
-        {configValue: {bool: false}, count: 11_473},
-        {configValue: {bool: true}, count: 23_316},
-      ],
-      name: 'Production',
-      total: 34_789,
-    },
+  type: 'config',
+  valueType: 'string_list',
+  default: {
+    rules: [
+      {
+        criteria: [{operator: 'ALWAYS_TRUE'}],
+        value: {
+          type: 'string_list',
+          value: ['a', 'b', 'c'],
+        },
+      },
+    ],
   },
-  key: keyWithEvaluations,
-  start: 1_699_975_592_151,
-  total: 51_934,
+  environments: [
+    {
+      id: '588',
+      rules: [],
+    },
+    {
+      id: '143',
+      rules: [],
+    },
+  ],
 }
 
-const rawConfigResponseForKeyWithNoEvaluations = {
-  changedBy: {sdkKeyId: '', email: 'mark.faga@reforge.com', userId: '0'},
-  configType: 'CONFIG',
-  key: 'jeffreys.test.key.reforge',
-  projectId: '124',
-  rows: [
+// v1 config response for keyWithNoEvaluations
+const configWithNoEvaluations = {
+  key: keyWithNoEvaluations,
+  type: 'config',
+  valueType: 'string',
+  default: {
+    rules: [
+      {
+        criteria: [
+          {
+            propertyName: 'reforge-api-key.user-id',
+            operator: 'PROP_IS_ONE_OF',
+            valueToMatch: {
+              type: 'string_list',
+              value: ['112'],
+            },
+          },
+        ],
+        value: {
+          type: 'string',
+          value: 'my.override',
+        },
+      },
+      {
+        criteria: [{operator: 'ALWAYS_TRUE'}],
+        value: {
+          type: 'string',
+          value: 'abc',
+        },
+      },
+    ],
+  },
+  environments: [
     {
-      projectEnvId: '143',
-      values: [
+      id: '588',
+      rules: [
+        {
+          criteria: [{operator: 'ALWAYS_TRUE'}],
+          value: {type: 'string', value: 'test'},
+        },
+      ],
+    },
+    {
+      id: '143',
+      rules: [
         {
           criteria: [
             {
               operator: 'PROP_IS_ONE_OF',
               propertyName: 'prefab-api-key.user-id',
-              valueToMatch: {stringList: {values: ['112']}},
+              valueToMatch: {
+                type: 'string_list',
+                value: ['112'],
+              },
             },
           ],
-          value: {string: 'my.override'},
+          value: {type: 'string', value: 'my.override'},
         },
       ],
     },
-    {values: [{value: {string: 'abc'}}]},
-    {
-      projectEnvId: '588',
-      values: [
-        {
-          criteria: [
-            {operator: 'PROP_IS_ONE_OF', propertyName: 'user.key', valueToMatch: {stringList: {values: ['abc']}}},
-          ],
-          value: {string: 'test'},
+  ],
+}
+
+const secretConfig = {
+  key: secretKey,
+  type: 'config',
+  valueType: 'string',
+  default: {
+    rules: [
+      {
+        criteria: [{operator: 'ALWAYS_TRUE'}],
+        value: {
+          type: 'string',
+          value: rawSecret,
+          confidential: true,
+          decryptWith: 'prefab.secrets.encryption.key',
         },
-        {value: {string: 'default'}},
-      ],
-    },
-  ],
-  valueType: 'STRING',
+      },
+    ],
+  },
 }
 
-const environmentResponse = {
-  envs: [
-    {id: 588, name: 'jeffrey'},
-    {id: 143, name: 'Production'},
-  ],
-  projectId: 124,
+const confidentialConfig = {
+  key: confidentialKey,
+  type: 'config',
+  valueType: 'string',
+  default: {
+    rules: [
+      {
+        criteria: [{operator: 'ALWAYS_TRUE'}],
+        value: {
+          type: 'string',
+          value: 'some value',
+          confidential: true,
+        },
+      },
+    ],
+  },
 }
 
-const cannedResponses: CannedResponses = {
-  [`https://api.staging-prefab.cloud/api/v2/config/key/${confidentialKey}`]: [[{}, rawConfidentialConfigResponse, 200]],
-  [`https://api.staging-prefab.cloud/api/v2/config/key/${keyWithEvaluations}`]: [
-    [{}, rawConfigResponseForKeyWithEvaluations, 200],
-  ],
-  [`https://api.staging-prefab.cloud/api/v2/config/key/${keyWithNoEvaluations}`]: [
-    [{}, rawConfigResponseForKeyWithNoEvaluations, 200],
-  ],
-  [`https://api.staging-prefab.cloud/api/v2/config/key/${secretKey}`]: [[{}, rawSecretConfigResponse, 200]],
-  [`https://api.staging-prefab.cloud/api/v2/evaluation-stats/${confidentialKey}`]: [
-    [{}, rawConfigResponseForKeyWithNoEvaluations, 200],
-  ],
-  [`https://api.staging-prefab.cloud/api/v2/evaluation-stats/${keyWithEvaluations}`]: [
-    [{}, rawEvaluationResponse, 200],
-  ],
-  [`https://api.staging-prefab.cloud/api/v2/evaluation-stats/${keyWithNoEvaluations}`]: [
-    [{}, noEvaluationsResponse(keyWithNoEvaluations), 200],
-  ],
-  [`https://api.staging-prefab.cloud/api/v2/evaluation-stats/${secretKey}`]: [
-    [{}, noEvaluationsResponse(keyWithNoEvaluations), 200],
-  ],
-  'https://api.staging-prefab.cloud/api/v2/project-environments': [[{}, environmentResponse, 200]],
-}
+// GET /all-config-types/v1/metadata - list all configs
+const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/metadata', () =>
+  HttpResponse.json({
+    configs: [
+      {
+        key: keyWithEvaluations,
+        type: 'config',
+        valueType: 'string_list',
+        version: 1,
+        id: 1,
+        name: 'My String List',
+        description: '',
+      },
+      {
+        key: keyWithNoEvaluations,
+        type: 'config',
+        valueType: 'string',
+        version: 1,
+        id: 2,
+        name: 'Jeffrey Test',
+        description: '',
+      },
+      {key: secretKey, type: 'config', valueType: 'string', version: 1, id: 3, name: 'Secret', description: ''},
+      {
+        key: confidentialKey,
+        type: 'config',
+        valueType: 'string',
+        version: 1,
+        id: 4,
+        name: 'Confidential',
+        description: '',
+      },
+    ],
+  }),
+)
+
+// GET /all-config-types/v1/config/:key - get full config
+const configHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/config/:key', ({params}) => {
+  const key = params.key as string
+
+  if (key === keyWithEvaluations) {
+    return HttpResponse.json(configWithEvaluations)
+  }
+
+  if (key === keyWithNoEvaluations) {
+    return HttpResponse.json(configWithNoEvaluations)
+  }
+
+  if (key === secretKey) {
+    return HttpResponse.json(secretConfig)
+  }
+
+  if (key === confidentialKey) {
+    return HttpResponse.json(confidentialConfig)
+  }
+
+  return HttpResponse.json({error: 'Not found'}, {status: 404})
+})
+
+// GET /environments/v1 - list environments
+const environmentsHandler = http.get('https://api.goatsofreforge.com/environments/v1', () =>
+  HttpResponse.json({
+    environments: [
+      {id: '588', name: 'jeffrey', active: true, protected: false},
+      {id: '143', name: 'Production', active: true, protected: false},
+    ],
+  }),
+)
+
+// GET /evaluation-statistics/v1 - evaluation stats
+const evaluationStatsHandler = http.get('https://api.goatsofreforge.com/evaluation-statistics/v1', ({request}) => {
+  const url = new URL(request.url)
+  const key = url.searchParams.get('key')
+  const envId = url.searchParams.get('projectEnvId')
+  const startTime = url.searchParams.get('startTime')
+  const endTime = url.searchParams.get('endTime')
+
+  // For keyWithEvaluations, return stats
+  if (key === keyWithEvaluations) {
+    if (envId === '143') {
+      // Production environment - return actual stats
+      return HttpResponse.json({
+        projectEnvId: '143',
+        key: keyWithEvaluations,
+        intervals: [
+          {
+            startAt: startTime ? Number(startTime) : 1_699_975_592_151,
+            endAt: endTime ? Number(endTime) : 1_700_061_992_151,
+            data: [
+              {
+                configId: '1',
+                configType: 'config',
+                selectedValue: {bool: false},
+                count: 11_473,
+              },
+              {
+                configId: '1',
+                configType: 'config',
+                selectedValue: {bool: true},
+                count: 23_316,
+              },
+            ],
+          },
+        ],
+      })
+    }
+
+    if (envId === '588') {
+      // jeffrey environment
+      return HttpResponse.json({
+        projectEnvId: '588',
+        key: keyWithEvaluations,
+        intervals: [
+          {
+            startAt: startTime ? Number(startTime) : 1_699_975_592_151,
+            endAt: endTime ? Number(endTime) : 1_700_061_992_151,
+            data: [
+              {
+                configId: '1',
+                configType: 'config',
+                selectedValue: {string: 'test'},
+                count: 42,
+              },
+            ],
+          },
+        ],
+      })
+    }
+  }
+
+  // For other keys or envs, return empty stats
+  return HttpResponse.json({
+    projectEnvId: envId || 'unknown',
+    key: key || 'unknown',
+    intervals: [],
+  })
+})
 
 export const server = setupServer(
-  http.get('https://api.staging-prefab.cloud/api/v2/configs/0', () => passthrough()),
-  http.get('https://api.staging-prefab.cloud/api/v2/*', async ({request}) =>
-    getCannedResponse(request, cannedResponses).catch(console.error),
-  ),
+  identityHandler,
+  identityHandlerTestDomain,
+  metadataHandler,
+  configHandler,
+  environmentsHandler,
+  evaluationStatsHandler,
 )

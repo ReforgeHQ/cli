@@ -18,6 +18,7 @@
     "reforge": "./bin/run.js"
   },
   "dependencies": {
+    "@inquirer/prompts": "^5.0.0",
     "@oclif/core": "^3.18.2",
     "@oclif/plugin-help": "^6",
     "@oclif/plugin-plugins": "^4",
@@ -74,7 +75,8 @@
     "commands": "./dist/commands",
     "plugins": [],
     "topicSeparator": " ",
-    "helpClass": "./dist/help"
+    "helpClass": "./dist/help",
+    "stacktrace": false
   },
   "scripts": {
     "build": "shx rm -rf dist && tsc -b",
@@ -86,8 +88,8 @@
     "prettier": "prettier -l \"**/*.{ts,md,json}\"",
     "prettier:fix": "prettier --write \"**/*.{ts,md,json}\"",
     "readme": "yarn build && oclif manifest && oclif readme",
-    "test": "mocha \"test/**/*.test.ts\" --exit",
-    "test:ci": "mocha --forbid-only \"test/**/*.test.ts\" --exit",
+    "test": "NODE_ENV=test mocha \"test/**/*.test.ts\" --exit",
+    "test:ci": "NODE_ENV=test mocha --forbid-only \"test/**/*.test.ts\" --exit",
     "test:debug:single": "node --inspect-brk --loader ts-node/esm --no-warnings=ExperimentalWarning ./node_modules/.bin/mocha --exit",
     "update-submodule": "git submodule update --remote src/reforge-common"
   },
