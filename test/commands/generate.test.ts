@@ -2,10 +2,21 @@ import {expect, test} from '@oclif/test'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 
+import {resetClientCache} from '../../src/util/get-client.js'
+import {server} from '../responses/generate.js'
+import {cleanupTestAuth, setupTestAuth} from '../test-auth-helper.js'
+
 describe('generate', () => {
   const configPath = path.join(process.cwd(), 'reforge.config.json')
 
+  before(() => {
+    setupTestAuth()
+    server.listen()
+  })
+
   afterEach(() => {
+    server.resetHandlers()
+    resetClientCache()
     try {
       // Clean up any test config files (could be file or directory)
       if (fs.existsSync(configPath)) {
@@ -49,7 +60,9 @@ describe('generate', () => {
     .catch((error) => {
       expect(error.message).to.include('Unsupported target: invalid')
     })
-    .it('handles invalid targets')
+    .it('handles invalid targets', () => {
+      // Error assertion done in catch block
+    })
 
   describe('local configuration file parsing', () => {
     test
@@ -178,7 +191,9 @@ describe('generate', () => {
       .catch((error) => {
         expect(error.message).to.include('Error reading reforge.config.json')
       })
-      .it('handles invalid JSON in config file')
+      .it('handles invalid JSON in config file', () => {
+        // Error assertion done in catch block
+      })
 
     test
       .do(() => {
@@ -197,7 +212,9 @@ describe('generate', () => {
       .catch((error) => {
         expect(error.message).to.include('Expected string, received number')
       })
-      .it('validates config schema and rejects invalid types')
+      .it('validates config schema and rejects invalid types', () => {
+        // Error assertion done in catch block
+      })
 
     test
       .stdout()
@@ -257,6 +274,13 @@ describe('generate', () => {
       .catch((error) => {
         expect(error.message).to.include('Error reading reforge.config.json')
       })
-      .it('handles case where config path is a directory')
+      .it('handles case where config path is a directory', () => {
+        // Error assertion done in catch block
+      })
+  })
+
+  after(() => {
+    server.close()
+    cleanupTestAuth()
   })
 })

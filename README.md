@@ -14,7 +14,7 @@ $ npm install -g @reforge-com/cli
 $ reforge COMMAND
 running command...
 $ reforge (--version)
-@reforge-com/cli/0.0.0-pre.11 darwin-arm64 node-v24.4.1
+@reforge-com/cli/0.0.0-pre.11 darwin-arm64 node-v24.4.0
 $ reforge --help [COMMAND]
 USAGE
   $ reforge COMMAND
@@ -33,10 +33,14 @@ USAGE
 * [`reforge info [NAME]`](#reforge-info-name)
 * [`reforge interactive`](#reforge-interactive)
 * [`reforge list`](#reforge-list)
+* [`reforge login`](#reforge-login)
+* [`reforge logout`](#reforge-logout)
 * [`reforge override [NAME]`](#reforge-override-name)
+* [`reforge profile`](#reforge-profile)
 * [`reforge schema NAME`](#reforge-schema-name)
 * [`reforge serve DATA-FILE`](#reforge-serve-data-file)
 * [`reforge set-default [NAME]`](#reforge-set-default-name)
+* [`reforge workspace`](#reforge-workspace)
 
 ## `reforge create NAME`
 
@@ -44,9 +48,9 @@ Create a new item in Reforge
 
 ```
 USAGE
-  $ reforge create NAME --sdk-key <value> --type boolean-flag|boolean|string|double|int|string-list|json
-    [--json] [--interactive] [--no-color] [--verbose] [--confidential] [--env-var <value>] [--value <value>] [--secret]
-    [--secret-key-name <value>]
+  $ reforge create NAME --type boolean-flag|boolean|string|double|int|string-list|json [--json]
+    [--interactive] [--no-color] [--verbose] [-p <value>] [--confidential] [--env-var <value>] [--value <value>]
+    [--secret] [--secret-key-name <value>]
 
 ARGUMENTS
   NAME  name for your new item (e.g. my.new.flag)
@@ -62,11 +66,11 @@ FLAGS
   --value=<value>            default value for your new item
 
 GLOBAL FLAGS
-  --[no-]interactive  Force interactive mode
-  --json              Format output as json.
-  --no-color          Do not colorize output
-  --sdk-key=<value>   (required) Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)
-  --verbose           Verbose output
+  -p, --profile=<value>   Profile to use (defaults to ENV var REFORGE_PROFILE or "default")
+      --[no-]interactive  Force interactive mode
+      --json              Format output as json.
+      --no-color          Do not colorize output
+      --verbose           Verbose output
 
 DESCRIPTION
   Create a new item in Reforge
@@ -93,18 +97,19 @@ Download a Datafile for a given environment
 
 ```
 USAGE
-  $ reforge download --sdk-key <value> [--json] [--interactive] [--no-color] [--verbose] [--environment
-    <value>]
+  $ reforge download [--json] [--interactive] [--no-color] [--verbose] [-p <value>] [--environment <value>]
+    [--sdk-key <value>]
 
 FLAGS
   --environment=<value>  environment to download
+  --sdk-key=<value>      SDK key for authentication (uses legacy download endpoint)
 
 GLOBAL FLAGS
-  --[no-]interactive  Force interactive mode
-  --json              Format output as json.
-  --no-color          Do not colorize output
-  --sdk-key=<value>   (required) Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)
-  --verbose           Verbose output
+  -p, --profile=<value>   Profile to use (defaults to ENV var REFORGE_PROFILE or "default")
+      --[no-]interactive  Force interactive mode
+      --json              Format output as json.
+      --no-color          Do not colorize output
+      --verbose           Verbose output
 
 DESCRIPTION
   Download a Datafile for a given environment
@@ -113,6 +118,8 @@ DESCRIPTION
 
 EXAMPLES
   $ reforge download --environment=test
+
+  $ reforge download --environment=test --sdk-key=YOUR_SDK_KEY
 ```
 
 _See code: [src/commands/download.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.11/src/commands/download.ts)_
@@ -123,17 +130,17 @@ Generate type definitions for your Reforge configuration
 
 ```
 USAGE
-  $ reforge generate --sdk-key <value> [--json] [--interactive] [--no-color] [--verbose] [--targets <value>]
+  $ reforge generate [--json] [--interactive] [--no-color] [--verbose] [-p <value>] [--targets <value>]
 
 FLAGS
   --targets=<value>  [default: react-ts] Determines for language/framework to generate code for (node-ts, react-ts)
 
 GLOBAL FLAGS
-  --[no-]interactive  Force interactive mode
-  --json              Format output as json.
-  --no-color          Do not colorize output
-  --sdk-key=<value>   (required) Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)
-  --verbose           Verbose output
+  -p, --profile=<value>   Profile to use (defaults to ENV var REFORGE_PROFILE or "default")
+      --[no-]interactive  Force interactive mode
+      --json              Format output as json.
+      --no-color          Do not colorize output
+      --verbose           Verbose output
 
 DESCRIPTION
   Generate type definitions for your Reforge configuration
@@ -209,23 +216,29 @@ Get the value of a config/feature-flag/etc.
 
 ```
 USAGE
-  $ reforge get [NAME] --sdk-key <value> [--json] [--interactive] [--no-color] [--verbose]
+  $ reforge get [NAME] [--json] [--interactive] [--no-color] [--verbose] [-p <value>] [--environment
+    <value>]
 
 ARGUMENTS
   NAME  config/feature-flag/etc. name
 
+FLAGS
+  --environment=<value>  environment to evaluate in
+
 GLOBAL FLAGS
-  --[no-]interactive  Force interactive mode
-  --json              Format output as json.
-  --no-color          Do not colorize output
-  --sdk-key=<value>   (required) Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)
-  --verbose           Verbose output
+  -p, --profile=<value>   Profile to use (defaults to ENV var REFORGE_PROFILE or "default")
+      --[no-]interactive  Force interactive mode
+      --json              Format output as json.
+      --no-color          Do not colorize output
+      --verbose           Verbose output
 
 DESCRIPTION
   Get the value of a config/feature-flag/etc.
 
 EXAMPLES
   $ reforge get my.config.name
+
+  $ reforge get my.config.name --environment=production
 ```
 
 _See code: [src/commands/get.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.11/src/commands/get.ts)_
@@ -236,7 +249,7 @@ Show details about the provided config/feature-flag/etc.
 
 ```
 USAGE
-  $ reforge info [NAME] --sdk-key <value> [--json] [--interactive] [--no-color] [--verbose]
+  $ reforge info [NAME] [--json] [--interactive] [--no-color] [--verbose] [-p <value>]
     [--exclude-evaluations]
 
 ARGUMENTS
@@ -246,11 +259,11 @@ FLAGS
   --exclude-evaluations  Exclude evaluation data
 
 GLOBAL FLAGS
-  --[no-]interactive  Force interactive mode
-  --json              Format output as json.
-  --no-color          Do not colorize output
-  --sdk-key=<value>   (required) Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)
-  --verbose           Verbose output
+  -p, --profile=<value>   Profile to use (defaults to ENV var REFORGE_PROFILE or "default")
+      --[no-]interactive  Force interactive mode
+      --json              Format output as json.
+      --no-color          Do not colorize output
+      --verbose           Verbose output
 
 DESCRIPTION
   Show details about the provided config/feature-flag/etc.
@@ -285,21 +298,22 @@ Show keys for your config/feature flags/etc.
 
 ```
 USAGE
-  $ reforge list --sdk-key <value> [--json] [--interactive] [--no-color] [--verbose] [--configs]
-    [--feature-flags] [--log-levels] [--segments]
+  $ reforge list [--json] [--interactive] [--no-color] [--verbose] [-p <value>] [--configs]
+    [--feature-flags] [--log-levels] [--schemas] [--segments]
 
 FLAGS
   --configs        include configs
   --feature-flags  include flags
   --log-levels     include log levels
+  --schemas        include schemas
   --segments       include segments
 
 GLOBAL FLAGS
-  --[no-]interactive  Force interactive mode
-  --json              Format output as json.
-  --no-color          Do not colorize output
-  --sdk-key=<value>   (required) Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)
-  --verbose           Verbose output
+  -p, --profile=<value>   Profile to use (defaults to ENV var REFORGE_PROFILE or "default")
+      --[no-]interactive  Force interactive mode
+      --json              Format output as json.
+      --no-color          Do not colorize output
+      --verbose           Verbose output
 
 DESCRIPTION
   Show keys for your config/feature flags/etc.
@@ -315,28 +329,80 @@ EXAMPLES
 
 _See code: [src/commands/list.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.11/src/commands/list.ts)_
 
+## `reforge login`
+
+Log in to Reforge using OAuth
+
+```
+USAGE
+  $ reforge login [--json] [--interactive] [--no-color] [--verbose] [-p <value>]
+
+FLAGS
+  -p, --profile=<value>  Profile name to create or update (defaults to "default")
+
+GLOBAL FLAGS
+  --[no-]interactive  Force interactive mode
+  --json              Format output as json.
+  --no-color          Do not colorize output
+  --verbose           Verbose output
+
+DESCRIPTION
+  Log in to Reforge using OAuth
+
+EXAMPLES
+  $ reforge login
+
+  $ reforge login --profile myprofile
+```
+
+_See code: [src/commands/login.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.11/src/commands/login.ts)_
+
+## `reforge logout`
+
+Log out and clear stored authentication tokens
+
+```
+USAGE
+  $ reforge logout [--json] [--interactive] [--no-color] [--verbose]
+
+GLOBAL FLAGS
+  --[no-]interactive  Force interactive mode
+  --json              Format output as json.
+  --no-color          Do not colorize output
+  --verbose           Verbose output
+
+DESCRIPTION
+  Log out and clear stored authentication tokens
+
+EXAMPLES
+  $ reforge logout
+```
+
+_See code: [src/commands/logout.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.11/src/commands/logout.ts)_
+
 ## `reforge override [NAME]`
 
 Override the value of an item for your user/SDK key combo
 
 ```
 USAGE
-  $ reforge override [NAME] --sdk-key <value> [--json] [--interactive] [--no-color] [--verbose] [--remove]
-    [--value <value>]
+  $ reforge override [NAME] [--json] [--interactive] [--no-color] [--verbose] [-p <value>] [--environment
+    <value>] [--remove] [--value <value>]
 
 ARGUMENTS
   NAME  config/feature-flag/etc. name
 
 FLAGS
-  --remove         remove your override (if present)
-  --value=<value>  value to use for your override
+  --environment=<value>  environment to override in
+  --remove               remove your override (if present)
+  --value=<value>        value to use for your override
 
 GLOBAL FLAGS
-  --[no-]interactive  Force interactive mode
-  --json              Format output as json.
-  --no-color          Do not colorize output
-  --sdk-key=<value>   (required) Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)
-  --verbose           Verbose output
+  -p, --profile=<value>   Profile to use (defaults to ENV var REFORGE_PROFILE or "default")
+      --[no-]interactive  Force interactive mode
+      --json              Format output as json.
+      --no-color          Do not colorize output
+      --verbose           Verbose output
 
 DESCRIPTION
   Override the value of an item for your user/SDK key combo
@@ -353,14 +419,37 @@ EXAMPLES
 
 _See code: [src/commands/override.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.11/src/commands/override.ts)_
 
+## `reforge profile`
+
+Manage profiles and set default profile
+
+```
+USAGE
+  $ reforge profile [--json] [--interactive] [--no-color] [--verbose]
+
+GLOBAL FLAGS
+  --[no-]interactive  Force interactive mode
+  --json              Format output as json.
+  --no-color          Do not colorize output
+  --verbose           Verbose output
+
+DESCRIPTION
+  Manage profiles and set default profile
+
+EXAMPLES
+  $ reforge profile
+```
+
+_See code: [src/commands/profile.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.11/src/commands/profile.ts)_
+
 ## `reforge schema NAME`
 
 Manage schemas for Reforge configs
 
 ```
 USAGE
-  $ reforge schema NAME --sdk-key <value> [--json] [--interactive] [--no-color] [--verbose] [--get]
-    [--set-zod <value>]
+  $ reforge schema NAME [--json] [--interactive] [--no-color] [--verbose] [-p <value>] [--get] [--set-zod
+    <value>]
 
 ARGUMENTS
   NAME  name of the schema
@@ -370,11 +459,11 @@ FLAGS
   --set-zod=<value>  set a Zod schema definition
 
 GLOBAL FLAGS
-  --[no-]interactive  Force interactive mode
-  --json              Format output as json.
-  --no-color          Do not colorize output
-  --sdk-key=<value>   (required) Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)
-  --verbose           Verbose output
+  -p, --profile=<value>   Profile to use (defaults to ENV var REFORGE_PROFILE or "default")
+      --[no-]interactive  Force interactive mode
+      --json              Format output as json.
+      --no-color          Do not colorize output
+      --verbose           Verbose output
 
 DESCRIPTION
   Manage schemas for Reforge configs
@@ -429,9 +518,8 @@ Set/update the default value for an environment (other rules still apply)
 
 ```
 USAGE
-  $ reforge set-default [NAME] --sdk-key <value> [--json] [--interactive] [--no-color] [--verbose]
-    [--confidential] [--env-var <value>] [--environment <value>] [--value <value>] [--confirm] [--secret]
-    [--secret-key-name <value>]
+  $ reforge set-default [NAME] [--json] [--interactive] [--no-color] [--verbose] [-p <value>] [--confidential]
+    [--env-var <value>] [--environment <value>] [--value <value>] [--confirm] [--secret] [--secret-key-name <value>]
 
 ARGUMENTS
   NAME  config/feature-flag/etc. name
@@ -440,18 +528,18 @@ FLAGS
   --confidential             mark the value as confidential
   --confirm                  confirm without prompt
   --env-var=<value>          environment variable to use as default value
-  --environment=<value>      environment to change (specify "[default]" for the default environment)
+  --environment=<value>      environment to change
   --secret                   encrypt the value of this item
   --secret-key-name=<value>  [default: reforge.secrets.encryption.key] name of the secret key to use for
                              encryption/decryption
   --value=<value>            new default value
 
 GLOBAL FLAGS
-  --[no-]interactive  Force interactive mode
-  --json              Format output as json.
-  --no-color          Do not colorize output
-  --sdk-key=<value>   (required) Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)
-  --verbose           Verbose output
+  -p, --profile=<value>   Profile to use (defaults to ENV var REFORGE_PROFILE or "default")
+      --[no-]interactive  Force interactive mode
+      --json              Format output as json.
+      --no-color          Do not colorize output
+      --verbose           Verbose output
 
 DESCRIPTION
   Set/update the default value for an environment (other rules still apply)
@@ -467,6 +555,29 @@ EXAMPLES
 ```
 
 _See code: [src/commands/set-default.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.11/src/commands/set-default.ts)_
+
+## `reforge workspace`
+
+Switch active workspace or display current workspace
+
+```
+USAGE
+  $ reforge workspace [--json] [--interactive] [--no-color] [--verbose]
+
+GLOBAL FLAGS
+  --[no-]interactive  Force interactive mode
+  --json              Format output as json.
+  --no-color          Do not colorize output
+  --verbose           Verbose output
+
+DESCRIPTION
+  Switch active workspace or display current workspace
+
+EXAMPLES
+  $ reforge workspace
+```
+
+_See code: [src/commands/workspace.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.11/src/commands/workspace.ts)_
 <!-- commandsstop -->
 
 ## Local Development

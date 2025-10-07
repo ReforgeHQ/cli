@@ -2,7 +2,7 @@ export {run} from '@oclif/core'
 import {Command, Flags} from '@oclif/core'
 
 import {Client} from './reforge-common/src/api/client.js'
-import {ProjectEnvId, getProjectEnvFromSdkKey} from './reforge-common/src/getProjectEnvFromSdkKey.js'
+import {ProjectEnvId} from './reforge-common/src/getProjectEnvFromSdkKey.js'
 import {JsonObj, Result} from './result.js'
 import rawGetClient, {unwrapRequest} from './util/get-client.js'
 
@@ -39,10 +39,10 @@ export abstract class BaseCommand extends Command {
     }
 
     if (typeof error === 'string') {
-      return this.error(error)
+      return this.error(error, {code: 'ERR', exit: 1})
     }
 
-    this.error(this.toErrorJson(error))
+    this.error(this.toErrorJson(error), {code: 'ERR', exit: 1})
   }
 
   public isVerbose!: boolean
@@ -80,6 +80,27 @@ export abstract class BaseCommand extends Command {
     }
   }
 
+  protected async catch(err: {exitCode?: number; code?: string} & Error): Promise<void> {
+    // Override oclif's default error handling to suppress stack traces in production
+    // but preserve error messages for tests
+
+    // In test environment with JSON mode, output JSON then throw
+    if (process.env.NODE_ENV === 'test' && this.jsonEnabled()) {
+      // Output the error object directly (oclif test framework will capture it)
+      process.stdout.write(JSON.stringify(err) + '\n')
+      throw err
+    }
+
+    // In test environment, re-throw with message
+    if (process.env.NODE_ENV === 'test') {
+      throw err
+    }
+
+    // In production, log the error message without stack trace
+    this.log(err.message)
+    this.exit(err.exitCode || 1)
+  }
+
   public async init(): Promise<void> {
     await super.init()
 
@@ -92,11 +113,11 @@ export abstract class BaseCommand extends Command {
 export abstract class APICommand extends BaseCommand {
   static baseFlags = {
     ...globalFlags,
-    'sdk-key': Flags.string({
-      description: 'Reforge SDK KEY (defaults to ENV var REFORGE_SDK_KEY)',
-      env: 'REFORGE_SDK_KEY',
+    profile: Flags.string({
+      char: 'p',
+      description: 'Profile to use (defaults to ENV var REFORGE_PROFILE or "default")',
       helpGroup: 'GLOBAL',
-      required: true,
+      required: false,
     }),
   }
 
@@ -104,11 +125,15 @@ export abstract class APICommand extends BaseCommand {
 
   public rawApiClient!: Client
 
+  public workspaceId?: string
+
   get apiClient() {
     return {
       get: async (path: string) => unwrapRequest(this, this.rawApiClient.get(path)),
 
       post: async (path: string, payload: unknown) => unwrapRequest(this, this.rawApiClient.post(path, payload)),
+
+      put: async (path: string, payload: unknown) => unwrapRequest(this, this.rawApiClient.put(path, payload)),
     }
   }
 
@@ -117,13 +142,10 @@ export abstract class APICommand extends BaseCommand {
 
     const {flags} = await this.parse()
 
-    // We want to handle the sdk-key being explicitly blank.
-    // If it is truly absent then the `required: true` will catch it.
-    if (!flags['sdk-key']) {
-      this.error('SDK key is required', {exit: 401})
-    }
+    this.rawApiClient = await rawGetClient(this, undefined, flags.profile)
 
-    this.rawApiClient = rawGetClient(this, flags['sdk-key'])
-    this.currentEnvironment = getProjectEnvFromSdkKey(flags['sdk-key'])
+    // For JWT-based auth, we'll need to get environment info from the token
+    // For now, set a placeholder - this should be enhanced later
+    this.currentEnvironment = {id: 'unknown', projectId: 0}
   }
 }

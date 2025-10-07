@@ -1,259 +1,275 @@
-import {http, passthrough} from 'msw'
+import {HttpResponse, http} from 'msw'
 import {setupServer} from 'msw/node'
 
-import {ANY, CannedResponses, SECRET_VALUE, getCannedResponse} from '../test-helper.js'
+import {identityHandler, identityHandlerTestDomain} from '../test-auth-helper.js'
 
-const createdResponse = {response: {message: '', newId: '17002327855857830'}}
+/**
+ * Mock responses for set-default command tests
+ * Uses v1 API endpoints
+ */
 
-const cannedResponses: CannedResponses = {
-  'https://api.staging-prefab.cloud/api/v2/config/key/feature-flag.simple': [
-    [
-      {},
+// GET /all-config-types/v1/metadata - list all configs
+const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/metadata', () =>
+  HttpResponse.json({
+    configs: [
       {
-        allowableValues: [{bool: true}, {bool: false}],
-        changedBy: {sdkKeyId: '315', email: '', userId: '4'},
-        configType: 'FEATURE_FLAG',
-        draftId: '522',
-        id: '17005947285496532',
         key: 'feature-flag.simple',
-        projectId: '124',
-        rows: [
-          {
-            projectEnvId: '143',
-            values: [
-              {
-                criteria: [
-                  {
-                    operator: 'PROP_IS_ONE_OF',
-                    propertyName: 'prefab-api-key.user-id',
-                    valueToMatch: {stringList: {values: ['4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4']}},
-                  },
-                ],
-                value: {bool: true},
-              },
-              {value: {bool: true}},
-            ],
-          },
-        ],
-        valueType: 'BOOL',
+        type: 'feature_flag',
+        valueType: 'bool',
+        version: 1,
+        id: 1001,
+        name: 'Simple Feature Flag',
+        description: 'A simple boolean feature flag',
       },
-      200,
-    ],
-  ],
-
-  'https://api.staging-prefab.cloud/api/v2/config/key/jeffreys.test.int': [
-    [
-      {},
       {
-        changedBy: {sdkKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
-        configType: 'CONFIG',
-        draftId: '531',
-        id: '17005955334851009',
-        key: 'jeffreys.test.int',
-        projectId: '124',
-        rows: [{values: [{value: {int: 99}}]}],
-        valueType: 'INT',
-      },
-      200,
-    ],
-  ],
-
-  'https://api.staging-prefab.cloud/api/v2/config/key/jeffreys.test.key.reforge': [
-    [
-      {},
-      {
-        changedBy: {sdkKeyId: '', email: 'mark.faga@reforge.com', userId: '0'},
-        configType: 'CONFIG',
-        draftId: '531',
-        id: '17005955334851003',
         key: 'jeffreys.test.key.reforge',
-        projectId: '124',
-        rows: [
-          {projectEnvId: '588', values: [{value: {string: 'default'}}]},
-          {values: [{value: {string: 'abc'}}]},
+        type: 'config',
+        valueType: 'string',
+        version: 2,
+        id: 1002,
+        name: "Jeffrey's Test Config",
+        description: 'A test string config',
+      },
+      {
+        key: 'jeffreys.test.int',
+        type: 'config',
+        valueType: 'int',
+        version: 1,
+        id: 1003,
+        name: "Jeffrey's Int Config",
+        description: 'A test int config',
+      },
+      {
+        key: 'robocop-secret',
+        type: 'config',
+        valueType: 'string',
+        version: 1,
+        id: 1004,
+        name: 'Robocop Secret',
+        description: 'A secret config',
+      },
+      {
+        key: 'test.json',
+        type: 'config',
+        valueType: 'json',
+        version: 1,
+        id: 1005,
+        name: 'Test JSON',
+        description: 'A JSON config',
+      },
+      {
+        key: 'reforge.secrets.encryption.key',
+        type: 'config',
+        valueType: 'string',
+        version: 1,
+        id: 1006,
+        name: 'Encryption Key',
+        description: 'Encryption key for secrets',
+      },
+    ],
+  }),
+)
+
+// GET /environments/v1 - list environments
+const environmentsHandler = http.get('https://api.goatsofreforge.com/environments/v1', () =>
+  HttpResponse.json({
+    environments: [
+      {id: '5', name: 'Development', active: true, protected: false},
+      {id: '6', name: 'Staging', active: true, protected: false},
+      {id: '7', name: 'Production', active: true, protected: true},
+    ],
+  }),
+)
+
+// GET /all-config-types/v1/config/:key - get encryption key config
+const encryptionKeyHandler = http.get(
+  'https://api.goatsofreforge.com/all-config-types/v1/config/reforge.secrets.encryption.key',
+  () =>
+    HttpResponse.json({
+      key: 'reforge.secrets.encryption.key',
+      type: 'config',
+      valueType: 'string',
+      default: {
+        rules: [
           {
-            projectEnvId: '143',
-            values: [
-              {
-                criteria: [
-                  {
-                    operator: 'PROP_IS_ONE_OF',
-                    propertyName: 'prefab-api-key.user-id',
-                    valueToMatch: {stringList: {values: ['112']}},
-                  },
-                ],
-                value: {string: 'my.override'},
+            criteria: [],
+            value: {
+              provided: {
+                source: 'ENV_VAR',
+                lookup: 'REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY',
               },
-              {value: {string: 'default'}},
-            ],
+            },
           },
         ],
-        valueType: 'STRING',
       },
-      200,
-    ],
-  ],
-
-  'https://api.staging-prefab.cloud/api/v2/config/key/reforge.secrets.encryption.key': [
-    [
-      {},
-      {
-        changedBy: {sdkKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
-        configType: 'CONFIG',
-        draftId: '497',
-        id: '17018809595519854',
-        key: 'reforge.secrets.encryption.key',
-        projectId: '100',
-        rows: [
-          {values: [{value: {provided: {lookup: 'FAKE_PROD_SECRET', source: 'ENV_VAR'}}}]},
-          {projectEnvId: '101', values: [{value: {provided: {lookup: 'FAKE_DEFAULT_SECRET', source: 'ENV_VAR'}}}]},
-        ],
-        valueType: 'STRING',
-      },
-      200,
-    ],
-  ],
-
-  'https://api.staging-prefab.cloud/api/v2/config/key/robocop-secret': [
-    [
-      {},
-      {
-        changedBy: {sdkKeyId: '315', email: '', userId: '4'},
-        configType: 'CONFIG',
-        draftId: '554',
-        id: '17049868822052866',
-        key: 'robocop-secret',
-        projectId: '124',
-        rows: [
-          {
-            values: [
-              {
-                value: {
-                  confidential: true,
-                  decryptWith: 'reforge.secrets.encryption.key',
-                  string: 'ff6351432e--76813f77392fb3dd15f5ca1b--87f6c7691570d277ae1a9a302646f906',
+      environments: [
+        {
+          id: 6,
+          rules: [
+            {
+              criteria: [],
+              value: {
+                provided: {
+                  source: 'ENV_VAR',
+                  lookup: 'REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY',
                 },
               },
-            ],
+            },
+          ],
+        },
+      ],
+    }),
+)
+
+// GET /all-config-types/v1/config/feature-flag.simple - get feature flag details (not encrypted)
+const featureFlagDetailsHandler = http.get(
+  'https://api.goatsofreforge.com/all-config-types/v1/config/feature-flag.simple',
+  () =>
+    HttpResponse.json({
+      key: 'feature-flag.simple',
+      type: 'feature_flag',
+      valueType: 'bool',
+      default: {
+        rules: [
+          {
+            criteria: [],
+            value: {
+              type: 'bool',
+              value: false,
+            },
           },
         ],
-        valueType: 'STRING',
       },
-      200,
-    ],
-  ],
+    }),
+)
 
-  'https://api.staging-prefab.cloud/api/v2/config/key/test.json': [
-    [
-      {},
-      {
-        changedBy: {sdkKeyId: '', email: 'jeffrey.chupp@reforge.com', userId: '0'},
-        configType: 'CONFIG',
-        draftId: '533',
-        id: '17005955334851012',
-        key: 'test.json',
-        projectId: '124',
-        rows: [{values: [{json: {json: '[]'}}]}],
-        valueType: 'INT',
+// GET /all-config-types/v1/config/jeffreys.test.key.reforge - get string config details (not encrypted)
+const jeffreysTestKeyDetailsHandler = http.get(
+  'https://api.goatsofreforge.com/all-config-types/v1/config/jeffreys.test.key.reforge',
+  () =>
+    HttpResponse.json({
+      key: 'jeffreys.test.key.reforge',
+      type: 'config',
+      valueType: 'string',
+      default: {
+        rules: [
+          {
+            criteria: [],
+            value: {
+              type: 'string',
+              value: 'default value',
+            },
+          },
+        ],
       },
-      200,
-    ],
-  ],
+    }),
+)
 
-  'https://api.staging-prefab.cloud/api/v2/config/key/this.does.not.exist': [[{}, {}, 404]],
+// GET /all-config-types/v1/config/jeffreys.test.int - get int config details (not encrypted)
+const jeffreysTestIntDetailsHandler = http.get(
+  'https://api.goatsofreforge.com/all-config-types/v1/config/jeffreys.test.int',
+  () =>
+    HttpResponse.json({
+      key: 'jeffreys.test.int',
+      type: 'config',
+      valueType: 'int',
+      default: {
+        rules: [
+          {
+            criteria: [],
+            value: {
+              type: 'int',
+              value: 42,
+            },
+          },
+        ],
+      },
+    }),
+)
 
-  'https://api.staging-prefab.cloud/api/v2/config/set-default/': [
-    [
-      {configKey: 'feature-flag.simple', currentVersionId: ANY, environmentId: '5', value: {bool: true}},
-      createdResponse,
-      200,
-    ],
-
-    [
-      {
-        configKey: 'test.json',
-        currentVersionId: '17259086775344510',
-        environmentId: '6',
-        value: {
-          json: {
-            json: '{"hello":"world"}',
+// GET /all-config-types/v1/config/test.json - get json config details (not encrypted)
+const testJsonDetailsHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/config/test.json', () =>
+  HttpResponse.json({
+    key: 'test.json',
+    type: 'config',
+    valueType: 'json',
+    default: {
+      rules: [
+        {
+          criteria: [],
+          value: {
+            type: 'json',
+            value: {test: 'data'},
           },
         },
-      },
-      createdResponse,
-      200,
-    ],
+      ],
+    },
+  }),
+)
 
-    [
-      {
-        configKey: 'jeffreys.test.key.reforge',
-        currentVersionId: ANY,
-        value: {string: 'hello default world'},
-      },
-      createdResponse,
-      200,
-    ],
-
-    [
-      {
-        configKey: 'jeffreys.test.key.reforge',
-        currentVersionId: ANY,
-        environmentId: '6',
-        value: {provided: {lookup: 'GREETING', source: 'ENV_VAR'}},
-      },
-      createdResponse,
-      200,
-    ],
-
-    [
-      {
-        configKey: 'jeffreys.test.key.reforge',
-        currentVersionId: ANY,
-        environmentId: '6',
-        value: {
-          confidential: true,
-          decryptWith: 'reforge.secrets.encryption.key',
-          string: SECRET_VALUE,
+// GET /all-config-types/v1/config/robocop-secret - get robocop secret (has encrypted values)
+const robocopSecretHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/config/robocop-secret', () =>
+  HttpResponse.json({
+    key: 'robocop-secret',
+    type: 'config',
+    valueType: 'string',
+    default: {
+      rules: [
+        {
+          criteria: [],
+          value: {
+            type: 'string',
+            value: 'encrypted-value-here',
+            confidential: true,
+            decryptWith: 'reforge.secrets.encryption.key',
+          },
         },
-      },
-      createdResponse,
-      200,
-    ],
+      ],
+    },
+  }),
+)
 
-    [
-      {
-        configKey: 'robocop-secret',
-        currentVersionId: ANY,
-        environmentId: '6',
-        value: {confidential: true, decryptWith: 'reforge.secrets.encryption.key', string: ANY},
-      },
-      createdResponse,
-      200,
-    ],
-  ],
+// POST /internal/ops/v1/set-default - set default value
+const setDefaultHandler = http.post('https://api.goatsofreforge.com/internal/ops/v1/set-default', async ({request}) => {
+  const body = (await request.json()) as any
 
-  'https://api.staging-prefab.cloud/api/v2/project-environments': [
-    [
-      {},
-      {
-        envs: [
-          {id: 5, name: 'Development'},
-          {id: 590, name: 'Another One Mark 2'},
-          {id: 6, name: 'Staging'},
-        ],
-        projectId: 3,
-      },
-      200,
-    ],
-  ],
-}
+  // Validate the request (allow environmentId: 0 for default environment)
+  if (!body.configKey || body.currentVersionId === undefined) {
+    return HttpResponse.json({error: 'Missing required fields'}, {status: 400})
+  }
+
+  // Check for invalid boolean values
+  if (body.configKey === 'feature-flag.simple' && body.value?.string) {
+    // String value for boolean flag is invalid
+    return HttpResponse.json(
+      {error: `'${body.value.string}' is not a valid value for feature-flag.simple`},
+      {status: 400},
+    )
+  }
+
+  // Check for invalid int values
+  if (body.configKey === 'jeffreys.test.int' && body.value?.int === undefined && body.value?.string !== undefined) {
+    // Non-integer value for int config
+    return HttpResponse.json({error: `Invalid default value for int: ${body.value.string}`}, {status: 400})
+  }
+
+  // Success response
+  return HttpResponse.json({
+    success: true,
+    newVersionId: body.currentVersionId + 1,
+  })
+})
 
 export const server = setupServer(
-  http.get('https://api.staging-prefab.cloud/api/v2/configs/0', () => passthrough()),
-  http.get('https://api.staging-prefab.cloud/api/v2/*', async ({request}) =>
-    getCannedResponse(request, cannedResponses).catch(console.error),
-  ),
-  http.post('https://api.staging-prefab.cloud/api/v2/*', async ({request}) =>
-    getCannedResponse(request, cannedResponses).catch(console.error),
-  ),
+  identityHandler,
+  identityHandlerTestDomain,
+  metadataHandler,
+  environmentsHandler,
+  encryptionKeyHandler,
+  featureFlagDetailsHandler,
+  jeffreysTestKeyDetailsHandler,
+  jeffreysTestIntDetailsHandler,
+  testJsonDetailsHandler,
+  robocopSecretHandler,
+  setDefaultHandler,
 )

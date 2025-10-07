@@ -105,7 +105,7 @@ type Arg = {
   type: string
 }
 
-const promptForInput = async (arg: Arg, name: string, commandId: string, sdkKey?: string) => {
+const promptForInput = async (arg: Arg, name: string, commandId: string) => {
   let value
 
   const message = arg.description ?? name
@@ -119,7 +119,7 @@ const promptForInput = async (arg: Arg, name: string, commandId: string, sdkKey?
           const {key} = await getKey({
             args: {},
             command: {err: throwError, error: throwError},
-            flags: {'sdk-key': sdkKey, interactive: true},
+            flags: {interactive: true},
             message: 'Which item?',
           })
 
@@ -144,17 +144,13 @@ const promptForInput = async (arg: Arg, name: string, commandId: string, sdkKey?
   return value
 }
 
-const getArgs = async (
-  args: AvailableCommand['command']['args'],
-  commandId: string,
-  sdkKey?: string,
-): Promise<string[]> => {
+const getArgs = async (args: AvailableCommand['command']['args'], commandId: string): Promise<string[]> => {
   const requiredArgs = Object.keys(args)
 
   return Promise.all(
     Object.entries(args)
       .filter(([key]) => requiredArgs.includes(key))
-      .map(([key, arg]) => promptForInput(arg, key, commandId, sdkKey)),
+      .map(([key, arg]) => promptForInput(arg, key, commandId)),
   )
 }
 
@@ -162,7 +158,6 @@ const getFlags = async (
   flags: AvailableCommand['command']['flags'],
   commandId: string,
   implicitFlags: string[],
-  sdkKey?: string,
 ): Promise<string[]> => {
   if (!flags && implicitFlags.length === 0) {
     return []
@@ -177,7 +172,7 @@ const getFlags = async (
         inputs.push(`--${key}`)
       } else {
         // eslint-disable-next-line no-await-in-loop
-        const value = await promptForInput(arg, key, commandId, sdkKey)
+        const value = await promptForInput(arg, key, commandId)
         inputs.push(`--${key}=${value}`)
       }
     }
@@ -217,25 +212,10 @@ export const interactivePrompt = async (config: Config) => {
       return
     }
 
-    let sdkKey = process.env.REFORGE_SDK_KEY
+    const cliArgs = process.argv.slice(2)
 
-    const cliArgs = process.argv.slice(2).filter((arg) => {
-      if (arg.startsWith('--sdk-key=') && !Object.keys(chosenCommand.command.baseFlags ?? {}).includes('sdk-key')) {
-        sdkKey = arg.split('=')[1]
-        return false
-      }
-
-      return true
-    })
-
-    if (Object.keys(chosenCommand.command.baseFlags ?? {}).includes('sdk-key') && !sdkKey) {
-      throw new Error(
-        'You must provide an SDK Key via --sdk-key=XYZ or by setting the REFORGE_SDK_KEY environment variable.',
-      )
-    }
-
-    const args = await getArgs(chosenCommand.command.args, chosenCommand.id, sdkKey)
-    const flags = await getFlags(chosenCommand.command.flags, chosenCommand.id, chosenCommand.implicitFlags, sdkKey)
+    const args = await getArgs(chosenCommand.command.args, chosenCommand.id)
+    const flags = await getFlags(chosenCommand.command.flags, chosenCommand.id, chosenCommand.implicitFlags)
 
     const allArgs = [...cliArgs, ...args, ...flags]
 

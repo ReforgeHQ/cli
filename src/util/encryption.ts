@@ -1,0 +1,89 @@
+import {encryption} from '@reforge-com/node'
+
+import type {APICommand} from '../index.js'
+import type {Secret} from './secret-flags.js'
+
+import {Result, failure, success} from '../result.js'
+
+/**
+ * Creates an encrypted ConfigValue using the new v1 API endpoints
+ * @param command - The APICommand instance for API calls and logging
+ * @param value - The plaintext value to encrypt
+ * @param secret - Secret configuration containing key name
+ * @param environmentId - Environment ID to fetch encryption key for (empty string for default)
+ * @returns Result<ConfigValue> with encrypted value or error
+ */
+export async function makeConfidentialValue(
+  command: APICommand,
+  value: string,
+  secret: Secret,
+  environmentId: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Promise<Result<any>> {
+  // Fetch the encryption key config
+  const configRequest = await command.apiClient.get(`/all-config-types/v1/config/${encodeURIComponent(secret.keyName)}`)
+
+  if (!configRequest.ok) {
+    const message =
+      configRequest.status === 404
+        ? `Failed to create secret: ${secret.keyName} not found`
+        : `Failed to fetch encryption key config ${secret.keyName}: ${configRequest.status}`
+    return failure(message, {
+      phase: 'finding-secret',
+    })
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const keyConfig = configRequest.json as any
+
+  // Find the encryption key for this environment (or default)
+  let envVar: string | undefined
+
+  // Check environment-specific config first
+  if (keyConfig.environments && environmentId) {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    const envConfig = (keyConfig.environments as any[]).find(
+      (env: any) => env.id === Number.parseInt(environmentId, 10),
+    )
+    /* eslint-enable @typescript-eslint/no-explicit-any */
+    if (envConfig?.rules?.[0]?.value?.provided?.lookup) {
+      envVar = envConfig.rules[0].value.provided.lookup
+    }
+  }
+
+  // Fall back to default config
+  if (!envVar && keyConfig.default?.rules?.[0]?.value?.provided?.lookup) {
+    envVar = keyConfig.default.rules[0].value.provided.lookup
+  }
+
+  if (!envVar) {
+    return failure(
+      `Failed to create secret: ${secret.keyName} not found for environment ${environmentId || 'default'} or default env`,
+      {
+        phase: 'finding-secret',
+      },
+    )
+  }
+
+  const secretKey = process.env[envVar]
+
+  command.verboseLog(`Using env var ${envVar} to encrypt secret`)
+
+  if (typeof secretKey !== 'string') {
+    return failure(`Failed to create secret: env var ${envVar} is not present`, {
+      phase: 'finding-secret',
+    })
+  }
+
+  if (secretKey.length !== 64) {
+    return failure(`Secret key is too short. ${secret.keyName} must be 64 characters.`, {
+      phase: 'finding-secret',
+    })
+  }
+
+  return success({
+    confidential: true,
+    decryptWith: secret.keyName,
+    string: encryption.encrypt(value, secretKey),
+  })
+}

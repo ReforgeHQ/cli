@@ -2,6 +2,7 @@
 *-debug.log
 *-error.log
 /.idea
+/.claude
 /.nyc_output
 /dist
 /lib
@@ -16,4 +17,5 @@ tsconfig.tsbuildinfo
 .oprc
 generated/*
 src/reforge
-.yarn
+.yarn/install-state.gz
+test-*.sh
