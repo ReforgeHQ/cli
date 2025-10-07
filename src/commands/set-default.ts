@@ -255,11 +255,14 @@ export default class SetDefault extends APICommand {
         configValue = encryptedValueResult.value
         successMessage += ' (encrypted)'
       } else {
-        // Parse the value based on type
-        let parsedValue: unknown = value
+        // Parse the value based on type and build value object
+        let variantValue: unknown = value
+        let variantType: string = type
+
         switch (type) {
           case 'stringList': {
-            parsedValue = {values: value.split(',')}
+            variantValue = value.split(',')
+            variantType = 'string_list'
 
             break
           }
@@ -268,29 +271,34 @@ export default class SetDefault extends APICommand {
             if (lowerValue !== 'true' && lowerValue !== 'false') {
               return this.err(`'${value}' is not a valid value for ${key}`)
             }
-            parsedValue = lowerValue === 'true'
+            variantValue = lowerValue === 'true'
 
             break
           }
           case 'int': {
-            parsedValue = Number.parseInt(value, 10)
-            if (Number.isNaN(parsedValue)) {
+            variantValue = Number.parseInt(value, 10)
+            if (Number.isNaN(variantValue)) {
               return this.err(`Invalid default value for int: ${value}`)
             }
 
             break
           }
           case 'double': {
-            parsedValue = Number.parseFloat(value)
+            variantValue = Number.parseFloat(value)
 
             break
           }
           case 'json': {
             try {
-              parsedValue = JSON.parse(value)
+              variantValue = JSON.parse(value)
             } catch {
               return this.err(`Invalid JSON value: ${value}`)
             }
+
+            break
+          }
+          case 'string': {
+            variantValue = value
 
             break
           }
@@ -298,7 +306,8 @@ export default class SetDefault extends APICommand {
         }
 
         configValue = {
-          [type]: parsedValue,
+          type: variantType,
+          value: variantValue,
         }
       }
     } else {

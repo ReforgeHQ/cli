@@ -239,18 +239,18 @@ const setDefaultHandler = http.post('https://api.goatsofreforge.com/internal/ops
   }
 
   // Check for invalid boolean values
-  if (body.configKey === 'feature-flag.simple' && body.value?.string) {
+  if (body.configKey === 'feature-flag.simple' && body.value?.type === 'string') {
     // String value for boolean flag is invalid
     return HttpResponse.json(
-      {error: `'${body.value.string}' is not a valid value for feature-flag.simple`},
+      {error: `'${body.value.value}' is not a valid value for feature-flag.simple`},
       {status: 400},
     )
   }
 
   // Check for invalid int values
-  if (body.configKey === 'jeffreys.test.int' && body.value?.int === undefined && body.value?.string !== undefined) {
+  if (body.configKey === 'jeffreys.test.int' && body.value?.type === 'string') {
     // Non-integer value for int config
-    return HttpResponse.json({error: `Invalid default value for int: ${body.value.string}`}, {status: 400})
+    return HttpResponse.json({error: `Invalid default value for int: ${body.value.value}`}, {status: 400})
   }
 
   // Success response
