@@ -77,6 +77,9 @@ jobs:
             ${{ runner.os }}-yarn-
       - run: yarn install --immutable
       - run: yarn build
+      - name: Configure npm authentication
+        run: |
+          echo "npmAuthToken: '\${NPM_AUTH_TOKEN}'" >> .yarnrc.yml
       - name: Publish to npm
         run: |
           if [ "${{ needs.check-version.outputs.is-prerelease }}" == "true" ]; then
