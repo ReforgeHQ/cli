@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.1 - 2025-10-07
+
+- feat: OAuth login with JWT authentication and v1 API migration
+- feat: nodejs typegen shouldn't generate unnecessary async methods
+- feat: expose the reforge client directly in nodejs typegen
+
 ## 0.0.0-pre.11 - 2025-10-01
 
 - fix: don't assume feature flags are boolean values in typegen
