@@ -17,7 +17,8 @@
     "prefer-destructuring": "off",
     "perfectionist/sort-objects": "off",
     "perfectionist/sort-object-types": "off",
-    "perfectionist/sort-union-types": "off"
+    "perfectionist/sort-union-types": "off",
+    "perfectionist/sort-imports": "off"
   },
   "overrides": [
     {
