@@ -2,9 +2,13 @@ import * as fs from 'node:fs'
 import * as os from 'node:os'
 import * as path from 'node:path'
 
-const getReforgeDir = () => path.join(os.homedir(), '.reforge')
-const getTokenFile = () => path.join(getReforgeDir(), 'tokens.json')
-const getConfigFile = () => path.join(getReforgeDir(), 'config')
+export interface TokenStorageOptions {
+  reforgeDir?: string
+}
+
+const getReforgeDir = (options?: TokenStorageOptions) => options?.reforgeDir || path.join(os.homedir(), '.reforge')
+const getTokenFile = (options?: TokenStorageOptions) => path.join(getReforgeDir(options), 'tokens.json')
+const getConfigFile = (options?: TokenStorageOptions) => path.join(getReforgeDir(options), 'config')
 
 export interface TokenData {
   accessToken: string
@@ -22,8 +26,8 @@ export interface AuthConfig {
   }
 }
 
-const ensureReforgeDir = async () => {
-  const reforgeDir = getReforgeDir()
+const ensureReforgeDir = async (options?: TokenStorageOptions) => {
+  const reforgeDir = getReforgeDir(options)
   try {
     await fs.promises.access(reforgeDir, fs.constants.F_OK)
   } catch {
@@ -31,22 +35,22 @@ const ensureReforgeDir = async () => {
   }
 }
 
-export const saveTokens = async (tokens: TokenData): Promise<void> => {
-  await ensureReforgeDir()
-  await fs.promises.writeFile(getTokenFile(), JSON.stringify(tokens, null, 2), 'utf8')
+export const saveTokens = async (tokens: TokenData, options?: TokenStorageOptions): Promise<void> => {
+  await ensureReforgeDir(options)
+  await fs.promises.writeFile(getTokenFile(options), JSON.stringify(tokens, null, 2), 'utf8')
 }
 
-export const loadTokens = async (): Promise<TokenData | null> => {
+export const loadTokens = async (options?: TokenStorageOptions): Promise<TokenData | null> => {
   try {
-    const data = await fs.promises.readFile(getTokenFile(), 'utf8')
+    const data = await fs.promises.readFile(getTokenFile(options), 'utf8')
     return JSON.parse(data) as TokenData
   } catch {
     return null
   }
 }
 
-export const saveAuthConfig = async (config: AuthConfig): Promise<void> => {
-  await ensureReforgeDir()
+export const saveAuthConfig = async (config: AuthConfig, options?: TokenStorageOptions): Promise<void> => {
+  await ensureReforgeDir(options)
 
   let configContent = ''
 
@@ -66,12 +70,12 @@ export const saveAuthConfig = async (config: AuthConfig): Promise<void> => {
     configContent += '\n\n'
   }
 
-  await fs.promises.writeFile(getConfigFile(), configContent, 'utf8')
+  await fs.promises.writeFile(getConfigFile(options), configContent, 'utf8')
 }
 
-export const loadAuthConfig = async (): Promise<AuthConfig | null> => {
+export const loadAuthConfig = async (options?: TokenStorageOptions): Promise<AuthConfig | null> => {
   try {
-    const data = await fs.promises.readFile(getConfigFile(), 'utf8')
+    const data = await fs.promises.readFile(getConfigFile(options), 'utf8')
 
     const config: AuthConfig = {
       profiles: {},
@@ -106,15 +110,15 @@ export const loadAuthConfig = async (): Promise<AuthConfig | null> => {
 
 export const getActiveProfile = (profileArg?: string): string => profileArg || process.env.REFORGE_PROFILE || 'default'
 
-export const clearAuth = async (): Promise<void> => {
+export const clearAuth = async (options?: TokenStorageOptions): Promise<void> => {
   try {
-    await fs.promises.unlink(getTokenFile())
+    await fs.promises.unlink(getTokenFile(options))
   } catch {
     // Ignore if file doesn't exist
   }
 
   try {
-    await fs.promises.unlink(getConfigFile())
+    await fs.promises.unlink(getConfigFile(options))
   } catch {
     // Ignore if file doesn't exist
   }

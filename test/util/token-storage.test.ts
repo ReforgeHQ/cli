@@ -4,61 +4,26 @@ import * as os from 'node:os'
 import * as path from 'node:path'
 import {afterEach, beforeEach, describe, it} from 'mocha'
 
-import {type AuthConfig, getActiveProfile, loadAuthConfig, saveAuthConfig} from '../../src/util/token-storage.js'
+import {
+  type AuthConfig,
+  getActiveProfile,
+  loadAuthConfig,
+  saveAuthConfig,
+  type TokenStorageOptions,
+} from '../../src/util/token-storage.js'
 
 describe('token-storage', () => {
   const testDir = path.join(os.tmpdir(), '.reforge-test-' + Date.now())
-  const configFile = path.join(testDir, '.reforge', 'config')
-  let originalHome: string | undefined
-  let originalUserProfile: string | undefined
-  let originalHomeDrive: string | undefined
-  let originalHomePath: string | undefined
+  const reforgeDir = path.join(testDir, '.reforge')
+  const configFile = path.join(reforgeDir, 'config')
+  const options: TokenStorageOptions = {reforgeDir}
 
   beforeEach(() => {
     // Create test directory and .reforge subdirectory
-    fs.mkdirSync(path.join(testDir, '.reforge'), {recursive: true})
-
-    // Mock homedir to point to our test directory for all platforms
-    // Save original values
-    originalHome = process.env.HOME
-    originalUserProfile = process.env.USERPROFILE
-    originalHomeDrive = process.env.HOMEDRIVE
-    originalHomePath = process.env.HOMEPATH
-
-    // Set environment variables for both Unix and Windows
-    process.env.HOME = testDir
-    process.env.USERPROFILE = testDir
-    // For Windows, we need to ensure HOMEDRIVE and HOMEPATH are not interfering
-    delete process.env.HOMEDRIVE
-    delete process.env.HOMEPATH
+    fs.mkdirSync(reforgeDir, {recursive: true})
   })
 
   afterEach(() => {
-    // Restore original environment variables
-    if (originalHome === undefined) {
-      delete process.env.HOME
-    } else {
-      process.env.HOME = originalHome
-    }
-
-    if (originalUserProfile === undefined) {
-      delete process.env.USERPROFILE
-    } else {
-      process.env.USERPROFILE = originalUserProfile
-    }
-
-    if (originalHomeDrive === undefined) {
-      delete process.env.HOMEDRIVE
-    } else {
-      process.env.HOMEDRIVE = originalHomeDrive
-    }
-
-    if (originalHomePath === undefined) {
-      delete process.env.HOMEPATH
-    } else {
-      process.env.HOMEPATH = originalHomePath
-    }
-
     // Clean up test directory
     if (fs.existsSync(testDir)) {
       fs.rmSync(testDir, {recursive: true})
@@ -80,7 +45,7 @@ describe('token-storage', () => {
         },
       }
 
-      await saveAuthConfig(config)
+      await saveAuthConfig(config, options)
 
       const content = fs.readFileSync(configFile, 'utf8')
       expect(content).to.include('default_profile = default')
@@ -103,7 +68,7 @@ describe('token-storage', () => {
         },
       }
 
-      await saveAuthConfig(config)
+      await saveAuthConfig(config, options)
 
       const content = fs.readFileSync(configFile, 'utf8')
       expect(content).to.include('default_profile = work')
@@ -124,7 +89,7 @@ workspace = workspace-123 # Org Name - Workspace Name
 `
       fs.writeFileSync(configFile, configContent, 'utf8')
 
-      const config = await loadAuthConfig()
+      const config = await loadAuthConfig(options)
 
       expect(config).to.not.be.null
       expect(config!.defaultProfile).to.equal('default')
@@ -144,7 +109,7 @@ workspace = workspace-work # Work Org - Work Workspace
 `
       fs.writeFileSync(configFile, configContent, 'utf8')
 
-      const config = await loadAuthConfig()
+      const config = await loadAuthConfig(options)
 
       expect(config).to.not.be.null
       expect(config!.defaultProfile).to.equal('work')
@@ -160,7 +125,7 @@ workspace = workspace-work # Work Org - Work Workspace
         fs.unlinkSync(configFile)
       }
 
-      const config = await loadAuthConfig()
+      const config = await loadAuthConfig(options)
       expect(config).to.be.null
     })
   })
