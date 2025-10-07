@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.3 - 2025-10-07
+
+- feat: update format of string lists in the override/set-default operations
+
 ## 0.0.1 - 2025-10-07
 
 - feat: OAuth login with JWT authentication and v1 API migration
