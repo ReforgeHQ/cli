@@ -40,11 +40,7 @@ const cannedResponses: CannedResponses = {
     ],
   ],
   'https://api.goatsofreforge.com/api/v2/config/remove-variant': [
-    [
-      {configKey: 'jeffreys.test.key.reforge'},
-      {message: '', newId: '17545727831235982'},
-      200,
-    ],
+    [{configKey: 'jeffreys.test.key.reforge'}, {message: '', newId: '17545727831235982'}, 200],
   ],
 }
 
