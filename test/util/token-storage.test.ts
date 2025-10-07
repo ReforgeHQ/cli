@@ -8,16 +8,16 @@ import {type AuthConfig, getActiveProfile, loadAuthConfig, saveAuthConfig} from 
 
 describe('token-storage', () => {
   const testDir = path.join(os.tmpdir(), '.reforge-test-' + Date.now())
-  const configFile = path.join(testDir, 'config')
+  const configFile = path.join(testDir, '.reforge', 'config')
   let originalHome: string | undefined
 
   beforeEach(() => {
-    // Create test directory
-    fs.mkdirSync(testDir, {recursive: true})
+    // Create test directory and .reforge subdirectory
+    fs.mkdirSync(path.join(testDir, '.reforge'), {recursive: true})
 
     // Mock homedir to point to our test directory
     originalHome = process.env.HOME
-    process.env.HOME = testDir.replace('/.reforge-test-' + testDir.split('-').pop()!, '')
+    process.env.HOME = testDir
   })
 
   afterEach(() => {
@@ -124,6 +124,11 @@ workspace = workspace-work # Work Org - Work Workspace
     })
 
     it('should return null for missing file', async () => {
+      // Ensure config file doesn't exist
+      if (fs.existsSync(configFile)) {
+        fs.unlinkSync(configFile)
+      }
+
       const config = await loadAuthConfig()
       expect(config).to.be.null
     })
