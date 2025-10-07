@@ -64,6 +64,9 @@ jobs:
         with:
           node-version-file: '.tool-versions'
           registry-url: 'https://registry.npmjs.org'
+      - name: Configure npm authentication
+        run: |
+          echo "npmAuthToken: '\${NPM_AUTH_TOKEN}'" >> .yarnrc.yml
       - name: enable corepack
         run: |
           corepack enable
@@ -77,9 +80,6 @@ jobs:
             ${{ runner.os }}-yarn-
       - run: yarn install --immutable
       - run: yarn build
-      - name: Configure npm authentication
-        run: |
-          echo "npmAuthToken: '\${NPM_AUTH_TOKEN}'" >> .yarnrc.yml
       - name: Publish to npm
         run: |
           if [ "${{ needs.check-version.outputs.is-prerelease }}" == "true" ]; then

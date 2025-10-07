@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.3 - 2025-10-07
+
+- fix: automated release process
+
+## 0.0.2
+
+N/A
+
 ## 0.0.1 - 2025-10-07
 
 - feat: OAuth login with JWT authentication and v1 API migration
