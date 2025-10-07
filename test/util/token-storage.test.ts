@@ -2,32 +2,28 @@ import {expect} from '@oclif/test'
 import * as fs from 'node:fs'
 import * as os from 'node:os'
 import * as path from 'node:path'
-import {afterEach, beforeEach, describe, it} from 'node:test'
+import {afterEach, beforeEach, describe, it} from 'mocha'
 
-import {type AuthConfig, getActiveProfile, loadAuthConfig, saveAuthConfig} from '../../src/util/token-storage.js'
+import {
+  type AuthConfig,
+  getActiveProfile,
+  loadAuthConfig,
+  saveAuthConfig,
+  type TokenStorageOptions,
+} from '../../src/util/token-storage.js'
 
 describe('token-storage', () => {
   const testDir = path.join(os.tmpdir(), '.reforge-test-' + Date.now())
-  const configFile = path.join(testDir, 'config')
-  let originalHome: string | undefined
+  const reforgeDir = path.join(testDir, '.reforge')
+  const configFile = path.join(reforgeDir, 'config')
+  const options: TokenStorageOptions = {reforgeDir}
 
   beforeEach(() => {
-    // Create test directory
-    fs.mkdirSync(testDir, {recursive: true})
-
-    // Mock homedir to point to our test directory
-    originalHome = process.env.HOME
-    process.env.HOME = testDir.replace('/.reforge-test-' + testDir.split('-').pop()!, '')
+    // Create test directory and .reforge subdirectory
+    fs.mkdirSync(reforgeDir, {recursive: true})
   })
 
   afterEach(() => {
-    // Restore original HOME
-    if (originalHome === undefined) {
-      delete process.env.HOME
-    } else {
-      process.env.HOME = originalHome
-    }
-
     // Clean up test directory
     if (fs.existsSync(testDir)) {
       fs.rmSync(testDir, {recursive: true})
@@ -49,7 +45,7 @@ describe('token-storage', () => {
         },
       }
 
-      await saveAuthConfig(config)
+      await saveAuthConfig(config, options)
 
       const content = fs.readFileSync(configFile, 'utf8')
       expect(content).to.include('default_profile = default')
@@ -72,7 +68,7 @@ describe('token-storage', () => {
         },
       }
 
-      await saveAuthConfig(config)
+      await saveAuthConfig(config, options)
 
       const content = fs.readFileSync(configFile, 'utf8')
       expect(content).to.include('default_profile = work')
@@ -93,7 +89,7 @@ workspace = workspace-123 # Org Name - Workspace Name
 `
       fs.writeFileSync(configFile, configContent, 'utf8')
 
-      const config = await loadAuthConfig()
+      const config = await loadAuthConfig(options)
 
       expect(config).to.not.be.null
       expect(config!.defaultProfile).to.equal('default')
@@ -113,7 +109,7 @@ workspace = workspace-work # Work Org - Work Workspace
 `
       fs.writeFileSync(configFile, configContent, 'utf8')
 
-      const config = await loadAuthConfig()
+      const config = await loadAuthConfig(options)
 
       expect(config).to.not.be.null
       expect(config!.defaultProfile).to.equal('work')
@@ -124,7 +120,12 @@ workspace = workspace-work # Work Org - Work Workspace
     })
 
     it('should return null for missing file', async () => {
-      const config = await loadAuthConfig()
+      // Ensure config file doesn't exist
+      if (fs.existsSync(configFile)) {
+        fs.unlinkSync(configFile)
+      }
+
+      const config = await loadAuthConfig(options)
       expect(config).to.be.null
     })
   })
