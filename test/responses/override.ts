@@ -7,22 +7,22 @@ import {CannedResponses, getCannedResponse} from '../test-helper.js'
 const cannedResponses: CannedResponses = {
   'https://api.goatsofreforge.com/api/v2/config/assign-variant': [
     [
-      {configKey: 'feature-flag.simple', variant: {bool: 'true'}},
+      {configKey: 'feature-flag.simple', variant: {type: 'bool', value: true}},
       {response: {message: '', newId: '17002327855857830'}},
       200,
     ],
     [
-      {configKey: 'my-double-key', variant: {double: '42.1'}},
+      {configKey: 'my-double-key', variant: {type: 'double', value: 42.1}},
       {response: {message: '', newId: '17002327855857830'}},
       200,
     ],
     [
-      {configKey: 'my-string-list-key', variant: {stringList: {values: ['a', 'b', 'c', 'd']}}},
+      {configKey: 'my-string-list-key', variant: {type: 'string_list', value: ['a', 'b', 'c', 'd']}},
       {response: {message: '', newId: '17002327855857830'}},
       200,
     ],
     [
-      {configKey: 'my-double-key', variant: {double: 'pumpkin'}},
+      {configKey: 'my-double-key', variant: {type: 'double', value: 'pumpkin'}},
       {
         _embedded: {
           errors: [
@@ -41,7 +41,7 @@ const cannedResponses: CannedResponses = {
   ],
   'https://api.goatsofreforge.com/api/v2/config/remove-variant': [
     [
-      {configKey: 'jeffreys.test.key.reforge', variant: {string: 'my.override'}},
+      {configKey: 'jeffreys.test.key.reforge'},
       {message: '', newId: '17545727831235982'},
       200,
     ],
@@ -109,8 +109,8 @@ const assignVariantHandler = http.post(
   async ({request}) => {
     const body = (await request.json()) as any
 
-    // Check for invalid double value (NaN becomes null in JSON)
-    if (body.configKey === 'my-double-key' && body.variant?.double === null) {
+    // Check for invalid double value (NaN becomes null when JSON stringified)
+    if (body.configKey === 'my-double-key' && body.variant?.type === 'double' && body.variant?.value === null) {
       return HttpResponse.json({error: 'Invalid double value'}, {status: 400})
     }
 

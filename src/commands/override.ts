@@ -159,35 +159,43 @@ export default class Override extends APICommand {
 
     const type = typeMapping[valueType.toLowerCase()] || valueType
 
-    // Parse the value based on type
-    let parsedValue: unknown = value
+    // Parse the value based on type and build variant object
+    let variantValue: unknown = value
+    let variantType: string = type
+
     switch (type) {
       case 'stringList': {
-        parsedValue = {values: value.split(',')}
+        variantValue = value.split(',')
+        variantType = 'string_list'
 
         break
       }
       case 'bool': {
-        parsedValue = value.toLowerCase() === 'true'
+        variantValue = value.toLowerCase() === 'true'
 
         break
       }
       case 'int': {
-        parsedValue = Number.parseInt(value, 10)
+        variantValue = Number.parseInt(value, 10)
 
         break
       }
       case 'double': {
-        parsedValue = Number.parseFloat(value)
+        variantValue = Number.parseFloat(value)
 
         break
       }
       case 'json': {
         try {
-          parsedValue = JSON.parse(value)
+          variantValue = JSON.parse(value)
         } catch {
           return this.err(`Invalid JSON value: ${value}`)
         }
+
+        break
+      }
+      case 'string': {
+        variantValue = value
 
         break
       }
@@ -198,7 +206,10 @@ export default class Override extends APICommand {
       configKey: key,
       currentVersionId: version,
       environmentId,
-      variant: {[type]: parsedValue},
+      variant: {
+        type: variantType,
+        value: variantValue,
+      },
     })
 
     if (request.ok) {
