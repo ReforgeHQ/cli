@@ -78,9 +78,17 @@ export async function makeConfidentialValue(
     )
     /* eslint-enable @typescript-eslint/no-explicit-any */
     const ruleValue = envConfig?.rules?.[0]?.value
-    if (ruleValue?.provided?.lookup) {
+
+    // Check if it's a provided value (env var)
+    if (ruleValue?.type === 'provided' && ruleValue?.value?.lookup) {
+      envVar = ruleValue.value.lookup
+    }
+    // Check for old format: provided.lookup
+    else if (ruleValue?.provided?.lookup) {
       envVar = ruleValue.provided.lookup
-    } else if (ruleValue?.value) {
+    }
+    // Otherwise it's a literal value
+    else if (ruleValue?.value && typeof ruleValue.value === 'string') {
       secretKey = ruleValue.value
     }
   }
@@ -88,9 +96,17 @@ export async function makeConfidentialValue(
   // Fall back to default config
   if (!secretKey && !envVar) {
     const defaultValue = keyConfig.default?.rules?.[0]?.value
-    if (defaultValue?.provided?.lookup) {
+
+    // Check if it's a provided value (env var)
+    if (defaultValue?.type === 'provided' && defaultValue?.value?.lookup) {
+      envVar = defaultValue.value.lookup
+    }
+    // Check for old format: provided.lookup
+    else if (defaultValue?.provided?.lookup) {
       envVar = defaultValue.provided.lookup
-    } else if (defaultValue?.value) {
+    }
+    // Otherwise it's a literal value
+    else if (defaultValue?.value && typeof defaultValue.value === 'string') {
       secretKey = defaultValue.value
     }
   }
