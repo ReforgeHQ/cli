@@ -1,0 +1,1737 @@
+(node:62300) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+--import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));'
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:62300) [DEP0180] DeprecationWarning: fs.Stats constructor is deprecated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+
+  NodeTypeScriptGenerator
+    declarationGenerate
+      ✔ should generate basic code structure when no configs exist
+      ✔ should generate type definitions for configs and feature flags, not schema, or empty configurations
+      ✔ should generate function accessor methods for function configs
+      ✔ should generate durations correctly
+      ✔ should prefix method names with underscore when they start with a digit
+      ✔ should properly camelCase various key formats
+    generate
+      ✔ should generate basic code structure when no configs exist
+      ✔ should include Mustache import when function configs exist
+      ✔ should generate type definitions for configs and feature flags, not schema, or empty configurations
+      ✔ should generate function accessor methods for function configs
+      ✔ should generate durations correctly
+      ✔ should prefix method names with underscore when they start with a digit
+      ✔ should properly camelCase various key formats
+      ✔ should throw an error when method names conflict
+
+  ReactTypeScriptGenerator
+    declarationGenerate
+      ✔ should generate basic code structure when no configs exist
+      ✔ should generate type definitions for configs and feature flags, not schema, empty configurations, or non-client configs
+      ✔ should generate function accessor methods for function configs
+      ✔ should generate durations correctly
+      ✔ should prefix method names with underscore when they start with a digit
+      ✔ should properly camelCase various key formats
+    generate
+      ✔ should generate basic code structure when no configs exist
+      ✔ should include Mustache import when function configs exist
+      ✔ should generate type definitions for configs and feature flags, not schema, empty configurations, or non-client configs
+      ✔ should generate function accessor methods for function configs
+      ✔ should generate durations correctly
+      ✔ should prefix method names with underscore when they start with a digit
+      ✔ should properly camelCase various key formats
+      ✔ should throw an error when method names conflict
+
+  JsonToZodMapper
+    resolve
+      ✔ should resolve homogeneous array of numbers
+      ✔ should resolve homogeneous array of strings
+      ✔ should resolve homogeneous array of booleans
+      ✔ should resolve heterogeneous array to unknown
+      ✔ should resolve object with primitive types
+      ✔ should resolve deeply nested objects
+      ✔ should resolve array of objects
+      ✔ should resolve null values
+
+  ZodToStringMapper
+    renderField
+      ✔ Can successfully parse strings
+      ✔ Can successfully parse numbers
+      ✔ Can successfully parse integer numbers
+      ✔ Can successfully parse booleans
+      ✔ Can successfully parse any
+      ✔ Can successfully parse an array wrapped type
+      ✔ Can successfully parse an array chained type
+      ✔ Can successfully parse an enum
+      ✔ Can successfully parse null
+      ✔ Can successfully parse undefined
+      ✔ Can successfully parse unknown
+      ✔ Can successfully parse unions
+      ✔ Can successfully parse unions defined with or chaining
+      ✔ Can successfully parse tuples
+      ✔ Can successfully parse objects
+      ✔ Can successfully parse an optional wrapped type
+      ✔ Can successfully parse an optional chained type
+      ✔ Can successfully parse functions
+      1) Can successfully complex combinations of types
+
+  ZodToTypescriptMapper
+    renderField
+      ✔ Can successfully parse strings
+      ✔ Can successfully parse numbers
+      ✔ Can successfully parse integer numbers
+      ✔ Can successfully parse booleans
+      ✔ Can successfully parse any
+      ✔ Can successfully parse an array wrapped type
+      ✔ Can successfully parse an array chained type
+      ✔ Can successfully parse an enum
+      ✔ Can successfully parse null
+      ✔ Can successfully parse undefined
+      ✔ Can successfully parse unknown
+      ✔ Can successfully parse unions
+      ✔ Can successfully parse unions defined with or chaining
+      ✔ Can successfully parse tuples
+      ✔ Can successfully parse objects
+      ✔ Can successfully parse an optional wrapped type
+      ✔ Can successfully parse an optional chained type
+      when the target = "accessor"
+        ✔ Can successfully parse functions
+        2) Can successfully complex combinations of types
+      when the target = "raw"
+        ✔ Can successfully parse functions
+        3) Can successfully complex combinations of types
+
+  ZodToTypescriptReturnValueMapper
+    renderField
+      ✔ Can successfully parse strings
+      ✔ Can successfully parse strings with property paths
+      ✔ Can successfully parse numbers
+      ✔ Can successfully parse numbers with property paths
+      ✔ Can successfully parse integer numbers
+      ✔ Can successfully parse integer numbers with property paths
+      ✔ Can successfully parse booleans
+      ✔ Can successfully parse booleans with property paths
+      ✔ Can successfully parse any
+      ✔ Can successfully parse any with property paths
+      ✔ Can successfully parse an array wrapped type
+      ✔ Can successfully parse an array wrapped type with property paths
+      ✔ Can successfully parse an array chained type
+      ✔ Can successfully parse an array chained type with property paths
+      ✔ Can successfully parse an enum
+      ✔ Can successfully parse an enum with property paths
+      ✔ Can successfully parse null
+      ✔ Can successfully parse null with property paths
+      ✔ Can successfully parse undefined
+      ✔ Can successfully parse undefined with property paths
+      ✔ Can successfully parse unknown
+      ✔ Can successfully parse unknown with property paths
+      ✔ Can successfully parse unions
+      ✔ Can successfully parse unions defined with or chaining with property paths
+      ✔ Can successfully parse unions defined with or chaining
+      ✔ Can successfully parse unions defined with or chaining with property paths
+      ✔ Can successfully parse tuples
+      ✔ Can successfully parse tuples with property paths
+      ✔ Can successfully parse objects
+      ✔ Can successfully parse objects with property paths
+      ✔ Can successfully parse an optional wrapped type
+      ✔ Can successfully parse an optional wrapped type with property paths
+      ✔ Can successfully parse an optional chained type
+      ✔ Can successfully parse an optional chained type with property paths
+      ✔ Can successfully parse functions
+      ✔ Can successfully parse functions with property paths
+      ✔ Can successfully complex combinations of types
+
+  MustacheExtractor
+    ✔ extracts simple placeholders
+    ✔ handles section with variables
+    ✔ handles inverted sections
+    ✔ handles complex nested template
+    ✔ validates data against generated schema
+
+  SchemaEvaluator
+    secureEvaluateSchema
+      ✔ should properly evaluate valid schema strings
+      ✔ should handle complex schema strings
+      ✔ should reject schema strings with syntax errors
+      ✔ should reject schema strings with unsupported operations
+      ✔ should reject schema strings attempting to use unsupported properties
+      ✔ should allow valid refinements with arrow functions
+      ✔ should reject schema strings exceeding maximum complexity
+      ✔ should handle enum types properly
+      ✔ should handle union types
+
+  SchemaExtractor
+    execute
+      ✔ should use user-defined schema when available
+      ✔ should infer schema when no user-defined schema is available
+      ✔ should infer a union of schema when multiple schemas are found
+      ✔ should use custom duration type map when provided
+      ✔ should replace strings with Mustache templates when found
+      ✔ should replace strings with a union of Mustache templates when found
+
+  create
+    type=boolean-flag
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST https://api.reforge.com/flags/v1
+
+  • Request body: {"key":"brand.new.flag","type":"feature_flag","valueType":"bool","sendToClientSdk":true,"variants":[{"value":{"type":"bool","value":true},"name":"True","description":"Enabled"},{"value":{"type":"bool","value":false},"name":"False","description":"Disabled"}],"default":{"rules":[{"criteria":[],"value":{"type":"bool","value":false}}]}}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      4) can create a boolean flag
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST https://api.reforge.com/flags/v1
+
+  • Request body: {"key":"brand.new.flag","type":"feature_flag","valueType":"bool","sendToClientSdk":true,"variants":[{"value":{"type":"bool","value":true},"name":"True","description":"Enabled"},{"value":{"type":"bool","value":false},"name":"False","description":"Disabled"}],"default":{"rules":[{"criteria":[],"value":{"type":"bool","value":false}}]}}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      5) can create a boolean flag and return a JSON response
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST https://api.reforge.com/flags/v1
+
+  • Request body: {"key":"new.with.different.default","type":"feature_flag","valueType":"bool","sendToClientSdk":true,"variants":[{"value":{"type":"bool","value":true},"name":"True","description":"Enabled"},{"value":{"type":"bool","value":false},"name":"False","description":"Disabled"}],"default":{"rules":[{"criteria":[],"value":{"type":"bool","value":true}}]}}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      6) can create a boolean flag with a true default
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST https://api.reforge.com/flags/v1
+
+  • Request body: {"key":"already.in.use","type":"feature_flag","valueType":"bool","sendToClientSdk":true,"variants":[{"value":{"type":"bool","value":true},"name":"True","description":"Enabled"},{"value":{"type":"bool","value":false},"name":"False","description":"Disabled"}],"default":{"rules":[{"criteria":[],"value":{"type":"bool","value":false}}]}}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      7) returns an error if the flag exists
+      ✔ returns an error if the value is not a boolean
+      ✔ returns a JSON error if the flag exists
+    type=string
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST https://api.reforge.com/configs/v1
+
+  • Request body: {"key":"brand.new.string","type":"config","valueType":"string","sendToClientSdk":false,"default":{"rules":[{"criteria":[],"value":{"type":"string","value":"hello.world"}}]}}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      8) can create a string
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST https://api.reforge.com/configs/v1
+
+  • Request body: {"key":"confidential.new.string","type":"config","valueType":"string","sendToClientSdk":false,"default":{"rules":[{"criteria":[],"value":{"type":"string","value":"hello.world","confidential":true}}]}}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      9) can create a string
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST https://api.reforge.com/configs/v1
+
+  • Request body: {"key":"greeting.from.env","type":"config","valueType":"string","sendToClientSdk":false,"default":{"rules":[{"criteria":[],"value":{"type":"string","provided":{"source":"ENV_VAR","lookup":"GREETING"}}}]}}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      10) can create a string provided by an env var
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST https://api.reforge.com/configs/v1
+
+  • Request body: {"key":"confidential.greeting.from.env","type":"config","valueType":"string","sendToClientSdk":false,"default":{"rules":[{"criteria":[],"value":{"type":"string","provided":{"source":"ENV_VAR","lookup":"GREETING"}}}]}}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      11) can create a confidential string provided by an env var
+      ✔ shows an error when provided a default and an env-var
+    type=int
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST https://api.reforge.com/configs/v1
+
+  • Request body: {"key":"brand.new.int","type":"config","valueType":"int","sendToClientSdk":false,"default":{"rules":[{"criteria":[],"value":{"type":"int","value":"123"}}]}}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      12) can create an int
+      ✔ returns an error if the value is not an int
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST https://api.reforge.com/configs/v1
+
+  • Request body: {"key":"int.from.env","type":"config","valueType":"int","sendToClientSdk":false,"default":{"rules":[{"criteria":[],"value":{"type":"int","provided":{"source":"ENV_VAR","lookup":"MY_INT"}}}]}}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      13) can create an int provided by an env var
+    type=double
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST https://api.reforge.com/configs/v1
+
+  • Request body: {"key":"brand.new.double","type":"config","valueType":"double","sendToClientSdk":false,"default":{"rules":[{"criteria":[],"value":{"type":"double","value":123.99}}]}}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      14) can create a double
+      ✔ returns an error if the value is not a double
+    type=boolean
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST https://api.reforge.com/configs/v1
+
+  • Request body: {"key":"brand.new.boolean","type":"config","valueType":"bool","sendToClientSdk":false,"default":{"rules":[{"criteria":[],"value":{"type":"bool","value":false}}]}}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      15) can create a boolean
+      ✔ returns an error if the value is not a boolean
+    type=string-list
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST https://api.reforge.com/configs/v1
+
+  • Request body: {"key":"brand.new.string-list","type":"config","valueType":"string_list","sendToClientSdk":false,"default":{"rules":[{"criteria":[],"value":{"type":"string_list","value":["a","b","c","d"]}}]}}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      16) can create a string list
+    type=json
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST https://api.reforge.com/configs/v1
+
+  • Request body: {"key":"brand.new.json","type":"config","valueType":"json","sendToClientSdk":false,"default":{"rules":[{"criteria":[],"value":{"type":"json","value":{"json":"{\"key\": \"value\"}"}}}]}}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      17) can create a JSON object
+      ✔ returns an error if the value is not JSON
+    secret
+      when no encryption key can be found
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/config/missing.secret.key
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+        18) complains about the missing key
+      type=string
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/config/reforge.secrets.encryption.key
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+        19) can create a string
+      type=NOT_STRING
+        ✔ errors
+
+  download
+    when the download server responds successfully
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/environments/v1
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      20) saves the file and returns a success message
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/environments/v1
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      21) saves the file and returns JSON
+    when the download server does not respond successfully
+      22) saves the file and returns a success message
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/environments/v1
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      23) saves the file and returns JSON
+    when the provided environment is invalid
+      24) saves the file and returns a success message
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/environments/v1
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      ✔ saves the file and returns JSON
+
+  generate-new-hex-key
+    ✔ generates a new hex key
+    ✔ generates JSON output with a new key
+
+  generate
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/download-all-envs
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+Error downloading config: Error: Failed to download config: 401
+    at ConfigDownloader.downloadConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/codegen/config-downloader.js:10:23)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:128:32)
+    at async Generate._run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:311:22)
+    at async Config.runCommand (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/config/config.js:433:25)
+    at async Object.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/test/lib/command.js:23:28)
+    at async Context.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/fancy-test/lib/base.js:68:25)
+ERROR: Error: Failed to download config: 401
+    at ConfigDownloader.downloadConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/codegen/config-downloader.js:10:23)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:128:32)
+    at async Generate._run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:311:22)
+    at async Config.runCommand (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/config/config.js:433:25)
+    at async Object.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/test/lib/command.js:23:28)
+    at async Context.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/fancy-test/lib/base.js:68:25)
+    25) runs generate without flags
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/download-all-envs
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+Error downloading config: Error: Failed to download config: 401
+    at ConfigDownloader.downloadConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/codegen/config-downloader.js:10:23)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:128:32)
+    at async Generate._run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:311:22)
+    at async Config.runCommand (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/config/config.js:433:25)
+    at async Object.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/test/lib/command.js:23:28)
+    at async Context.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/fancy-test/lib/base.js:68:25)
+ERROR: Error: Failed to download config: 401
+    at ConfigDownloader.downloadConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/codegen/config-downloader.js:10:23)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:128:32)
+    at async Generate._run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:311:22)
+    at async Config.runCommand (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/config/config.js:433:25)
+    at async Object.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/test/lib/command.js:23:28)
+    at async Context.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/fancy-test/lib/base.js:68:25)
+    26) generates TypeScript definitions
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/download-all-envs
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+Error downloading config: Error: Failed to download config: 401
+    at ConfigDownloader.downloadConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/codegen/config-downloader.js:10:23)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:128:32)
+    at async Generate._run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:311:22)
+    at async Config.runCommand (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/config/config.js:433:25)
+    at async Object.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/test/lib/command.js:23:28)
+    at async Context.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/fancy-test/lib/base.js:68:25)
+ERROR: Error: Failed to download config: 401
+    at ConfigDownloader.downloadConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/codegen/config-downloader.js:10:23)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:128:32)
+    at async Generate._run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:311:22)
+    at async Config.runCommand (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/config/config.js:433:25)
+    at async Object.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/test/lib/command.js:23:28)
+    at async Context.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/fancy-test/lib/base.js:68:25)
+    27) generates React TypeScript definitions
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/download-all-envs
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+Error downloading config: Error: Failed to download config: 401
+    at ConfigDownloader.downloadConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/codegen/config-downloader.js:10:23)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:128:32)
+    at async Generate._run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:311:22)
+    at async Config.runCommand (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/config/config.js:433:25)
+    at async Object.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/test/lib/command.js:23:28)
+    at async Context.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/fancy-test/lib/base.js:68:25)
+ERROR: Error: Failed to download config: 401
+    at ConfigDownloader.downloadConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/codegen/config-downloader.js:10:23)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:128:32)
+    at async Generate._run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:311:22)
+    at async Config.runCommand (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/config/config.js:433:25)
+    at async Object.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/test/lib/command.js:23:28)
+    at async Context.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/fancy-test/lib/base.js:68:25)
+    28) handles invalid targets
+    local configuration file parsing
+      29) uses default config when no local config file exists
+      30) loads and uses valid local config file
+      31) falls back to global outputDirectory when target-specific not provided
+      32) uses global config as fallback for missing target-specific properties
+      33) handles empty targets object
+ERROR: CLIError: Error reading reforge.config.json: SyntaxError: Expected property name or '}' in JSON at position 2 (line 1 column 3)
+    at Object.error (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/errors/error.js:37:15)
+    at Generate.error (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:177:23)
+    at Generate.readLocalConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:191:22)
+    at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:121:33)
+    at async Generate._run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:311:22)
+    at async Config.runCommand (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/config/config.js:433:25)
+    at async Object.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/test/lib/command.js:23:28)
+    at async Context.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/fancy-test/lib/base.js:68:25) {
+  code: undefined,
+  oclif: { exit: 2 },
+  skipOclifErrorHandling: undefined,
+  suggestions: undefined
+}
+      ✔ handles invalid JSON in config file
+ERROR: CLIError: Error reading reforge.config.json: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "number",
+    "path": [
+      "outputDirectory"
+    ],
+    "message": "Expected string, received number"
+  }
+]
+    at Object.error (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/errors/error.js:37:15)
+    at Generate.error (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:177:23)
+    at Generate.readLocalConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:191:22)
+    at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:121:33)
+    at async Generate._run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:311:22)
+    at async Config.runCommand (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/config/config.js:433:25)
+    at async Object.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/test/lib/command.js:23:28)
+    at async Context.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/fancy-test/lib/base.js:68:25) {
+  code: undefined,
+  oclif: { exit: 2 },
+  skipOclifErrorHandling: undefined,
+  suggestions: undefined
+}
+      ✔ validates config schema and rejects invalid types
+      34) handles minimal empty config object
+      35) handles multiple targets with custom filenames
+ERROR: CLIError: Error reading reforge.config.json: Error: EISDIR: illegal operation on a directory, read
+    at Object.error (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/errors/error.js:37:15)
+    at Generate.error (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:177:23)
+    at Generate.readLocalConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:191:22)
+    at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:121:33)
+    at async Generate._run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:311:22)
+    at async Config.runCommand (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/config/config.js:433:25)
+    at async Object.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/test/lib/command.js:23:28)
+    at async Context.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/fancy-test/lib/base.js:68:25) {
+  code: undefined,
+  oclif: { exit: 2 },
+  skipOclifErrorHandling: undefined,
+  suggestions: undefined
+}
+      ✔ handles case where config path is a directory
+
+  get
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+    36) returns a value for a valid name
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+    37) returns JSON for a value for a valid name
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+    38) decrypts a secret
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+    39) shows an error if the key is invalid
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+    40) shows an error if no key is provided when things aren't interactive
+
+  info
+    when there are evaluations in the last 24 hours
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      41) returns info for a name
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      42) returns JSON for a name
+    when there are no evaluations in the last 24 hours
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      43) returns a message
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      44) returns JSON
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      45) decrypts a secret
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      46) shows [confidential] for confidential items
+    when the key does not exist
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      47) returns a message
+      48) returns a JSON error
+
+  list
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+    49) lists everything by default
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+    50) lists only flags
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+    51) lists only configs
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+    52) lists only log levels
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+    53) lists only segments
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+    54) lists multiple types
+
+  override
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+    55) overrides a boolean flag when given a valid key and value
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+    56) overrides a double config when given a valid key and value
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+    57) overrides a string list config when given a valid key and value
+    58) shows an error when the value type is wrong
+    59) shows an error when the key does not exist
+    ✔ shows an error when given remove and a value
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+    60) removes an override successfully
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/all-config-types/v1/metadata
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+    61) succeeds when trying to remove an override that does not exist
+
+  schema
+    ✔ requires an action flag
+    get
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/schemas/v1/schema/my.schema
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      62) can get a schema
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/schemas/v1/schema/my.schema
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      63) can get a schema and return JSON
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • GET https://api.reforge.com/schemas/v1/schema/non.existent.schema
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      ✔ handles non-existent schema
+    set-zod
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST https://api.reforge.com/schemas/v1
+
+  • Request body: {"key":"new.schema","schemaType":"ZOD","schema":"z.string()"}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      64) can create a new schema
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST https://api.reforge.com/schemas/v1
+
+  • Request body: {"key":"existing.schema","schemaType":"ZOD","schema":"z.number()"}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      65) can update an existing schema
+[MSW] Warning: intercepted a request without a matching request handler:
+
+  • POST https://api.reforge.com/schemas/v1
+
+  • Request body: {"key":"new.schema","schemaType":"ZOD","schema":"z.string()"}
+
+If you still wish to intercept this unhandled request, please create a request handler for it.
+Read more: https://mswjs.io/docs/http/intercepting-requests
+      66) can create a schema and return JSON
+
+  serve
+    success
+      when the context matches a rule
+        ✔ succeeds with a valid JSON file an uses the provided context to determine flag state
+      when the context does not match a rule
+        ✔ succeeds with a valid JSON file an uses the provided context to determine flag state
+    file issues
+      ✔ shows an error when the file does not exist
+      ✔ shows an error when the file is invalid
+      ✔ shows an error when the file is invalid
+
+  set-default
+    success
+      ✔ can change the default for a boolean flag
+      ✔ can change the default for a boolean flag with json output
+      ✔ can change the default for a string flag
+      ✔ can change the default for a string flag with json output
+      ✔ can create a string provided by an env var
+      67) can create a secret string
+      68) uses encryption if any existing value for the key is encrypted
+      ✔ can update a json config
+    failure
+      ✔ shows an error when the key does not exist
+      ✔ shows an error when the value isn't valid for the boolean key
+      ✔ shows an error when the value isn't valid for the int key
+    parsing errors
+      ✔ shows an error if no key is provided when things aren't interactive
+      ✔ shows an error if no environment is provided when things aren't interactive
+      ✔ shows an error when provided a value and an env-var
+
+  token-storage
+    saveAuthConfig
+      ✔ should save a single profile with comment
+      ✔ should save multiple profiles
+    loadAuthConfig
+      ✔ should load a single profile
+      ✔ should load multiple profiles
+      ✔ should return null for missing file
+    getActiveProfile
+      ✔ should return provided argument first
+      ✔ should return env var if no argument
+      ✔ should return "default" if no argument or env var
+      ✔ should prioritize: arg > env > default
+
+
+  173 passing (2s)
+  68 failing
+
+  1) ZodToStringMapper
+       renderField
+         Can successfully complex combinations of types:
+
+      AssertionError: expected 'z.object({name: z.string(); age: z.nu…' to equal 'z.object({name: z.string(); age: z.nu…'
+      + expected - actual
+
+      -z.object({name: z.string(); age: z.number().int(); topLevel: z.function().args(z.boolean().optional(), z.any()).returns(z.string()); more: z.object({details: z.string(); count: z.number().int(); exec: z.function().args(z.string()).returns(z.boolean().optional())}); tags: z.array(z.string()).optional(); isActive: z.boolean()})
+      +z.object({name: z.string(); age: z.number().int(); topLevel: z.function().args(z.boolean().optional(), z.any()).returns(z.string()); more: z.object({details: z.string(); count: z.number().int(); exec: z.function().args(z.string()).returns(z.boolean().optional())}); tags: z.array(z.string()).optional(); isActive: z.any()})
+      
+      at Context.<anonymous> (file:///Users/james.kebinger/dev/src/typescript/cli/test/codegen/language-mappers/zod-to-string-mapper.test.ts:133:33)
+      at processImmediate (node:internal/timers:505:21)
+
+  2) ZodToTypescriptMapper
+       renderField
+         when the target = "accessor"
+           Can successfully complex combinations of types:
+
+      AssertionError: expected '"someKey": { "name": string; "age": n…' to equal '"someKey": { "name": string; "age": n…'
+      + expected - actual
+
+      -"someKey": { "name": string; "age": number; "topLevel": (...params: [boolean | undefined, any]) => string; "more": { "details": string; "count": number; "exec": (...params: [string]) => boolean | undefined }; "tags"?: Array<string>; "isActive": boolean }
+      +"someKey": { "name": string; "age": number; "topLevel": (...params: [boolean | undefined, any]) => string; "more": { "details": string; "count": number; "exec": (...params: [string]) => boolean | undefined }; "tags"?: Array<string>; "isActive": any }
+      
+      at Context.<anonymous> (file:///Users/james.kebinger/dev/src/typescript/cli/test/codegen/language-mappers/zod-to-typescript-mapper.test.ts:134:37)
+      at processImmediate (node:internal/timers:505:21)
+
+  3) ZodToTypescriptMapper
+       renderField
+         when the target = "raw"
+           Can successfully complex combinations of types:
+
+      AssertionError: expected '"someKey": { "name": string; "age": n…' to equal '"someKey": { "name": string; "age": n…'
+      + expected - actual
+
+      -"someKey": { "name": string; "age": number; "topLevel": string | undefined; "more": { "details": string; "count": number; "exec": string | undefined }; "tags"?: Array<string>; "isActive": boolean }
+      +"someKey": { "name": string; "age": number; "topLevel": string | undefined; "more": { "details": string; "count": number; "exec": string | undefined }; "tags"?: Array<string>; "isActive": any }
+      
+      at Context.<anonymous> (file:///Users/james.kebinger/dev/src/typescript/cli/test/codegen/language-mappers/zod-to-typescript-mapper.test.ts:163:37)
+      at processImmediate (node:internal/timers:505:21)
+
+  4) create
+       type=boolean-flag
+         can create a boolean flag:
+     Error: Failed to create boolean flag: 401 | {"message":"Unauthorized","_links":{"self":{"href":"/flags/v1","templated":false}},"_embedded":{"errors":[{"message":"Unauthorized"}]}}
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Create.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Create.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Create.createBooleanFlag (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/create.js:166:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Create._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  5) create
+       type=boolean-flag
+         can create a boolean flag and return a JSON response:
+     Error: the object {
+  "key": "brand.new.flag"
+  "phase": "creation"
+  "serverError": {
+    "_embedded": {
+      "errors": [
+        {
+          "message": "Unauthorized"
+        }
+      ]
+    }
+    "_links": {
+      "self": {
+        "href": "/flags/v1"
+        "templated": false
+      }
+    }
+    "message": "Unauthorized"
+  }
+} was thrown, throw an Error :)
+  
+
+  6) create
+       type=boolean-flag
+         can create a boolean flag with a true default:
+     Error: Failed to create boolean flag: 401 | {"message":"Unauthorized","_links":{"self":{"href":"/flags/v1","templated":false}},"_embedded":{"errors":[{"message":"Unauthorized"}]}}
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Create.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Create.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Create.createBooleanFlag (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/create.js:166:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Create._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  7) create
+       type=boolean-flag
+         returns an error if the flag exists:
+     AssertionError: expected 'Failed to create boolean flag: 401 | …' to include 'Failed to create boolean flag: alread…'
+      at file:///Users/james.kebinger/dev/src/typescript/cli/test/commands/create.test.ts:44:38
+      at Object.catch (node_modules/fancy-test/lib/catch.js:20:13)
+      at handleError (node_modules/fancy-test/lib/base.js:56:44)
+      at Context.run (node_modules/fancy-test/lib/base.js:72:32)
+
+  8) create
+       type=string
+         can create a string:
+     Error: Failed to create config: 401 | {"message":"Unauthorized","_links":{"self":{"href":"/configs/v1","templated":false}},"_embedded":{"errors":[{"message":"Unauthorized"}]}}
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Create.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Create.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Create.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/create.js:115:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Create._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  9) create
+       type=string
+         can create a string:
+     Error: Failed to create config: 401 | {"message":"Unauthorized","_links":{"self":{"href":"/configs/v1","templated":false}},"_embedded":{"errors":[{"message":"Unauthorized"}]}}
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Create.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Create.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Create.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/create.js:115:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Create._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  10) create
+       type=string
+         can create a string provided by an env var:
+     Error: Failed to create config: 401 | {"message":"Unauthorized","_links":{"self":{"href":"/configs/v1","templated":false}},"_embedded":{"errors":[{"message":"Unauthorized"}]}}
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Create.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Create.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Create.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/create.js:115:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Create._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  11) create
+       type=string
+         can create a confidential string provided by an env var:
+     Error: Failed to create config: 401 | {"message":"Unauthorized","_links":{"self":{"href":"/configs/v1","templated":false}},"_embedded":{"errors":[{"message":"Unauthorized"}]}}
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Create.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Create.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Create.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/create.js:115:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Create._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  12) create
+       type=int
+         can create an int:
+     Error: Failed to create config: 401 | {"message":"Unauthorized","_links":{"self":{"href":"/configs/v1","templated":false}},"_embedded":{"errors":[{"message":"Unauthorized"}]}}
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Create.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Create.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Create.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/create.js:115:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Create._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  13) create
+       type=int
+         can create an int provided by an env var:
+     Error: Failed to create config: 401 | {"message":"Unauthorized","_links":{"self":{"href":"/configs/v1","templated":false}},"_embedded":{"errors":[{"message":"Unauthorized"}]}}
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Create.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Create.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Create.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/create.js:115:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Create._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  14) create
+       type=double
+         can create a double:
+     Error: Failed to create config: 401 | {"message":"Unauthorized","_links":{"self":{"href":"/configs/v1","templated":false}},"_embedded":{"errors":[{"message":"Unauthorized"}]}}
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Create.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Create.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Create.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/create.js:115:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Create._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  15) create
+       type=boolean
+         can create a boolean:
+     Error: Failed to create config: 401 | {"message":"Unauthorized","_links":{"self":{"href":"/configs/v1","templated":false}},"_embedded":{"errors":[{"message":"Unauthorized"}]}}
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Create.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Create.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Create.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/create.js:115:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Create._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  16) create
+       type=string-list
+         can create a string list:
+     Error: Failed to create config: 401 | {"message":"Unauthorized","_links":{"self":{"href":"/configs/v1","templated":false}},"_embedded":{"errors":[{"message":"Unauthorized"}]}}
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Create.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Create.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Create.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/create.js:115:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Create._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  17) create
+       type=json
+         can create a JSON object:
+     Error: Failed to create config: 401 | {"message":"Unauthorized","_links":{"self":{"href":"/configs/v1","templated":false}},"_embedded":{"errors":[{"message":"Unauthorized"}]}}
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Create.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Create.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Create.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/create.js:115:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Create._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  18) create
+       secret
+         when no encryption key can be found
+           complains about the missing key:
+     AssertionError: expected 'Failed to fetch encryption key config…' to include 'Failed to create secret: missing.secr…'
+      at file:///Users/james.kebinger/dev/src/typescript/cli/test/commands/create.test.ts:193:42
+      at Object.catch (node_modules/fancy-test/lib/catch.js:20:13)
+      at handleError (node_modules/fancy-test/lib/base.js:56:44)
+      at Context.run (node_modules/fancy-test/lib/base.js:72:32)
+
+  19) create
+       secret
+         type=string
+           can create a string:
+     Error: Failed to fetch encryption key config reforge.secrets.encryption.key: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Create.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Create.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Create.resultMessage (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:49:25)
+      at Create.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/create.js:81:30)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Create._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  20) download
+       when the download server responds successfully
+         saves the file and returns a success message:
+     Error: Failed to fetch environments: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Download.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Download.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at getEnvironments (file:///Users/james.kebinger/dev/src/typescript/cli/dist/api/get-environments.js:5:24)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async getEnvironment (file:///Users/james.kebinger/dev/src/typescript/cli/dist/ui/get-environment.js:9:26)
+      at async Download.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/download.js:35:29)
+      at async Download._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  21) download
+       when the download server responds successfully
+         saves the file and returns JSON:
+     Error: the object {
+  "serverError": {
+    "_embedded": {
+      "errors": [
+        {
+          "message": "Unauthorized"
+        }
+      ]
+    }
+    "_links": {
+      "self": {
+        "href": "/environments/v1"
+        "templated": false
+      }
+    }
+    "message": "Unauthorized"
+  }
+} was thrown, throw an Error :)
+  
+
+  22) download
+       when the download server does not respond successfully
+         saves the file and returns a success message:
+     AssertionError: expected 'Failed to fetch environments: 401' to match /Failed to download file. Status=500/
+      at Object.catch (node_modules/fancy-test/lib/catch.js:14:48)
+      at handleError (node_modules/fancy-test/lib/base.js:56:44)
+      at Context.run (node_modules/fancy-test/lib/base.js:72:32)
+
+  23) download
+       when the download server does not respond successfully
+         saves the file and returns JSON:
+     AssertionError: the given combination of arguments (undefined and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string
+      at file:///Users/james.kebinger/dev/src/typescript/cli/test/commands/download.test.ts:54:38
+      at Object.catch (node_modules/fancy-test/lib/catch.js:20:13)
+      at handleError (node_modules/fancy-test/lib/base.js:56:44)
+      at Context.run (node_modules/fancy-test/lib/base.js:72:32)
+
+  24) download
+       when the provided environment is invalid
+         saves the file and returns a success message:
+     AssertionError: expected 'Failed to fetch environments: 401' to match /Environment `this.does.not.exist` not found. Valid environments: Production, test/
+      at Object.catch (node_modules/fancy-test/lib/catch.js:14:48)
+      at handleError (node_modules/fancy-test/lib/base.js:56:44)
+      at Context.run (node_modules/fancy-test/lib/base.js:72:32)
+
+  25) generate
+       runs generate without flags:
+     Error: Failed to download config: 401
+      at ConfigDownloader.downloadConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/codegen/config-downloader.js:10:23)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:128:32)
+      at async Generate._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  26) generate
+       generates TypeScript definitions:
+     Error: Failed to download config: 401
+      at ConfigDownloader.downloadConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/codegen/config-downloader.js:10:23)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:128:32)
+      at async Generate._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  27) generate
+       generates React TypeScript definitions:
+     Error: Failed to download config: 401
+      at ConfigDownloader.downloadConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/codegen/config-downloader.js:10:23)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:128:32)
+      at async Generate._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  28) generate
+       handles invalid targets:
+     AssertionError: expected 'Failed to download config: 401' to include 'Unsupported target: invalid'
+      at file:///Users/james.kebinger/dev/src/typescript/cli/test/commands/generate.test.ts:55:34
+      at Object.catch (node_modules/fancy-test/lib/catch.js:20:13)
+      at handleError (node_modules/fancy-test/lib/base.js:56:44)
+      at Context.run (node_modules/fancy-test/lib/base.js:72:32)
+
+  29) generate
+       local configuration file parsing
+         uses default config when no local config file exists:
+     Error: Failed to download config: 401
+      at ConfigDownloader.downloadConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/codegen/config-downloader.js:10:23)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:128:32)
+      at async Generate._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  30) generate
+       local configuration file parsing
+         loads and uses valid local config file:
+     Error: Failed to download config: 401
+      at ConfigDownloader.downloadConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/codegen/config-downloader.js:10:23)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:128:32)
+      at async Generate._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  31) generate
+       local configuration file parsing
+         falls back to global outputDirectory when target-specific not provided:
+     Error: Failed to download config: 401
+      at ConfigDownloader.downloadConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/codegen/config-downloader.js:10:23)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:128:32)
+      at async Generate._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  32) generate
+       local configuration file parsing
+         uses global config as fallback for missing target-specific properties:
+     Error: Failed to download config: 401
+      at ConfigDownloader.downloadConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/codegen/config-downloader.js:10:23)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:128:32)
+      at async Generate._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  33) generate
+       local configuration file parsing
+         handles empty targets object:
+     Error: Failed to download config: 401
+      at ConfigDownloader.downloadConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/codegen/config-downloader.js:10:23)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:128:32)
+      at async Generate._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  34) generate
+       local configuration file parsing
+         handles minimal empty config object:
+     Error: Failed to download config: 401
+      at ConfigDownloader.downloadConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/codegen/config-downloader.js:10:23)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:128:32)
+      at async Generate._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  35) generate
+       local configuration file parsing
+         handles multiple targets with custom filenames:
+     Error: Failed to download config: 401
+      at ConfigDownloader.downloadConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/codegen/config-downloader.js:10:23)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:128:32)
+      at async Generate._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  36) get
+       returns a value for a valid name:
+     Error: Failed to fetch configs: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Get.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Get.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Get.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/get.js:23:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Get._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  37) get
+       returns JSON for a value for a valid name:
+     Error: the object {
+  "serverError": {
+    "_embedded": {
+      "errors": [
+        {
+          "message": "Unauthorized"
+        }
+      ]
+    }
+    "_links": {
+      "self": {
+        "href": "/all-config-types/v1/metadata"
+        "templated": false
+      }
+    }
+    "message": "Unauthorized"
+  }
+} was thrown, throw an Error :)
+  
+
+  38) get
+       decrypts a secret:
+     Error: Failed to fetch configs: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Get.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Get.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Get.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/get.js:23:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Get._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  39) get
+       shows an error if the key is invalid:
+
+      AssertionError: expected 'Failed to fetch configs: 401' to deeply equal 'this-does-not-exist does not exist'
+      + expected - actual
+
+      -Failed to fetch configs: 401
+      +this-does-not-exist does not exist
+      
+      at file:///Users/james.kebinger/dev/src/typescript/cli/test/commands/get.test.ts:41:34
+      at Object.catch (node_modules/fancy-test/lib/catch.js:20:13)
+      at handleError (node_modules/fancy-test/lib/base.js:56:44)
+      at Context.run (node_modules/fancy-test/lib/base.js:72:32)
+
+  40) get
+       shows an error if no key is provided when things aren't interactive:
+
+      AssertionError: expected 'Failed to fetch configs: 401' to deeply equal 'Key is required'
+      + expected - actual
+
+      -Failed to fetch configs: 401
+      +Key is required
+      
+      at file:///Users/james.kebinger/dev/src/typescript/cli/test/commands/get.test.ts:49:34
+      at Object.catch (node_modules/fancy-test/lib/catch.js:20:13)
+      at handleError (node_modules/fancy-test/lib/base.js:56:44)
+      at Context.run (node_modules/fancy-test/lib/base.js:72:32)
+
+  41) info
+       when there are evaluations in the last 24 hours
+         returns info for a name:
+     Error: Failed to fetch configs: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Info.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Info.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Info.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/info.js:21:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Info._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  42) info
+       when there are evaluations in the last 24 hours
+         returns JSON for a name:
+     Error: the object {
+  "serverError": {
+    "_embedded": {
+      "errors": [
+        {
+          "message": "Unauthorized"
+        }
+      ]
+    }
+    "_links": {
+      "self": {
+        "href": "/all-config-types/v1/metadata"
+        "templated": false
+      }
+    }
+    "message": "Unauthorized"
+  }
+} was thrown, throw an Error :)
+  
+
+  43) info
+       when there are no evaluations in the last 24 hours
+         returns a message:
+     Error: Failed to fetch configs: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Info.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Info.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Info.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/info.js:21:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Info._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  44) info
+       when there are no evaluations in the last 24 hours
+         returns JSON:
+     Error: the object {
+  "serverError": {
+    "_embedded": {
+      "errors": [
+        {
+          "message": "Unauthorized"
+        }
+      ]
+    }
+    "_links": {
+      "self": {
+        "href": "/all-config-types/v1/metadata"
+        "templated": false
+      }
+    }
+    "message": "Unauthorized"
+  }
+} was thrown, throw an Error :)
+  
+
+  45) info
+       when there are no evaluations in the last 24 hours
+         decrypts a secret:
+     Error: Failed to fetch configs: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Info.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Info.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Info.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/info.js:21:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Info._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  46) info
+       when there are no evaluations in the last 24 hours
+         shows [confidential] for confidential items:
+     Error: Failed to fetch configs: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Info.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Info.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Info.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/info.js:21:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Info._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  47) info
+       when the key does not exist
+         returns a message:
+     AssertionError: expected 'Failed to fetch configs: 401' to include 'Key this.does.not.exist not found'
+      at file:///Users/james.kebinger/dev/src/typescript/cli/test/commands/info.test.ts:142:38
+      at Object.catch (node_modules/fancy-test/lib/catch.js:20:13)
+      at handleError (node_modules/fancy-test/lib/base.js:56:44)
+      at Context.run (node_modules/fancy-test/lib/base.js:72:32)
+
+  48) info
+       when the key does not exist
+         returns a JSON error:
+     SyntaxError: Unexpected token 'M', "[MSW] Warni"... is not valid JSON
+      at JSON.parse (<anonymous>)
+      at Context.<anonymous> (file:///Users/james.kebinger/dev/src/typescript/cli/test/commands/info.test.ts:155:29)
+      at Object.run (node_modules/fancy-test/lib/base.js:44:38)
+      at Context.run (node_modules/fancy-test/lib/base.js:68:36)
+
+  49) list
+       lists everything by default:
+     Error: Failed to fetch configs: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at List.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at List.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at List.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/list.js:20:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async List._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  50) list
+       lists only flags:
+     Error: Failed to fetch configs: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at List.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at List.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at List.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/list.js:20:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async List._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  51) list
+       lists only configs:
+     Error: Failed to fetch configs: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at List.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at List.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at List.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/list.js:20:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async List._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  52) list
+       lists only log levels:
+     Error: Failed to fetch configs: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at List.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at List.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at List.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/list.js:20:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async List._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  53) list
+       lists only segments:
+     Error: Failed to fetch configs: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at List.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at List.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at List.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/list.js:20:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async List._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  54) list
+       lists multiple types:
+     Error: Failed to fetch configs: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at List.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at List.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at List.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/list.js:20:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async List._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  55) override
+       overrides a boolean flag when given a valid key and value:
+     Error: Failed to fetch configs: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Override.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Override.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Override.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/override.js:32:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Override._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  56) override
+       overrides a double config when given a valid key and value:
+     Error: Failed to fetch configs: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Override.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Override.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Override.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/override.js:32:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Override._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  57) override
+       overrides a string list config when given a valid key and value:
+     Error: Failed to fetch configs: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Override.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Override.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Override.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/override.js:32:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Override._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  58) override
+       shows an error when the value type is wrong:
+     AssertionError: expected 'Failed to fetch configs: 401' to include 'Failed to override value: 400 -- is p…'
+      at file:///Users/james.kebinger/dev/src/typescript/cli/test/commands/override.test.ts:40:34
+      at Object.catch (node_modules/fancy-test/lib/catch.js:20:13)
+      at handleError (node_modules/fancy-test/lib/base.js:56:44)
+      at Context.run (node_modules/fancy-test/lib/base.js:72:32)
+
+  59) override
+       shows an error when the key does not exist:
+     AssertionError: expected 'Failed to fetch configs: 401' to include 'Could not find config named this.does…'
+      at file:///Users/james.kebinger/dev/src/typescript/cli/test/commands/override.test.ts:49:34
+      at Object.catch (node_modules/fancy-test/lib/catch.js:20:13)
+      at handleError (node_modules/fancy-test/lib/base.js:56:44)
+      at Context.run (node_modules/fancy-test/lib/base.js:72:32)
+
+  60) override
+       removes an override successfully:
+     Error: Failed to fetch configs: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Override.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Override.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Override.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/override.js:32:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Override._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  61) override
+       succeeds when trying to remove an override that does not exist:
+     Error: Failed to fetch configs: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Override.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Override.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Override.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/override.js:32:25)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Override._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  62) schema
+       get
+         can get a schema:
+     Error: Failed to get schema: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Schema.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Schema.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Schema.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/schema.js:22:29)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Schema._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  63) schema
+       get
+         can get a schema and return JSON:
+     Error: the object {
+  "name": "my.schema"
+  "phase": "get"
+  "serverError": {
+    "_embedded": {
+      "errors": [
+        {
+          "message": "Unauthorized"
+        }
+      ]
+    }
+    "_links": {
+      "self": {
+        "href": "/schemas/v1/schema/my.schema"
+        "templated": false
+      }
+    }
+    "message": "Unauthorized"
+  }
+} was thrown, throw an Error :)
+  
+
+  64) schema
+       set-zod
+         can create a new schema:
+     Error: Failed to create schema: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Schema.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Schema.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Schema.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/schema.js:64:29)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Schema._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  65) schema
+       set-zod
+         can update an existing schema:
+     Error: Failed to create schema: 401
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at Schema.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at Schema.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at Schema.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/schema.js:64:29)
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at async Schema._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  66) schema
+       set-zod
+         can create a schema and return JSON:
+     Error: the object {
+  "name": "new.schema"
+  "phase": "creation"
+  "serverError": {
+    "_embedded": {
+      "errors": [
+        {
+          "message": "Unauthorized"
+        }
+      ]
+    }
+    "_links": {
+      "self": {
+        "href": "/schemas/v1"
+        "templated": false
+      }
+    }
+    "message": "Unauthorized"
+  }
+} was thrown, throw an Error :)
+  
+
+  67) set-default
+       success
+         can create a secret string:
+     Error: Failed to create secret: env var REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY is not present
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at SetDefault.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at SetDefault.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at SetDefault.submitChange (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/set-default.js:177:33)
+      at async SetDefault._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+  68) set-default
+       success
+         uses encryption if any existing value for the key is encrypted:
+     Error: Failed to create secret: env var REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY is not present
+      at Object.error (node_modules/@oclif/core/lib/errors/error.js:37:15)
+      at SetDefault.error (node_modules/@oclif/core/lib/command.js:177:23)
+      at SetDefault.err (file:///Users/james.kebinger/dev/src/typescript/cli/dist/index.js:33:25)
+      at SetDefault.submitChange (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/set-default.js:177:33)
+      at async SetDefault._run (node_modules/@oclif/core/lib/command.js:311:22)
+      at async Config.runCommand (node_modules/@oclif/core/lib/config/config.js:433:25)
+      at async Object.run (node_modules/@oclif/test/lib/command.js:23:28)
+      at async Context.run (node_modules/fancy-test/lib/base.js:68:25)
+
+
+

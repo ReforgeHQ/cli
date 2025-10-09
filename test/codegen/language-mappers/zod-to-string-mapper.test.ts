@@ -204,9 +204,9 @@ describe('ZodToStringMapper', () => {
 
       const rendered = mapper.renderField(zodAst.schema!)
 
-      // NOTE: isActive is set to `any` because of the default value, which is not currently supported in the mapper.
+      // NOTE: isActive now correctly unwraps the default to get the inner boolean type
       expect(rendered).to.equal(
-        'z.object({name: z.string(); age: z.number().int(); topLevel: z.function().args(z.boolean().optional(), z.any()).returns(z.string()); more: z.object({details: z.string(); count: z.number().int(); exec: z.function().args(z.string()).returns(z.boolean().optional())}); tags: z.array(z.string()).optional(); isActive: z.any()})',
+        'z.object({name: z.string(); age: z.number().int(); topLevel: z.function().args(z.boolean().optional(), z.any()).returns(z.string()); more: z.object({details: z.string(); count: z.number().int(); exec: z.function().args(z.string()).returns(z.boolean().optional())}); tags: z.array(z.string()).optional(); isActive: z.boolean()})',
       )
     })
   })
