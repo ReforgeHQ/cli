@@ -170,6 +170,48 @@ const cannedResponses: CannedResponses = {
       successResponse,
       200,
     ],
+    [
+      createRequest('secret.with.literal.key', {
+        rows: [
+          {
+            properties: {},
+            values: [
+              {
+                criteria: [],
+                value: {
+                  confidential: true,
+                  decryptWith: 'literal.encryption.key',
+                  string: SECRET_VALUE,
+                },
+              },
+            ],
+          },
+        ],
+      }),
+      successResponse,
+      200,
+    ],
+    [
+      createRequest('secret.with.new.format.key', {
+        rows: [
+          {
+            properties: {},
+            values: [
+              {
+                criteria: [],
+                value: {
+                  confidential: true,
+                  decryptWith: 'new.format.encryption.key',
+                  string: SECRET_VALUE,
+                },
+              },
+            ],
+          },
+        ],
+      }),
+      successResponse,
+      200,
+    ],
   ],
 
   'https://api.goatsofreforge.com/api/v2/config/key/missing.secret.key': [[{}, {}, 404]],
@@ -212,6 +254,16 @@ const flagsV1Handler = http.post('https://api.goatsofreforge.com/flags/v1', asyn
   return new Response(JSON.stringify(successResponse), {status: 200})
 })
 
+const flagsV1HandlerProd = http.post('https://api.reforge.com/flags/v1', async ({request}) => {
+  const body = (await request.json()) as any
+
+  if (body.key === 'already.in.use') {
+    return new Response(JSON.stringify(conflictResponse), {status: 409})
+  }
+
+  return new Response(JSON.stringify(successResponse), {status: 200})
+})
+
 const configsV1Handler = http.post('https://api.goatsofreforge.com/configs/v1', async ({request}) => {
   const body = (await request.json()) as any
 
@@ -222,28 +274,121 @@ const configsV1Handler = http.post('https://api.goatsofreforge.com/configs/v1', 
   return new Response(JSON.stringify(successResponse), {status: 200})
 })
 
-// GET /all-config-types/v1/config/:key - get encryption key config
+const configsV1HandlerProd = http.post('https://api.reforge.com/configs/v1', async ({request}) => {
+  const body = (await request.json()) as any
+
+  if (body.key === 'already.in.use') {
+    return new Response(JSON.stringify(conflictResponse), {status: 409})
+  }
+
+  return new Response(JSON.stringify(successResponse), {status: 200})
+})
+
+// GET /all-config-types/v1/metadata - list all configs
+const metadataResponse = {
+  configs: [
+    {key: 'reforge.secrets.encryption.key', type: 'config'},
+    {key: 'literal.encryption.key', type: 'config'},
+    {key: 'new.format.encryption.key', type: 'config'},
+  ],
+}
+
+const metadataHandler = http.get('https://api.goatsofreforge.com/all-config-types/v1/metadata', () =>
+  HttpResponse.json(metadataResponse),
+)
+
+const metadataHandlerProd = http.get('https://api.reforge.com/all-config-types/v1/metadata', () =>
+  HttpResponse.json(metadataResponse),
+)
+
+// Encryption key config responses
+const encryptionKeyResponse = {
+  key: 'reforge.secrets.encryption.key',
+  type: 'config',
+  valueType: 'string',
+  default: {
+    rules: [
+      {
+        criteria: [],
+        value: {
+          provided: {
+            source: 'ENV_VAR',
+            lookup: 'REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY',
+          },
+        },
+      },
+    ],
+  },
+}
+
+const literalEncryptionKeyResponse = {
+  key: 'literal.encryption.key',
+  type: 'config',
+  valueType: 'string',
+  default: {
+    rules: [
+      {
+        criteria: [],
+        value: {
+          type: 'string',
+          value: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+        },
+      },
+    ],
+  },
+}
+
+const newFormatEncryptionKeyResponse = {
+  key: 'new.format.encryption.key',
+  type: 'config',
+  valueType: 'string',
+  default: {
+    rules: [
+      {
+        criteria: [],
+        value: {
+          type: 'provided',
+          value: {
+            source: 'ENV_VAR',
+            lookup: 'REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY',
+          },
+        },
+      },
+    ],
+  },
+}
+
+// GET /all-config-types/v1/config/:key - get encryption key config (old format with provided.lookup)
 const encryptionKeyHandler = http.get(
   'https://api.goatsofreforge.com/all-config-types/v1/config/reforge.secrets.encryption.key',
-  () =>
-    HttpResponse.json({
-      key: 'reforge.secrets.encryption.key',
-      type: 'config',
-      valueType: 'string',
-      default: {
-        rules: [
-          {
-            criteria: [],
-            value: {
-              provided: {
-                source: 'ENV_VAR',
-                lookup: 'REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY',
-              },
-            },
-          },
-        ],
-      },
-    }),
+  () => HttpResponse.json(encryptionKeyResponse),
+)
+
+const encryptionKeyHandlerProd = http.get(
+  'https://api.reforge.com/all-config-types/v1/config/reforge.secrets.encryption.key',
+  () => HttpResponse.json(encryptionKeyResponse),
+)
+
+// GET /all-config-types/v1/config/literal.encryption.key - encryption key with literal value
+const literalEncryptionKeyHandler = http.get(
+  'https://api.goatsofreforge.com/all-config-types/v1/config/literal.encryption.key',
+  () => HttpResponse.json(literalEncryptionKeyResponse),
+)
+
+const literalEncryptionKeyHandlerProd = http.get(
+  'https://api.reforge.com/all-config-types/v1/config/literal.encryption.key',
+  () => HttpResponse.json(literalEncryptionKeyResponse),
+)
+
+// GET /all-config-types/v1/config/new.format.encryption.key - encryption key with new type: "provided" format
+const newFormatEncryptionKeyHandler = http.get(
+  'https://api.goatsofreforge.com/all-config-types/v1/config/new.format.encryption.key',
+  () => HttpResponse.json(newFormatEncryptionKeyResponse),
+)
+
+const newFormatEncryptionKeyHandlerProd = http.get(
+  'https://api.reforge.com/all-config-types/v1/config/new.format.encryption.key',
+  () => HttpResponse.json(newFormatEncryptionKeyResponse),
 )
 
 // GET /all-config-types/v1/config/missing.secret.key - missing encryption key
@@ -252,13 +397,28 @@ const missingEncryptionKeyHandler = http.get(
   () => HttpResponse.json({error: 'Config not found'}, {status: 404}),
 )
 
+const missingEncryptionKeyHandlerProd = http.get(
+  'https://api.reforge.com/all-config-types/v1/config/missing.secret.key',
+  () => HttpResponse.json({error: 'Config not found'}, {status: 404}),
+)
+
 export const server = setupServer(
   identityHandler,
   identityHandlerTestDomain,
   flagsV1Handler,
+  flagsV1HandlerProd,
   configsV1Handler,
+  configsV1HandlerProd,
+  metadataHandler,
+  metadataHandlerProd,
   encryptionKeyHandler,
+  encryptionKeyHandlerProd,
+  literalEncryptionKeyHandler,
+  literalEncryptionKeyHandlerProd,
+  newFormatEncryptionKeyHandler,
+  newFormatEncryptionKeyHandlerProd,
   missingEncryptionKeyHandler,
+  missingEncryptionKeyHandlerProd,
   http.get('https://api.goatsofreforge.com/api/v2/configs/0', () => passthrough()),
 
   http.get('https://api.goatsofreforge.com/api/v2/*', async ({request}) =>

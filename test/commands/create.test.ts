@@ -203,7 +203,7 @@ describe('create', () => {
   })
 
   describe('secret', () => {
-    describe('when no encryption key can be found', () => {
+    describe('when encryption key does not exist in metadata', () => {
       test
         .command([
           'create',
@@ -214,9 +214,11 @@ describe('create', () => {
           '--secret-key-name=missing.secret.key',
         ])
         .catch((error) => {
-          expect(error.message).to.contain(`Failed to create secret: missing.secret.key not found`)
+          expect(error.message).to.contain(
+            `Failed to create secret: encryption key 'missing.secret.key' does not exist. Please create it first or use --secret-key-name to specify a different key.`,
+          )
         })
-        .it('complains about the missing key', () => {
+        .it('checks metadata and returns helpful error', () => {
           // Error assertion done in catch block
         })
     })
@@ -227,6 +229,39 @@ describe('create', () => {
         .command(['create', 'brand.new.secret', '--type=string', '--value=hello.world', '--secret'])
         .it('can create a string', (ctx) => {
           expect(ctx.stdout).to.contain(`Created config: brand.new.secret`)
+        })
+    })
+
+    describe('with literal encryption key value', () => {
+      test
+        .stdout()
+        .command([
+          'create',
+          'secret.with.literal.key',
+          '--type=string',
+          '--value=hello.world',
+          '--secret',
+          '--secret-key-name=literal.encryption.key',
+        ])
+        .it('can create a secret using literal encryption key', (ctx) => {
+          expect(ctx.stdout).to.contain(`Created config: secret.with.literal.key`)
+        })
+    })
+
+    describe('with new format encryption key (type: provided)', () => {
+      test
+        .env({REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'})
+        .stdout()
+        .command([
+          'create',
+          'secret.with.new.format.key',
+          '--type=string',
+          '--value=hello.world',
+          '--secret',
+          '--secret-key-name=new.format.encryption.key',
+        ])
+        .it('can create a secret using new format encryption key', (ctx) => {
+          expect(ctx.stdout).to.contain(`Created config: secret.with.new.format.key`)
         })
     })
 
