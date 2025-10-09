@@ -3,6 +3,8 @@ import {Flags} from '@oclif/core'
 import {APICommand} from '../index.js'
 import {JsonObj} from '../result.js'
 import getEnvironment from '../ui/get-environment.js'
+import getString from '../ui/get-string.js'
+import isInteractive from '../util/is-interactive.js'
 import nameArg from '../util/name-arg.js'
 
 interface EvaluationMetadata {
@@ -40,11 +42,18 @@ export default class Get extends APICommand {
   public async run(): Promise<JsonObj | void> {
     const {args, flags} = await this.parse(Get)
 
-    if (!args.name) {
-      return this.err('Key is required')
+    let key = args.name
+
+    if (!key && isInteractive(flags)) {
+      key = await getString({
+        allowBlank: false,
+        message: 'Config key',
+      })
     }
 
-    const key = args.name
+    if (!key) {
+      return this.err('Key is required')
+    }
 
     // Get the environment
     const environment = await getEnvironment({
