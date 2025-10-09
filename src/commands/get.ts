@@ -2,8 +2,8 @@ import {Flags} from '@oclif/core'
 
 import {APICommand} from '../index.js'
 import {JsonObj} from '../result.js'
+import autocomplete from '../util/autocomplete.js'
 import getEnvironment from '../ui/get-environment.js'
-import getString from '../ui/get-string.js'
 import isInteractive from '../util/is-interactive.js'
 import nameArg from '../util/name-arg.js'
 
@@ -42,32 +42,7 @@ export default class Get extends APICommand {
   public async run(): Promise<JsonObj | void> {
     const {args, flags} = await this.parse(Get)
 
-    let key = args.name
-
-    if (!key && isInteractive(flags)) {
-      key = await getString({
-        allowBlank: false,
-        message: 'Config key',
-      })
-    }
-
-    if (!key) {
-      return this.err('Key is required')
-    }
-
-    // Get the environment
-    const environment = await getEnvironment({
-      command: this,
-      flags,
-      message: 'Which environment would you like to evaluate in?',
-      providedEnvironment: flags.environment,
-    })
-
-    if (!environment) {
-      return
-    }
-
-    // First, check if the key exists
+    // Fetch metadata first for validation and autocomplete
     const metadataRequest = await this.apiClient.get('/all-config-types/v1/metadata')
 
     if (!metadataRequest.ok) {
@@ -89,10 +64,43 @@ export default class Get extends APICommand {
     }
 
     const metadataResponse = metadataRequest.json as unknown as ConfigMetadataResponse
+    const configKeys = metadataResponse.configs.map((c) => c.key)
+
+    // Get the key with autocomplete
+    let key = args.name
+
+    if (!key && isInteractive(flags)) {
+      const selectedKey = await autocomplete({
+        message: 'Config key',
+        source: configKeys,
+      })
+
+      if (selectedKey) {
+        key = selectedKey
+      }
+    }
+
+    if (!key) {
+      return this.err('Key is required')
+    }
+
+    // Validate key exists
     const configExists = metadataResponse.configs.some((config) => config.key === key)
 
     if (!configExists) {
       return this.err(`${key} does not exist`)
+    }
+
+    // Get the environment
+    const environment = await getEnvironment({
+      command: this,
+      flags,
+      message: 'Which environment would you like to evaluate in?',
+      providedEnvironment: flags.environment,
+    })
+
+    if (!environment) {
+      return
     }
 
     const request = await this.apiClient.get(
