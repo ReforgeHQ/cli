@@ -14,7 +14,7 @@ $ npm install -g @reforge-com/cli
 $ reforge COMMAND
 running command...
 $ reforge (--version)
-@reforge-com/cli/0.0.4 darwin-arm64 node-v24.4.0
+@reforge-com/cli/0.0.5 darwin-arm64 node-v24.4.0
 $ reforge --help [COMMAND]
 USAGE
   $ reforge COMMAND
@@ -90,7 +90,7 @@ EXAMPLES
   $ reforge create my.new.string --type json --value="{\"key\": \"value\"}"
 ```
 
-_See code: [src/commands/create.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.4/src/commands/create.ts)_
+_See code: [src/commands/create.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.5/src/commands/create.ts)_
 
 ## `reforge download`
 
@@ -123,7 +123,7 @@ EXAMPLES
   $ reforge download --environment=test --sdk-key=YOUR_SDK_KEY
 ```
 
-_See code: [src/commands/download.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.4/src/commands/download.ts)_
+_See code: [src/commands/download.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.5/src/commands/download.ts)_
 
 ## `reforge generate`
 
@@ -186,7 +186,7 @@ EXAMPLES
   $ reforge generate --target react-ts,node-ts # both node+react-ts
 ```
 
-_See code: [src/commands/generate.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.4/src/commands/generate.ts)_
+_See code: [src/commands/generate.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.5/src/commands/generate.ts)_
 
 ## `reforge generate-new-hex-key`
 
@@ -209,7 +209,7 @@ EXAMPLES
   $ reforge generate-new-hex-key
 ```
 
-_See code: [src/commands/generate-new-hex-key.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.4/src/commands/generate-new-hex-key.ts)_
+_See code: [src/commands/generate-new-hex-key.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.5/src/commands/generate-new-hex-key.ts)_
 
 ## `reforge get [NAME]`
 
@@ -242,7 +242,7 @@ EXAMPLES
   $ reforge get my.config.name --environment=production
 ```
 
-_See code: [src/commands/get.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.4/src/commands/get.ts)_
+_See code: [src/commands/get.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.5/src/commands/get.ts)_
 
 ## `reforge info [NAME]`
 
@@ -273,7 +273,7 @@ EXAMPLES
   $ reforge info my.config.name
 ```
 
-_See code: [src/commands/info.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.4/src/commands/info.ts)_
+_See code: [src/commands/info.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.5/src/commands/info.ts)_
 
 ## `reforge interactive`
 
@@ -291,7 +291,7 @@ EXAMPLES
   $ reforge
 ```
 
-_See code: [src/commands/interactive.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.4/src/commands/interactive.ts)_
+_See code: [src/commands/interactive.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.5/src/commands/interactive.ts)_
 
 ## `reforge list`
 
@@ -328,7 +328,7 @@ EXAMPLES
   $ reforge list --feature-flags
 ```
 
-_See code: [src/commands/list.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.4/src/commands/list.ts)_
+_See code: [src/commands/list.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.5/src/commands/list.ts)_
 
 ## `reforge login`
 
@@ -356,7 +356,7 @@ EXAMPLES
   $ reforge login --profile myprofile
 ```
 
-_See code: [src/commands/login.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.4/src/commands/login.ts)_
+_See code: [src/commands/login.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.5/src/commands/login.ts)_
 
 ## `reforge logout`
 
@@ -379,7 +379,7 @@ EXAMPLES
   $ reforge logout
 ```
 
-_See code: [src/commands/logout.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.4/src/commands/logout.ts)_
+_See code: [src/commands/logout.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.5/src/commands/logout.ts)_
 
 ## `reforge mcp`
 
@@ -412,7 +412,7 @@ EXAMPLES
   $ reforge mcp --url http://local-launch.goatsofreforge.com:3003/api/v1/mcp
 ```
 
-_See code: [src/commands/mcp.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.4/src/commands/mcp.ts)_
+_See code: [src/commands/mcp.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.5/src/commands/mcp.ts)_
 
 ## `reforge override [NAME]`
 
@@ -451,7 +451,7 @@ EXAMPLES
   $ reforge override my.double.config --value=3.14159
 ```
 
-_See code: [src/commands/override.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.4/src/commands/override.ts)_
+_See code: [src/commands/override.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.5/src/commands/override.ts)_
 
 ## `reforge profile`
 
@@ -474,7 +474,7 @@ EXAMPLES
   $ reforge profile
 ```
 
-_See code: [src/commands/profile.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.4/src/commands/profile.ts)_
+_See code: [src/commands/profile.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.5/src/commands/profile.ts)_
 
 ## `reforge schema NAME`
 
@@ -508,7 +508,7 @@ EXAMPLES
   $ reforge schema my-schema --get
 ```
 
-_See code: [src/commands/schema.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.4/src/commands/schema.ts)_
+_See code: [src/commands/schema.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.5/src/commands/schema.ts)_
 
 ## `reforge serve DATA-FILE`
 
@@ -544,7 +544,7 @@ EXAMPLES
   $ reforge serve ./reforge.test.588.config.json --port=3099
 ```
 
-_See code: [src/commands/serve.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.4/src/commands/serve.ts)_
+_See code: [src/commands/serve.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.5/src/commands/serve.ts)_
 
 ## `reforge set-default [NAME]`
 
@@ -588,7 +588,7 @@ EXAMPLES
   $ reforge set-default my.config.name --env-var=MY_ENV_VAR_NAME --environment=production
 ```
 
-_See code: [src/commands/set-default.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.4/src/commands/set-default.ts)_
+_See code: [src/commands/set-default.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.5/src/commands/set-default.ts)_
 
 ## `reforge workspace`
 
@@ -611,7 +611,7 @@ EXAMPLES
   $ reforge workspace
 ```
 
-_See code: [src/commands/workspace.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.4/src/commands/workspace.ts)_
+_See code: [src/commands/workspace.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.5/src/commands/workspace.ts)_
 <!-- commandsstop -->
 
 ## Local Development

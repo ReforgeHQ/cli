@@ -10,7 +10,7 @@ import Mcp from './commands/mcp.js'
 import Override from './commands/override.js'
 import Serve from './commands/serve.js'
 import SetDefault from './commands/set-default.js'
-import getKey from './ui/get-key.js'
+import {APICommand} from './index.js'
 import getString from './ui/get-string.js'
 import autocomplete from './util/autocomplete.js'
 import {green} from './util/color.js'
@@ -94,10 +94,6 @@ for (const command of commands) {
   descriptions[command.displayCommandName] = command.description.split('\n')[0]
 }
 
-const throwError = (input: Error | string) => {
-  throw new Error(input.toString())
-}
-
 type Arg = {
   description?: string
   options?: string[]
@@ -105,7 +101,11 @@ type Arg = {
   type: string
 }
 
-const promptForInput = async (arg: Arg, name: string, commandId: string) => {
+const isAPICommand = (command: SuggestedCommand['command']): boolean =>
+  // Check if command extends APICommand by checking prototype chain
+  command.prototype instanceof APICommand
+
+const promptForInput = async (arg: Arg, name: string, commandId: string, command: SuggestedCommand['command']) => {
   let value
 
   const message = arg.description ?? name
@@ -115,15 +115,11 @@ const promptForInput = async (arg: Arg, name: string, commandId: string) => {
   } else {
     switch (arg.type) {
       case 'option': {
-        if (name === 'name' && commandId !== 'create') {
-          const {key} = await getKey({
-            args: {},
-            command: {err: throwError, error: throwError},
-            flags: {interactive: true},
-            message: 'Which item?',
-          })
-
-          value = key
+        // APICommand-based commands handle their own "name" arg prompting with autocomplete from metadata API
+        // Skip prompting here for those commands (except create which needs the name upfront)
+        if (name === 'name' && commandId !== 'create' && isAPICommand(command)) {
+          // Skip prompting - let the OAuth command handle it interactively
+          value = undefined
         } else {
           value = await getString({allowBlank: false, message})
         }
@@ -137,27 +133,35 @@ const promptForInput = async (arg: Arg, name: string, commandId: string) => {
     }
   }
 
-  if (!value) {
+  if (!value && name !== 'name') {
     throw new Error(`Missing required argument: ${name}`)
   }
 
   return value
 }
 
-const getArgs = async (args: AvailableCommand['command']['args'], commandId: string): Promise<string[]> => {
+const getArgs = async (
+  args: AvailableCommand['command']['args'],
+  commandId: string,
+  command: SuggestedCommand['command'],
+): Promise<string[]> => {
   const requiredArgs = Object.keys(args)
 
-  return Promise.all(
+  const values = await Promise.all(
     Object.entries(args)
       .filter(([key]) => requiredArgs.includes(key))
-      .map(([key, arg]) => promptForInput(arg, key, commandId)),
+      .map(([key, arg]) => promptForInput(arg, key, commandId, command)),
   )
+
+  // Filter out undefined values (OAuth commands handle their own name prompting)
+  return values.filter((v): v is string => v !== undefined)
 }
 
 const getFlags = async (
   flags: AvailableCommand['command']['flags'],
   commandId: string,
   implicitFlags: string[],
+  command: SuggestedCommand['command'],
 ): Promise<string[]> => {
   if (!flags && implicitFlags.length === 0) {
     return []
@@ -172,7 +176,7 @@ const getFlags = async (
         inputs.push(`--${key}`)
       } else {
         // eslint-disable-next-line no-await-in-loop
-        const value = await promptForInput(arg, key, commandId)
+        const value = await promptForInput(arg, key, commandId, command)
         inputs.push(`--${key}=${value}`)
       }
     }
@@ -214,8 +218,13 @@ export const interactivePrompt = async (config: Config) => {
 
     const cliArgs = process.argv.slice(2)
 
-    const args = await getArgs(chosenCommand.command.args, chosenCommand.id)
-    const flags = await getFlags(chosenCommand.command.flags, chosenCommand.id, chosenCommand.implicitFlags)
+    const args = await getArgs(chosenCommand.command.args, chosenCommand.id, chosenCommand.command)
+    const flags = await getFlags(
+      chosenCommand.command.flags,
+      chosenCommand.id,
+      chosenCommand.implicitFlags,
+      chosenCommand.command,
+    )
 
     const allArgs = [...cliArgs, ...args, ...flags]
 

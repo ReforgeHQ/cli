@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.5 - 2025-10-09
+
+- Updated `get` command to no longer prompt for an sdk key, ensured no other commands will either
+- Updated `create` command to better handle creation of encrypted values
+
 ## 0.0.4 - 2025-10-09
 
 - Adds mcp command to assist installation of reforge-launch's mcp in claude desktop
