@@ -35,6 +35,7 @@ USAGE
 * [`reforge list`](#reforge-list)
 * [`reforge login`](#reforge-login)
 * [`reforge logout`](#reforge-logout)
+* [`reforge mcp`](#reforge-mcp)
 * [`reforge override [NAME]`](#reforge-override-name)
 * [`reforge profile`](#reforge-profile)
 * [`reforge schema NAME`](#reforge-schema-name)
@@ -379,6 +380,39 @@ EXAMPLES
 ```
 
 _See code: [src/commands/logout.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.3/src/commands/logout.ts)_
+
+## `reforge mcp`
+
+Configure Reforge MCP server for your AI assistant
+
+```
+USAGE
+  $ reforge mcp [--json] [--interactive] [--no-color] [--verbose] [--editor claude-code|codeium] [--url
+    <value>]
+
+FLAGS
+  --editor=<option>  Editor to configure (cursor, vscode, claude, windsurf)
+                     <options: claude-code|codeium>
+  --url=<value>      Internal URL for testing (defaults to https://launch.reforge.com/api/v1/mcp)
+
+GLOBAL FLAGS
+  --[no-]interactive  Force interactive mode
+  --json              Format output as json.
+  --no-color          Do not colorize output
+  --verbose           Verbose output
+
+DESCRIPTION
+  Configure Reforge MCP server for your AI assistant
+
+EXAMPLES
+  $ reforge mcp
+
+  $ reforge mcp --editor cursor
+
+  $ reforge mcp --url http://local-launch.goatsofreforge.com:3003/api/v1/mcp
+```
+
+_See code: [src/commands/mcp.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.11/src/commands/mcp.ts)_
 
 ## `reforge override [NAME]`
 
