@@ -42,6 +42,7 @@ export type SupportedZodTypes =
   | z.ZodAnyDef
   | z.ZodArrayDef
   | z.ZodBooleanDef
+  | z.ZodDefaultDef
   | z.ZodEnumDef
   | z.ZodFunctionDef
   | z.ZodNullDef

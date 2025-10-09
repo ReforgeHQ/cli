@@ -15,6 +15,11 @@ export abstract class ZodBaseMapper {
       }
       case 'ZodBoolean':
         return this.boolean()
+      case 'ZodDefault': {
+        // Unwrap default to get the inner type
+        const internalType = this.resolveType(def.innerType)
+        return internalType
+      }
       case 'ZodEnum': {
         const values = def.values.map((v) => v)
         return this.enum(values)

@@ -205,9 +205,9 @@ describe('ZodToTypescriptMapper', () => {
 
         const rendered = mapper.renderField(zodAst.schema!)
 
-        // NOTE: isActive is set to `any` because of the default value, which is not currently supported in the mapper.
+        // NOTE: isActive now correctly unwraps the default to get the inner boolean type
         expect(rendered).to.equal(
-          '"someKey": { "name": string; "age": number; "topLevel": (...params: [boolean | undefined, any]) => string; "more": { "details": string; "count": number; "exec": (...params: [string]) => boolean | undefined }; "tags"?: Array<string>; "isActive": any }',
+          '"someKey": { "name": string; "age": number; "topLevel": (...params: [boolean | undefined, any]) => string; "more": { "details": string; "count": number; "exec": (...params: [string]) => boolean | undefined }; "tags"?: Array<string>; "isActive": boolean }',
         )
       })
     })
@@ -245,9 +245,9 @@ describe('ZodToTypescriptMapper', () => {
 
         const rendered = mapper.renderField(zodAst.schema!)
 
-        // NOTE: isActive is set to `any` because of the default value, which is not currently supported in the mapper.
+        // NOTE: isActive now correctly unwraps the default to get the inner boolean type
         expect(rendered).to.equal(
-          '"someKey": { "name": string; "age": number; "topLevel": string | undefined; "more": { "details": string; "count": number; "exec": string | undefined }; "tags"?: Array<string>; "isActive": any }',
+          '"someKey": { "name": string; "age": number; "topLevel": string | undefined; "more": { "details": string; "count": number; "exec": string | undefined }; "tags"?: Array<string>; "isActive": boolean }',
         )
       })
     })
