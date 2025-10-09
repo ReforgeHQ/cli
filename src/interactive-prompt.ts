@@ -101,10 +101,9 @@ type Arg = {
   type: string
 }
 
-const isAPICommand = (command: SuggestedCommand['command']): boolean => 
+const isAPICommand = (command: SuggestedCommand['command']): boolean =>
   // Check if command extends APICommand by checking prototype chain
-   command.prototype instanceof APICommand
-
+  command.prototype instanceof APICommand
 
 const promptForInput = async (arg: Arg, name: string, commandId: string, command: SuggestedCommand['command']) => {
   let value
