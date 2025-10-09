@@ -1,0 +1,641 @@
+(node:56546) ExperimentalWarning: `--experimental-loader` may be removed in the future; instead use `register()`:
+--import 'data:text/javascript,import { register } from "node:module"; import { pathToFileURL } from "node:url"; register("ts-node/esm", pathToFileURL("./"));'
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:56546) [DEP0180] DeprecationWarning: fs.Stats constructor is deprecated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+
+  NodeTypeScriptGenerator
+    declarationGenerate
+      ✔ should generate basic code structure when no configs exist
+      ✔ should generate type definitions for configs and feature flags, not schema, or empty configurations
+      ✔ should generate function accessor methods for function configs
+      ✔ should generate durations correctly
+      ✔ should prefix method names with underscore when they start with a digit
+      ✔ should properly camelCase various key formats
+    generate
+      ✔ should generate basic code structure when no configs exist
+      ✔ should include Mustache import when function configs exist
+      ✔ should generate type definitions for configs and feature flags, not schema, or empty configurations
+      ✔ should generate function accessor methods for function configs
+      ✔ should generate durations correctly
+      ✔ should prefix method names with underscore when they start with a digit
+      ✔ should properly camelCase various key formats
+      ✔ should throw an error when method names conflict
+
+  ReactTypeScriptGenerator
+    declarationGenerate
+      ✔ should generate basic code structure when no configs exist
+      ✔ should generate type definitions for configs and feature flags, not schema, empty configurations, or non-client configs
+      ✔ should generate function accessor methods for function configs
+      ✔ should generate durations correctly
+      ✔ should prefix method names with underscore when they start with a digit
+      ✔ should properly camelCase various key formats
+    generate
+      ✔ should generate basic code structure when no configs exist
+      ✔ should include Mustache import when function configs exist
+      ✔ should generate type definitions for configs and feature flags, not schema, empty configurations, or non-client configs
+      ✔ should generate function accessor methods for function configs
+      ✔ should generate durations correctly
+      ✔ should prefix method names with underscore when they start with a digit
+      ✔ should properly camelCase various key formats
+      ✔ should throw an error when method names conflict
+
+  JsonToZodMapper
+    resolve
+      ✔ should resolve homogeneous array of numbers
+      ✔ should resolve homogeneous array of strings
+      ✔ should resolve homogeneous array of booleans
+      ✔ should resolve heterogeneous array to unknown
+      ✔ should resolve object with primitive types
+      ✔ should resolve deeply nested objects
+      ✔ should resolve array of objects
+      ✔ should resolve null values
+
+  ZodToStringMapper
+    renderField
+      ✔ Can successfully parse strings
+      ✔ Can successfully parse numbers
+      ✔ Can successfully parse integer numbers
+      ✔ Can successfully parse booleans
+      ✔ Can successfully parse any
+      ✔ Can successfully parse an array wrapped type
+      ✔ Can successfully parse an array chained type
+      ✔ Can successfully parse an enum
+      ✔ Can successfully parse null
+      ✔ Can successfully parse undefined
+      ✔ Can successfully parse unknown
+      ✔ Can successfully parse unions
+      ✔ Can successfully parse unions defined with or chaining
+      ✔ Can successfully parse tuples
+      ✔ Can successfully parse objects
+      ✔ Can successfully parse an optional wrapped type
+      ✔ Can successfully parse an optional chained type
+      ✔ Can successfully parse functions
+Unknown zod type: ZodDefault {
+  spa: [Function: bound safeParseAsync] AsyncFunction,
+  _def: {
+    errorMap: [Function: customMap],
+    description: undefined,
+    innerType: ZodBoolean {
+      spa: [Function: bound safeParseAsync] AsyncFunction,
+      _def: [Object],
+      parse: [Function: bound parse],
+      safeParse: [Function: bound safeParse],
+      parseAsync: [Function: bound parseAsync] AsyncFunction,
+      safeParseAsync: [Function: bound safeParseAsync] AsyncFunction,
+      refine: [Function: bound refine],
+      refinement: [Function: bound refinement],
+      superRefine: [Function: bound superRefine],
+      optional: [Function: bound optional],
+      nullable: [Function: bound nullable],
+      nullish: [Function: bound nullish],
+      array: [Function: bound array],
+      promise: [Function: bound promise],
+      or: [Function: bound or],
+      and: [Function: bound and],
+      transform: [Function: bound transform],
+      brand: [Function: bound brand],
+      default: [Function: bound default],
+      catch: [Function: bound catch],
+      describe: [Function: bound describe],
+      pipe: [Function: bound pipe],
+      readonly: [Function: bound readonly],
+      isNullable: [Function: bound isNullable],
+      isOptional: [Function: bound isOptional],
+      '~standard': [Object]
+    },
+    defaultValue: [Function (anonymous)],
+    typeName: 'ZodDefault'
+  },
+  parse: [Function: bound parse],
+  safeParse: [Function: bound safeParse],
+  parseAsync: [Function: bound parseAsync] AsyncFunction,
+  safeParseAsync: [Function: bound safeParseAsync] AsyncFunction,
+  refine: [Function: bound refine],
+  refinement: [Function: bound refinement],
+  superRefine: [Function: bound superRefine],
+  optional: [Function: bound optional],
+  nullable: [Function: bound nullable],
+  nullish: [Function: bound nullish],
+  array: [Function: bound array],
+  promise: [Function: bound promise],
+  or: [Function: bound or],
+  and: [Function: bound and],
+  transform: [Function: bound transform],
+  brand: [Function: bound brand],
+  default: [Function: bound default],
+  catch: [Function: bound catch],
+  describe: [Function: bound describe],
+  pipe: [Function: bound pipe],
+  readonly: [Function: bound readonly],
+  isNullable: [Function: bound isNullable],
+  isOptional: [Function: bound isOptional],
+  '~standard': { version: 1, vendor: 'zod', validate: [Function: validate] }
+}
+      ✔ Can successfully complex combinations of types
+
+  ZodToTypescriptMapper
+    renderField
+      ✔ Can successfully parse strings
+      ✔ Can successfully parse numbers
+      ✔ Can successfully parse integer numbers
+      ✔ Can successfully parse booleans
+      ✔ Can successfully parse any
+      ✔ Can successfully parse an array wrapped type
+      ✔ Can successfully parse an array chained type
+      ✔ Can successfully parse an enum
+      ✔ Can successfully parse null
+      ✔ Can successfully parse undefined
+      ✔ Can successfully parse unknown
+      ✔ Can successfully parse unions
+      ✔ Can successfully parse unions defined with or chaining
+      ✔ Can successfully parse tuples
+      ✔ Can successfully parse objects
+      ✔ Can successfully parse an optional wrapped type
+      ✔ Can successfully parse an optional chained type
+      when the target = "accessor"
+        ✔ Can successfully parse functions
+Unknown zod type: ZodDefault {
+  spa: [Function: bound safeParseAsync] AsyncFunction,
+  _def: {
+    errorMap: [Function: customMap],
+    description: undefined,
+    innerType: ZodBoolean {
+      spa: [Function: bound safeParseAsync] AsyncFunction,
+      _def: [Object],
+      parse: [Function: bound parse],
+      safeParse: [Function: bound safeParse],
+      parseAsync: [Function: bound parseAsync] AsyncFunction,
+      safeParseAsync: [Function: bound safeParseAsync] AsyncFunction,
+      refine: [Function: bound refine],
+      refinement: [Function: bound refinement],
+      superRefine: [Function: bound superRefine],
+      optional: [Function: bound optional],
+      nullable: [Function: bound nullable],
+      nullish: [Function: bound nullish],
+      array: [Function: bound array],
+      promise: [Function: bound promise],
+      or: [Function: bound or],
+      and: [Function: bound and],
+      transform: [Function: bound transform],
+      brand: [Function: bound brand],
+      default: [Function: bound default],
+      catch: [Function: bound catch],
+      describe: [Function: bound describe],
+      pipe: [Function: bound pipe],
+      readonly: [Function: bound readonly],
+      isNullable: [Function: bound isNullable],
+      isOptional: [Function: bound isOptional],
+      '~standard': [Object]
+    },
+    defaultValue: [Function (anonymous)],
+    typeName: 'ZodDefault'
+  },
+  parse: [Function: bound parse],
+  safeParse: [Function: bound safeParse],
+  parseAsync: [Function: bound parseAsync] AsyncFunction,
+  safeParseAsync: [Function: bound safeParseAsync] AsyncFunction,
+  refine: [Function: bound refine],
+  refinement: [Function: bound refinement],
+  superRefine: [Function: bound superRefine],
+  optional: [Function: bound optional],
+  nullable: [Function: bound nullable],
+  nullish: [Function: bound nullish],
+  array: [Function: bound array],
+  promise: [Function: bound promise],
+  or: [Function: bound or],
+  and: [Function: bound and],
+  transform: [Function: bound transform],
+  brand: [Function: bound brand],
+  default: [Function: bound default],
+  catch: [Function: bound catch],
+  describe: [Function: bound describe],
+  pipe: [Function: bound pipe],
+  readonly: [Function: bound readonly],
+  isNullable: [Function: bound isNullable],
+  isOptional: [Function: bound isOptional],
+  '~standard': { version: 1, vendor: 'zod', validate: [Function: validate] }
+}
+        ✔ Can successfully complex combinations of types
+      when the target = "raw"
+        ✔ Can successfully parse functions
+Unknown zod type: ZodDefault {
+  spa: [Function: bound safeParseAsync] AsyncFunction,
+  _def: {
+    errorMap: [Function: customMap],
+    description: undefined,
+    innerType: ZodBoolean {
+      spa: [Function: bound safeParseAsync] AsyncFunction,
+      _def: [Object],
+      parse: [Function: bound parse],
+      safeParse: [Function: bound safeParse],
+      parseAsync: [Function: bound parseAsync] AsyncFunction,
+      safeParseAsync: [Function: bound safeParseAsync] AsyncFunction,
+      refine: [Function: bound refine],
+      refinement: [Function: bound refinement],
+      superRefine: [Function: bound superRefine],
+      optional: [Function: bound optional],
+      nullable: [Function: bound nullable],
+      nullish: [Function: bound nullish],
+      array: [Function: bound array],
+      promise: [Function: bound promise],
+      or: [Function: bound or],
+      and: [Function: bound and],
+      transform: [Function: bound transform],
+      brand: [Function: bound brand],
+      default: [Function: bound default],
+      catch: [Function: bound catch],
+      describe: [Function: bound describe],
+      pipe: [Function: bound pipe],
+      readonly: [Function: bound readonly],
+      isNullable: [Function: bound isNullable],
+      isOptional: [Function: bound isOptional],
+      '~standard': [Object]
+    },
+    defaultValue: [Function (anonymous)],
+    typeName: 'ZodDefault'
+  },
+  parse: [Function: bound parse],
+  safeParse: [Function: bound safeParse],
+  parseAsync: [Function: bound parseAsync] AsyncFunction,
+  safeParseAsync: [Function: bound safeParseAsync] AsyncFunction,
+  refine: [Function: bound refine],
+  refinement: [Function: bound refinement],
+  superRefine: [Function: bound superRefine],
+  optional: [Function: bound optional],
+  nullable: [Function: bound nullable],
+  nullish: [Function: bound nullish],
+  array: [Function: bound array],
+  promise: [Function: bound promise],
+  or: [Function: bound or],
+  and: [Function: bound and],
+  transform: [Function: bound transform],
+  brand: [Function: bound brand],
+  default: [Function: bound default],
+  catch: [Function: bound catch],
+  describe: [Function: bound describe],
+  pipe: [Function: bound pipe],
+  readonly: [Function: bound readonly],
+  isNullable: [Function: bound isNullable],
+  isOptional: [Function: bound isOptional],
+  '~standard': { version: 1, vendor: 'zod', validate: [Function: validate] }
+}
+        ✔ Can successfully complex combinations of types
+
+  ZodToTypescriptReturnValueMapper
+    renderField
+      ✔ Can successfully parse strings
+      ✔ Can successfully parse strings with property paths
+      ✔ Can successfully parse numbers
+      ✔ Can successfully parse numbers with property paths
+      ✔ Can successfully parse integer numbers
+      ✔ Can successfully parse integer numbers with property paths
+      ✔ Can successfully parse booleans
+      ✔ Can successfully parse booleans with property paths
+      ✔ Can successfully parse any
+      ✔ Can successfully parse any with property paths
+      ✔ Can successfully parse an array wrapped type
+      ✔ Can successfully parse an array wrapped type with property paths
+      ✔ Can successfully parse an array chained type
+      ✔ Can successfully parse an array chained type with property paths
+      ✔ Can successfully parse an enum
+      ✔ Can successfully parse an enum with property paths
+      ✔ Can successfully parse null
+      ✔ Can successfully parse null with property paths
+      ✔ Can successfully parse undefined
+      ✔ Can successfully parse undefined with property paths
+      ✔ Can successfully parse unknown
+      ✔ Can successfully parse unknown with property paths
+      ✔ Can successfully parse unions
+      ✔ Can successfully parse unions defined with or chaining with property paths
+      ✔ Can successfully parse unions defined with or chaining
+      ✔ Can successfully parse unions defined with or chaining with property paths
+      ✔ Can successfully parse tuples
+      ✔ Can successfully parse tuples with property paths
+      ✔ Can successfully parse objects
+      ✔ Can successfully parse objects with property paths
+      ✔ Can successfully parse an optional wrapped type
+      ✔ Can successfully parse an optional wrapped type with property paths
+      ✔ Can successfully parse an optional chained type
+      ✔ Can successfully parse an optional chained type with property paths
+      ✔ Can successfully parse functions
+      ✔ Can successfully parse functions with property paths
+Unknown zod type: ZodDefault {
+  spa: [Function: bound safeParseAsync] AsyncFunction,
+  _def: {
+    errorMap: [Function: customMap],
+    description: undefined,
+    innerType: ZodBoolean {
+      spa: [Function: bound safeParseAsync] AsyncFunction,
+      _def: [Object],
+      parse: [Function: bound parse],
+      safeParse: [Function: bound safeParse],
+      parseAsync: [Function: bound parseAsync] AsyncFunction,
+      safeParseAsync: [Function: bound safeParseAsync] AsyncFunction,
+      refine: [Function: bound refine],
+      refinement: [Function: bound refinement],
+      superRefine: [Function: bound superRefine],
+      optional: [Function: bound optional],
+      nullable: [Function: bound nullable],
+      nullish: [Function: bound nullish],
+      array: [Function: bound array],
+      promise: [Function: bound promise],
+      or: [Function: bound or],
+      and: [Function: bound and],
+      transform: [Function: bound transform],
+      brand: [Function: bound brand],
+      default: [Function: bound default],
+      catch: [Function: bound catch],
+      describe: [Function: bound describe],
+      pipe: [Function: bound pipe],
+      readonly: [Function: bound readonly],
+      isNullable: [Function: bound isNullable],
+      isOptional: [Function: bound isOptional],
+      '~standard': [Object]
+    },
+    defaultValue: [Function (anonymous)],
+    typeName: 'ZodDefault'
+  },
+  parse: [Function: bound parse],
+  safeParse: [Function: bound safeParse],
+  parseAsync: [Function: bound parseAsync] AsyncFunction,
+  safeParseAsync: [Function: bound safeParseAsync] AsyncFunction,
+  refine: [Function: bound refine],
+  refinement: [Function: bound refinement],
+  superRefine: [Function: bound superRefine],
+  optional: [Function: bound optional],
+  nullable: [Function: bound nullable],
+  nullish: [Function: bound nullish],
+  array: [Function: bound array],
+  promise: [Function: bound promise],
+  or: [Function: bound or],
+  and: [Function: bound and],
+  transform: [Function: bound transform],
+  brand: [Function: bound brand],
+  default: [Function: bound default],
+  catch: [Function: bound catch],
+  describe: [Function: bound describe],
+  pipe: [Function: bound pipe],
+  readonly: [Function: bound readonly],
+  isNullable: [Function: bound isNullable],
+  isOptional: [Function: bound isOptional],
+  '~standard': { version: 1, vendor: 'zod', validate: [Function: validate] }
+}
+      ✔ Can successfully complex combinations of types
+
+  MustacheExtractor
+    ✔ extracts simple placeholders
+    ✔ handles section with variables
+    ✔ handles inverted sections
+    ✔ handles complex nested template
+    ✔ validates data against generated schema
+
+  SchemaEvaluator
+    secureEvaluateSchema
+      ✔ should properly evaluate valid schema strings
+      ✔ should handle complex schema strings
+      ✔ should reject schema strings with syntax errors
+      ✔ should reject schema strings with unsupported operations
+      ✔ should reject schema strings attempting to use unsupported properties
+      ✔ should allow valid refinements with arrow functions
+      ✔ should reject schema strings exceeding maximum complexity
+      ✔ should handle enum types properly
+      ✔ should handle union types
+
+  SchemaExtractor
+    execute
+      ✔ should use user-defined schema when available
+      ✔ should infer schema when no user-defined schema is available
+      ✔ should infer a union of schema when multiple schemas are found
+      ✔ should use custom duration type map when provided
+      ✔ should replace strings with Mustache templates when found
+      ✔ should replace strings with a union of Mustache templates when found
+
+  create
+    type=boolean-flag
+      ✔ can create a boolean flag (43ms)
+      ✔ can create a boolean flag and return a JSON response
+      ✔ can create a boolean flag with a true default
+      ✔ returns an error if the flag exists
+      ✔ returns an error if the value is not a boolean
+{"key":"already.in.use","phase":"creation","serverError":{"_embedded":{"errors":[{"message":"key `already.in.use` is already in use. Pass existing config id to overwrite"}]},"_links":{"self":{"href":"/api/v2/config/","templated":false}},"message":"Conflict"}}
+      ✔ returns a JSON error if the flag exists
+    type=string
+      ✔ can create a string
+      ✔ can create a string
+      ✔ can create a string provided by an env var
+      ✔ can create a confidential string provided by an env var
+      ✔ shows an error when provided a default and an env-var
+    type=int
+      ✔ can create an int
+converting...
+      ✔ returns an error if the value is not an int
+      ✔ can create an int provided by an env var
+    type=double
+      ✔ can create a double
+      ✔ returns an error if the value is not a double
+    type=boolean
+      ✔ can create a boolean
+      ✔ returns an error if the value is not a boolean
+    type=string-list
+      ✔ can create a string list
+    type=json
+      ✔ can create a JSON object
+      ✔ returns an error if the value is not JSON
+    secret
+      when no encryption key can be found
+        ✔ complains about the missing key
+      type=string
+        ✔ can create a string
+      type=NOT_STRING
+        ✔ errors
+
+  download
+    when the download server responds successfully
+      ✔ saves the file and returns a success message
+      ✔ saves the file and returns JSON
+    when the download server does not respond successfully
+      ✔ saves the file and returns a success message
+      ✔ saves the file and returns JSON
+    when the provided environment is invalid
+      ✔ saves the file and returns a success message
+"Environment `this.does.not.exist` not found. Valid environments: Production, test"
+      ✔ saves the file and returns JSON
+
+  generate-new-hex-key
+    ✔ generates a new hex key
+    ✔ generates JSON output with a new key
+
+  generate
+    ✔ runs generate without flags
+    ✔ generates TypeScript definitions
+    ✔ generates React TypeScript definitions
+ERROR: Error: Unsupported target: invalid
+    at Generate.resolveLanguage (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:207:19)
+    at Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:133:39)
+    at async Generate._run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:311:22)
+    at async Config.runCommand (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/config/config.js:433:25)
+    at async Object.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/test/lib/command.js:23:28)
+    at async Context.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/fancy-test/lib/base.js:68:25)
+    ✔ handles invalid targets
+    local configuration file parsing
+      ✔ uses default config when no local config file exists
+      ✔ loads and uses valid local config file
+      ✔ falls back to global outputDirectory when target-specific not provided
+      ✔ uses global config as fallback for missing target-specific properties
+      ✔ handles empty targets object
+ERROR: CLIError: Error reading reforge.config.json: SyntaxError: Expected property name or '}' in JSON at position 2 (line 1 column 3)
+    at Object.error (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/errors/error.js:37:15)
+    at Generate.error (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:177:23)
+    at Generate.readLocalConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:191:22)
+    at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:121:33)
+    at async Generate._run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:311:22)
+    at async Config.runCommand (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/config/config.js:433:25)
+    at async Object.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/test/lib/command.js:23:28)
+    at async Context.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/fancy-test/lib/base.js:68:25) {
+  code: undefined,
+  oclif: { exit: 2 },
+  skipOclifErrorHandling: undefined,
+  suggestions: undefined
+}
+      ✔ handles invalid JSON in config file
+ERROR: CLIError: Error reading reforge.config.json: [
+  {
+    "code": "invalid_type",
+    "expected": "string",
+    "received": "number",
+    "path": [
+      "outputDirectory"
+    ],
+    "message": "Expected string, received number"
+  }
+]
+    at Object.error (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/errors/error.js:37:15)
+    at Generate.error (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:177:23)
+    at Generate.readLocalConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:191:22)
+    at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:121:33)
+    at async Generate._run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:311:22)
+    at async Config.runCommand (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/config/config.js:433:25)
+    at async Object.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/test/lib/command.js:23:28)
+    at async Context.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/fancy-test/lib/base.js:68:25) {
+  code: undefined,
+  oclif: { exit: 2 },
+  skipOclifErrorHandling: undefined,
+  suggestions: undefined
+}
+      ✔ validates config schema and rejects invalid types
+      ✔ handles minimal empty config object
+      ✔ handles multiple targets with custom filenames
+ERROR: CLIError: Error reading reforge.config.json: Error: EISDIR: illegal operation on a directory, read
+    at Object.error (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/errors/error.js:37:15)
+    at Generate.error (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:177:23)
+    at Generate.readLocalConfig (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:191:22)
+    at async Generate.run (file:///Users/james.kebinger/dev/src/typescript/cli/dist/commands/generate.js:121:33)
+    at async Generate._run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/command.js:311:22)
+    at async Config.runCommand (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/core/lib/config/config.js:433:25)
+    at async Object.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/@oclif/test/lib/command.js:23:28)
+    at async Context.run (/Users/james.kebinger/dev/src/typescript/cli/node_modules/fancy-test/lib/base.js:68:25) {
+  code: undefined,
+  oclif: { exit: 2 },
+  skipOclifErrorHandling: undefined,
+  suggestions: undefined
+}
+      ✔ handles case where config path is a directory
+
+  get
+    ✔ returns a value for a valid name
+    ✔ returns JSON for a value for a valid name
+    ✔ decrypts a secret
+    ✔ shows an error if the key is invalid
+    ✔ shows an error if no key is provided when things aren't interactive
+
+  info
+    when there are evaluations in the last 24 hours
+      ✔ returns info for a name
+      ✔ returns JSON for a name
+    when there are no evaluations in the last 24 hours
+      ✔ returns a message
+      ✔ returns JSON
+      ✔ decrypts a secret
+      ✔ shows [confidential] for confidential items
+    when the key does not exist
+      ✔ returns a message
+      ✔ returns a JSON error
+
+  list
+    ✔ lists everything by default
+    ✔ lists only flags
+    ✔ lists only configs
+    ✔ lists only log levels
+    ✔ lists only segments
+    ✔ lists multiple types
+
+  override
+    ✔ overrides a boolean flag when given a valid key and value
+    ✔ overrides a double config when given a valid key and value
+    ✔ overrides a string list config when given a valid key and value
+    ✔ shows an error when the value type is wrong
+    ✔ shows an error when the key does not exist
+    ✔ shows an error when given remove and a value
+    ✔ removes an override successfully
+    ✔ succeeds when trying to remove an override that does not exist
+
+  schema
+    ✔ requires an action flag
+    get
+      ✔ can get a schema
+      ✔ can get a schema and return JSON
+      ✔ handles non-existent schema
+    set-zod
+      ✔ can create a new schema
+      ✔ can update an existing schema
+      ✔ can create a schema and return JSON
+
+  serve
+    success
+      when the context matches a rule
+        ✔ succeeds with a valid JSON file an uses the provided context to determine flag state
+      when the context does not match a rule
+        ✔ succeeds with a valid JSON file an uses the provided context to determine flag state
+    file issues
+      ✔ shows an error when the file does not exist
+      ✔ shows an error when the file is invalid
+      ✔ shows an error when the file is invalid
+
+  set-default
+    success
+      ✔ can change the default for a boolean flag
+      ✔ can change the default for a boolean flag with json output
+      ✔ can change the default for a string flag
+      ✔ can change the default for a string flag with json output
+      ✔ can create a string provided by an env var
+      ✔ can create a secret string
+      ✔ uses encryption if any existing value for the key is encrypted
+      ✔ can update a json config
+    failure
+      ✔ shows an error when the key does not exist
+      ✔ shows an error when the value isn't valid for the boolean key
+      ✔ shows an error when the value isn't valid for the int key
+    parsing errors
+      ✔ shows an error if no key is provided when things aren't interactive
+      ✔ shows an error if no environment is provided when things aren't interactive
+      ✔ shows an error when provided a value and an env-var
+
+  token-storage
+    saveAuthConfig
+      ✔ should save a single profile with comment
+      ✔ should save multiple profiles
+    loadAuthConfig
+      ✔ should load a single profile
+      ✔ should load multiple profiles
+      ✔ should return null for missing file
+    getActiveProfile
+      ✔ should return provided argument first
+      ✔ should return env var if no argument
+      ✔ should return "default" if no argument or env var
+      ✔ should prioritize: arg > env > default
+
+
+  241 passing (532ms)
+
