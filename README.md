@@ -14,7 +14,7 @@ $ npm install -g @reforge-com/cli
 $ reforge COMMAND
 running command...
 $ reforge (--version)
-@reforge-com/cli/0.0.3 darwin-arm64 node-v24.4.0
+@reforge-com/cli/0.0.3 darwin-arm64 node-v24.4.1
 $ reforge --help [COMMAND]
 USAGE
   $ reforge COMMAND
