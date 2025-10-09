@@ -83,9 +83,7 @@ const environmentsResponse = {
 }
 
 // GET /environments/v1 - list environments (both domains)
-const environmentsHandler = http.get('https://api.*/environments/v1', () =>
-  HttpResponse.json(environmentsResponse),
-)
+const environmentsHandler = http.get('https://api.*/environments/v1', () => HttpResponse.json(environmentsResponse))
 
 // Shared encryption key config response
 const encryptionKeyResponse = {
@@ -124,31 +122,28 @@ const encryptionKeyResponse = {
 }
 
 // GET /all-config-types/v1/config/:key - get encryption key config (both domains)
-const encryptionKeyHandler = http.get(
-  'https://api.*/all-config-types/v1/config/reforge.secrets.encryption.key',
-  () => HttpResponse.json(encryptionKeyResponse),
+const encryptionKeyHandler = http.get('https://api.*/all-config-types/v1/config/reforge.secrets.encryption.key', () =>
+  HttpResponse.json(encryptionKeyResponse),
 )
 
 // GET /all-config-types/v1/config/feature-flag.simple - get feature flag details (not encrypted)
-const featureFlagDetailsHandler = http.get(
-  'https://api.*/all-config-types/v1/config/feature-flag.simple',
-  () =>
-    HttpResponse.json({
-      key: 'feature-flag.simple',
-      type: 'feature_flag',
-      valueType: 'bool',
-      default: {
-        rules: [
-          {
-            criteria: [],
-            value: {
-              type: 'bool',
-              value: false,
-            },
+const featureFlagDetailsHandler = http.get('https://api.*/all-config-types/v1/config/feature-flag.simple', () =>
+  HttpResponse.json({
+    key: 'feature-flag.simple',
+    type: 'feature_flag',
+    valueType: 'bool',
+    default: {
+      rules: [
+        {
+          criteria: [],
+          value: {
+            type: 'bool',
+            value: false,
           },
-        ],
-      },
-    }),
+        },
+      ],
+    },
+  }),
 )
 
 // GET /all-config-types/v1/config/jeffreys.test.key.reforge - get string config details (not encrypted)
@@ -174,25 +169,23 @@ const jeffreysTestKeyDetailsHandler = http.get(
 )
 
 // GET /all-config-types/v1/config/jeffreys.test.int - get int config details (not encrypted)
-const jeffreysTestIntDetailsHandler = http.get(
-  'https://api.*/all-config-types/v1/config/jeffreys.test.int',
-  () =>
-    HttpResponse.json({
-      key: 'jeffreys.test.int',
-      type: 'config',
-      valueType: 'int',
-      default: {
-        rules: [
-          {
-            criteria: [],
-            value: {
-              type: 'int',
-              value: 42,
-            },
+const jeffreysTestIntDetailsHandler = http.get('https://api.*/all-config-types/v1/config/jeffreys.test.int', () =>
+  HttpResponse.json({
+    key: 'jeffreys.test.int',
+    type: 'config',
+    valueType: 'int',
+    default: {
+      rules: [
+        {
+          criteria: [],
+          value: {
+            type: 'int',
+            value: 42,
           },
-        ],
-      },
-    }),
+        },
+      ],
+    },
+  }),
 )
 
 // GET /all-config-types/v1/config/test.json - get json config details (not encrypted)
