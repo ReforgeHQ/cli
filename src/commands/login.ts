@@ -51,16 +51,18 @@ export default class Login extends BaseCommand {
     // Wait for the callback
     const code = await waitForCallback()
 
-    this.log('Exchanging authorization code for tokens...')
+    this.verboseLog('Exchanging authorization code for tokens...')
     const tokenResponse = await exchangeCodeForTokens(code, port, codeVerifier, domain)
 
-    // Decode and display the JWT
-    const jwtParts = tokenResponse.access_token.split('.')
-    const payload = JSON.parse(Buffer.from(jwtParts[1], 'base64').toString('utf8'))
+    // Decode and display the JWT (verbose mode only)
+    if (this.isVerbose) {
+      const jwtParts = tokenResponse.access_token.split('.')
+      const payload = JSON.parse(Buffer.from(jwtParts[1], 'base64').toString('utf8'))
 
-    this.log('\n=== Decoded JWT Payload ===')
-    this.log(JSON.stringify(payload, null, 2))
-    this.log('===========================\n')
+      this.verboseLog('\n=== Decoded JWT Payload ===')
+      this.verboseLog(JSON.stringify(payload, null, 2))
+      this.verboseLog('===========================\n')
+    }
 
     // Save tokens
     await saveTokens({
