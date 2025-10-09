@@ -67,6 +67,7 @@ export async function makeConfidentialValue(
   const keyConfig = configRequest.json as any
 
   // Find the encryption key for this environment (or default)
+  let secretKey: string | undefined
   let envVar: string | undefined
 
   // Check environment-specific config first
@@ -76,33 +77,48 @@ export async function makeConfidentialValue(
       (env: any) => env.id === Number.parseInt(environmentId, 10),
     )
     /* eslint-enable @typescript-eslint/no-explicit-any */
-    if (envConfig?.rules?.[0]?.value?.provided?.lookup) {
-      envVar = envConfig.rules[0].value.provided.lookup
+    const ruleValue = envConfig?.rules?.[0]?.value
+    if (ruleValue?.provided?.lookup) {
+      envVar = ruleValue.provided.lookup
+    } else if (ruleValue?.value) {
+      secretKey = ruleValue.value
     }
   }
 
   // Fall back to default config
-  if (!envVar && keyConfig.default?.rules?.[0]?.value?.provided?.lookup) {
-    envVar = keyConfig.default.rules[0].value.provided.lookup
+  if (!secretKey && !envVar) {
+    const defaultValue = keyConfig.default?.rules?.[0]?.value
+    if (defaultValue?.provided?.lookup) {
+      envVar = defaultValue.provided.lookup
+    } else if (defaultValue?.value) {
+      secretKey = defaultValue.value
+    }
   }
 
-  if (!envVar) {
+  // If we have an env var, resolve it
+  if (envVar && !secretKey) {
+    secretKey = process.env[envVar]
+    command.verboseLog(`Using env var ${envVar} to encrypt secret`)
+
+    if (typeof secretKey !== 'string') {
+      return failure(`Failed to create secret: env var ${envVar} is not present`, {
+        phase: 'finding-secret',
+      })
+    }
+  }
+
+  // If we have a literal value, use it
+  if (secretKey) {
+    command.verboseLog(`Using literal value from ${secret.keyName} to encrypt secret`)
+  }
+
+  if (!secretKey) {
     return failure(
-      `Failed to create secret: ${secret.keyName} not found for environment ${environmentId || 'default'} or default env`,
+      `Failed to create secret: ${secret.keyName} does not have a value configured for environment ${environmentId || 'default'} or default env`,
       {
         phase: 'finding-secret',
       },
     )
-  }
-
-  const secretKey = process.env[envVar]
-
-  command.verboseLog(`Using env var ${envVar} to encrypt secret`)
-
-  if (typeof secretKey !== 'string') {
-    return failure(`Failed to create secret: env var ${envVar} is not present`, {
-      phase: 'finding-secret',
-    })
   }
 
   if (secretKey.length !== 64) {
