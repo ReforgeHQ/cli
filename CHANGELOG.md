@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.4 - 2025-10-09
+
+- Adds mcp command to assist installation of reforge-launch's mcp in claude desktop
+- Clean up logging output (especially test output)
+- Improve the get command to interactively prompt for a key and confirm it exists before proceeding
+
 ## 0.0.3 - 2025-10-07
 
 - fix: automated release process
