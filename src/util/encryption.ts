@@ -20,6 +20,36 @@ export async function makeConfidentialValue(
   environmentId: string,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Promise<Result<any>> {
+  // First check if the encryption key exists in metadata
+  const metadataRequest = await command.apiClient.get('/all-config-types/v1/metadata')
+
+  if (!metadataRequest.ok) {
+    return failure(`Failed to check if encryption key exists: ${metadataRequest.status}`, {
+      phase: 'finding-secret',
+    })
+  }
+
+  interface ConfigMetadata {
+    key: string
+    [key: string]: unknown
+  }
+
+  interface MetadataResponse {
+    configs: ConfigMetadata[]
+  }
+
+  const metadata = metadataRequest.json as unknown as MetadataResponse
+  const keyExists = metadata.configs.some((config) => config.key === secret.keyName)
+
+  if (!keyExists) {
+    return failure(
+      `Failed to create secret: encryption key '${secret.keyName}' does not exist. Please create it first or use --secret-key-name to specify a different key.`,
+      {
+        phase: 'finding-secret',
+      },
+    )
+  }
+
   // Fetch the encryption key config
   const configRequest = await command.apiClient.get(`/all-config-types/v1/config/${encodeURIComponent(secret.keyName)}`)
 
