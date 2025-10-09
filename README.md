@@ -14,7 +14,7 @@ $ npm install -g @reforge-com/cli
 $ reforge COMMAND
 running command...
 $ reforge (--version)
-@reforge-com/cli/0.0.3 darwin-arm64 node-v24.4.1
+@reforge-com/cli/0.0.3 darwin-arm64 node-v24.4.0
 $ reforge --help [COMMAND]
 USAGE
   $ reforge COMMAND
@@ -412,7 +412,7 @@ EXAMPLES
   $ reforge mcp --url http://local-launch.goatsofreforge.com:3003/api/v1/mcp
 ```
 
-_See code: [src/commands/mcp.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.0-pre.11/src/commands/mcp.ts)_
+_See code: [src/commands/mcp.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.3/src/commands/mcp.ts)_
 
 ## `reforge override [NAME]`
 
