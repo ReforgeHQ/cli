@@ -10,7 +10,6 @@ import Mcp from './commands/mcp.js'
 import Override from './commands/override.js'
 import Serve from './commands/serve.js'
 import SetDefault from './commands/set-default.js'
-import getKey from './ui/get-key.js'
 import getString from './ui/get-string.js'
 import autocomplete from './util/autocomplete.js'
 import {green} from './util/color.js'
@@ -115,15 +114,11 @@ const promptForInput = async (arg: Arg, name: string, commandId: string) => {
   } else {
     switch (arg.type) {
       case 'option': {
+        // All commands with "name" arg in the interactive prompt are OAuth-based (APICommand)
+        // They handle their own key prompting with autocomplete from metadata API
         if (name === 'name' && commandId !== 'create') {
-          const {key} = await getKey({
-            args: {},
-            command: {err: throwError, error: throwError},
-            flags: {interactive: true},
-            message: 'Which item?',
-          })
-
-          value = key
+          // Skip prompting - let the OAuth command handle it interactively
+          value = undefined
         } else {
           value = await getString({allowBlank: false, message})
         }
@@ -137,7 +132,7 @@ const promptForInput = async (arg: Arg, name: string, commandId: string) => {
     }
   }
 
-  if (!value) {
+  if (!value && name !== 'name') {
     throw new Error(`Missing required argument: ${name}`)
   }
 
@@ -147,11 +142,14 @@ const promptForInput = async (arg: Arg, name: string, commandId: string) => {
 const getArgs = async (args: AvailableCommand['command']['args'], commandId: string): Promise<string[]> => {
   const requiredArgs = Object.keys(args)
 
-  return Promise.all(
+  const values = await Promise.all(
     Object.entries(args)
       .filter(([key]) => requiredArgs.includes(key))
       .map(([key, arg]) => promptForInput(arg, key, commandId)),
   )
+
+  // Filter out undefined values (OAuth commands handle their own name prompting)
+  return values.filter((v): v is string => v !== undefined)
 }
 
 const getFlags = async (
