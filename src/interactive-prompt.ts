@@ -94,10 +94,6 @@ for (const command of commands) {
   descriptions[command.displayCommandName] = command.description.split('\n')[0]
 }
 
-const throwError = (input: Error | string) => {
-  throw new Error(input.toString())
-}
-
 type Arg = {
   description?: string
   options?: string[]
@@ -105,10 +101,10 @@ type Arg = {
   type: string
 }
 
-const isAPICommand = (command: SuggestedCommand['command']): boolean => {
+const isAPICommand = (command: SuggestedCommand['command']): boolean => 
   // Check if command extends APICommand by checking prototype chain
-  return command.prototype instanceof APICommand
-}
+   command.prototype instanceof APICommand
+
 
 const promptForInput = async (arg: Arg, name: string, commandId: string, command: SuggestedCommand['command']) => {
   let value
@@ -224,7 +220,12 @@ export const interactivePrompt = async (config: Config) => {
     const cliArgs = process.argv.slice(2)
 
     const args = await getArgs(chosenCommand.command.args, chosenCommand.id, chosenCommand.command)
-    const flags = await getFlags(chosenCommand.command.flags, chosenCommand.id, chosenCommand.implicitFlags, chosenCommand.command)
+    const flags = await getFlags(
+      chosenCommand.command.flags,
+      chosenCommand.id,
+      chosenCommand.implicitFlags,
+      chosenCommand.command,
+    )
 
     const allArgs = [...cliArgs, ...args, ...flags]
 

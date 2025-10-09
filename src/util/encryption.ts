@@ -30,8 +30,8 @@ export async function makeConfidentialValue(
   }
 
   interface ConfigMetadata {
-    key: string
     [key: string]: unknown
+    key: string
   }
 
   interface MetadataResponse {
