@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.6 - 2025-10-13
+
+- fix: Handle enum values that come back as a single string, not an array of strings
+
 ## 0.0.5 - 2025-10-09
 
 - Updated `get` command to no longer prompt for an sdk key, ensured no other commands will either
