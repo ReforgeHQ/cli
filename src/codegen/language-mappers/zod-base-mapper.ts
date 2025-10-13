@@ -21,7 +21,9 @@ export abstract class ZodBaseMapper {
         return internalType
       }
       case 'ZodEnum': {
-        const values = def.values.map((v) => v)
+        // @ts-expect-error Sometimes, def.values is just an individual enum string value, not an array
+        const enumValues = Array.isArray(def.values) ? def.values : ([def.values] as string[])
+        const values = enumValues.map((v) => v)
         return this.enum(values)
       }
       case 'ZodFunction': {
