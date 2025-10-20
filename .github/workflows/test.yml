@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         os: ['ubuntu-latest', 'windows-latest']
-        node_version: [lts/-1, lts/*, latest]
+        node_version: [lts/-1, lts/*, 24]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
@@ -32,8 +32,6 @@ jobs:
           node-version: ${{ matrix.node_version }}
       - name: Enable Corepack
         run: corepack enable
-      - name: Install Yarn
-        run: corepack install
       - name: cache yarn dependencies
         uses: actions/cache@v4
         with:
