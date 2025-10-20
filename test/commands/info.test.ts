@@ -177,7 +177,15 @@ No evaluations found for the past 24 hours
       .command(['info', keyDoesNotExist, '--json'])
       .catch(/.*/)
       .it('returns a JSON error', (ctx) => {
-        const output = ctx.stdout.trim() || ctx.stderr.trim()
+        // Try stdout first, then stderr
+        let output = ctx.stdout.trim()
+        if (!output) {
+          // If stderr has multiple lines (e.g., warnings), find lines that look like JSON
+          const stderrLines = ctx.stderr.trim().split('\n')
+          const jsonLines = stderrLines.filter((line) => line.trim().startsWith('{') && line.trim().endsWith('}'))
+          output = jsonLines[jsonLines.length - 1] || '' // Get the last JSON line
+        }
+
         if (output) {
           expect(JSON.parse(output)).to.eql({
             error: `Key ${keyDoesNotExist} not found`,

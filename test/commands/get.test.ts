@@ -37,8 +37,45 @@ describe('get', () => {
   test
     .stdout()
     .command(['get', secretKey, '--environment=[default]'])
-    .it('decrypts a secret', (ctx) => {
+    .it('returns a normal config value', (ctx) => {
       expect(ctx.stdout).to.eql('hello.world\n')
+    })
+
+  test
+    .stdout()
+    .env({TEST_ENV_VAR: 'value-from-env'})
+    .command(['get', 'provided.config', '--environment=[default]'])
+    .it('resolves a provided config from environment variable', (ctx) => {
+      expect(ctx.stdout).to.contain('value-from-env')
+    })
+
+  test
+    .command(['get', 'provided.config', '--environment=[default]'])
+    .catch((error) => {
+      expect(error.message).to.contain('TEST_ENV_VAR')
+      expect(error.message).to.contain('not set')
+    })
+    .it('shows an error if provided config env var is missing', () => {
+      // Error assertion done in catch block
+    })
+
+  test
+    .stdout()
+    .env({TEST_ENCRYPTION_KEY: '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'})
+    .command(['get', 'encrypted.config', '--environment=[default]'])
+    .it('decrypts an encrypted config when encryption key is available', (ctx) => {
+      // The encrypted value should be decrypted to 'test-secret'
+      expect(ctx.stdout).to.contain('test-secret')
+    })
+
+  test
+    .command(['get', 'encrypted.config', '--environment=[default]'])
+    .catch((error) => {
+      expect(error.message).to.contain('TEST_ENCRYPTION_KEY')
+      expect(error.message).to.contain('not set')
+    })
+    .it('shows an error if encrypted config encryption key env var is missing', () => {
+      // Error assertion done in catch block
     })
 
   test

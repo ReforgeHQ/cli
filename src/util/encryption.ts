@@ -1,9 +1,66 @@
 import {encryption} from '@reforge-com/node'
+import forge from 'node-forge'
 
 import type {APICommand} from '../index.js'
 import type {Secret} from './secret-flags.js'
 
 import {Result, failure, success} from '../result.js'
+
+const SEPARATOR: string = '--'
+const KEY_LENGTH = 32 // 32 bytes for AES-256
+const TAG_LENGTH = 16 // 16 bytes for GCM tag
+
+/**
+ * Decrypts an encrypted config value
+ * Based on @reforge-com/node/src/encryption.ts
+ */
+export function decrypt(encryptedString: string, keyStringHex: string): string {
+  if (keyStringHex.length !== KEY_LENGTH * 2) {
+    throw new Error(`Invalid key length. Key must be a ${KEY_LENGTH * 2}-character hex string.`)
+  }
+
+  const parts = encryptedString.split(SEPARATOR)
+
+  if (parts.length !== 3) {
+    throw new Error('Invalid encrypted string. Must contain encrypted data, IV, and auth tag.')
+  }
+
+  const encryptedDataPart = parts[0]
+  const ivPart = parts[1]
+  const authTagPart = parts[2]
+
+  if (encryptedDataPart === undefined || ivPart === undefined || authTagPart === undefined) {
+    throw new Error('Invalid encrypted string. All parts must be defined.')
+  }
+
+  if (encryptedDataPart === '') {
+    return ''
+  }
+
+  // Convert hex strings to bytes
+  const keyBytes = forge.util.hexToBytes(keyStringHex)
+  const encryptedBytes = forge.util.hexToBytes(encryptedDataPart)
+  const ivBytes = forge.util.hexToBytes(ivPart)
+  const tagBytes = forge.util.hexToBytes(authTagPart)
+
+  // Create decipher
+  const decipher = forge.cipher.createDecipher('AES-GCM', keyBytes)
+  decipher.start({
+    iv: ivBytes,
+    tag: forge.util.createBuffer(tagBytes),
+    tagLength: TAG_LENGTH * 8, // tagLength is in bits
+  })
+
+  // Decrypt the data
+  decipher.update(forge.util.createBuffer(encryptedBytes))
+  const success = decipher.finish()
+
+  if (!success) {
+    throw new Error('Authentication tag verification failed')
+  }
+
+  return decipher.output.toString()
+}
 
 /**
  * Creates an encrypted ConfigValue using the new v1 API endpoints
