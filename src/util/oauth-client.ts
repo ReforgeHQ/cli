@@ -232,7 +232,7 @@ export const introspectToken = async (
   if (verbose) {
     console.error(`[introspectToken] Identity URL: ${identityUrl}`)
     console.error(`[introspectToken] Full introspection URL: ${introspectUrl}`)
-    console.error(`[introspectToken] Token (first 50 chars): ${accessToken.substring(0, 50)}...`)
+    console.error(`[introspectToken] Token (first 50 chars): ${accessToken.slice(0, 50)}...`)
   }
 
   // Create an agent that ignores SSL errors for local development
