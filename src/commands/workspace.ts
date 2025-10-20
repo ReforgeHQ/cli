@@ -23,7 +23,7 @@ export default class Workspace extends BaseCommand {
     const domain = getDomain()
 
     // Fetch current workspaces
-    const introspection = await introspectToken(tokens.accessToken, domain)
+    const introspection = await introspectToken(tokens.accessToken, domain, this.isVerbose)
     const allWorkspaces = introspection.organizations.flatMap((org) =>
       org.workspaces.map((ws) => ({
         ...ws,

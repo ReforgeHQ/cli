@@ -220,13 +220,25 @@ export const refreshAccessToken = async (refreshToken: string, domain?: string):
   return response.json()
 }
 
-export const introspectToken = async (accessToken: string, domain?: string): Promise<IntrospectionResponse> => {
+export const introspectToken = async (
+  accessToken: string,
+  domain?: string,
+  verbose?: boolean,
+): Promise<IntrospectionResponse> => {
   const identityUrl = getIdApiUrl(domain)
+  const introspectUrl = `${identityUrl}/api/oauth/identity`
+
+  // Log verbose info if verbose flag is set
+  if (verbose) {
+    console.error(`[introspectToken] Identity URL: ${identityUrl}`)
+    console.error(`[introspectToken] Full introspection URL: ${introspectUrl}`)
+    console.error(`[introspectToken] Token (first 50 chars): ${accessToken.slice(0, 50)}...`)
+  }
 
   // Create an agent that ignores SSL errors for local development
   const agent = process.env.IDENTITY_BASE_URL_OVERRIDE ? new https.Agent({rejectUnauthorized: false}) : undefined
 
-  const response = await fetch(`${identityUrl}/api/oauth/identity`, {
+  const response = await fetch(introspectUrl, {
     // @ts-expect-error - agent is valid for https URLs
     agent,
     headers: {
@@ -237,6 +249,10 @@ export const introspectToken = async (accessToken: string, domain?: string): Pro
 
   if (!response.ok) {
     const errorText = await response.text()
+    if (verbose) {
+      console.error(`[introspectToken] Response status: ${response.status}`)
+      console.error(`[introspectToken] Response error: ${errorText}`)
+    }
     throw new Error(`Failed to get identity: ${errorText}`)
   }
 
