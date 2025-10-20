@@ -38,7 +38,7 @@ jobs:
           echo "major=$NODE_MAJOR" >> $GITHUB_OUTPUT
       - name: Install Corepack (Node 25+)
         if: ${{ fromJSON(steps.node-version.outputs.major) >= 25 }}
-        run: npm install -g corepack
+        run: npm install -g corepack --force
       - name: Enable Corepack
         run: corepack enable
       - name: cache yarn dependencies
