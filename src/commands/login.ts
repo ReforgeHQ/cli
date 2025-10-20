@@ -43,6 +43,8 @@ export default class Login extends BaseCommand {
 
     // Now we have the port, generate the auth URL and open the browser
     const authUrl = generateAuthUrl(port, codeVerifier, domain)
+    this.verboseLog(`Using domain: ${domain}`)
+    this.verboseLog(`Auth URL: ${authUrl}`)
     this.log('Opening browser for authentication...')
 
     const opener = process.platform === 'win32' ? 'start' : process.platform === 'darwin' ? 'open' : 'xdg-open'
@@ -54,11 +56,13 @@ export default class Login extends BaseCommand {
     this.verboseLog('Exchanging authorization code for tokens...')
     const tokenResponse = await exchangeCodeForTokens(code, port, codeVerifier, domain)
 
-    // Decode and display the JWT (verbose mode only)
-    if (this.isVerbose) {
-      const jwtParts = tokenResponse.access_token.split('.')
-      const payload = JSON.parse(Buffer.from(jwtParts[1], 'base64').toString('utf8'))
+    // Decode JWT to extract email
+    const jwtParts = tokenResponse.access_token.split('.')
+    const payload = JSON.parse(Buffer.from(jwtParts[1], 'base64').toString('utf8'))
+    const userEmail = payload.email
 
+    // Display the JWT in verbose mode
+    if (this.isVerbose) {
       this.verboseLog('\n=== Decoded JWT Payload ===')
       this.verboseLog(JSON.stringify(payload, null, 2))
       this.verboseLog('===========================\n')
@@ -72,7 +76,8 @@ export default class Login extends BaseCommand {
     })
 
     this.log('Fetching available workspaces...')
-    const introspection = await introspectToken(tokenResponse.access_token, domain)
+    this.verboseLog(`Introspecting token at domain: ${domain}`)
+    const introspection = await introspectToken(tokenResponse.access_token, domain, this.isVerbose)
 
     // Flatten workspaces from all organizations, keeping org info
     const allWorkspaces = introspection.organizations.flatMap((org) =>
@@ -136,6 +141,9 @@ export default class Login extends BaseCommand {
     const selectedWorkspaceName = allWorkspaces.find((ws) => ws.id === selectedWorkspace)?.name
 
     this.log(`\nSuccessfully logged in!`)
+    if (userEmail) {
+      this.log(`Logged in as: ${userEmail}`)
+    }
     this.log(`Active workspace: ${selectedWorkspaceName}`)
 
     return {
