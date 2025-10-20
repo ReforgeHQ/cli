@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         os: ['ubuntu-latest', 'windows-latest']
-        node_version: [lts/-1, lts/*, 24]
+        node_version: [lts/-1, lts/*, latest]
       fail-fast: false
     runs-on: ${{ matrix.os }}
     steps:
@@ -30,6 +30,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node_version }}
+      - name: Get Node.js major version
+        id: node-version
+        shell: bash
+        run: |
+          NODE_MAJOR=$(node -v | cut -d'v' -f2 | cut -d'.' -f1)
+          echo "major=$NODE_MAJOR" >> $GITHUB_OUTPUT
+      - name: Install Corepack (Node 25+)
+        if: ${{ fromJSON(steps.node-version.outputs.major) >= 25 }}
+        run: npm install -g corepack
       - name: Enable Corepack
         run: corepack enable
       - name: cache yarn dependencies
