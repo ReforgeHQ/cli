@@ -183,7 +183,7 @@ No evaluations found for the past 24 hours
           // If stderr has multiple lines (e.g., warnings), find lines that look like JSON
           const stderrLines = ctx.stderr.trim().split('\n')
           const jsonLines = stderrLines.filter((line) => line.trim().startsWith('{') && line.trim().endsWith('}'))
-          output = jsonLines[jsonLines.length - 1] || '' // Get the last JSON line
+          output = jsonLines.at(-1) || '' // Get the last JSON line
         }
 
         if (output) {

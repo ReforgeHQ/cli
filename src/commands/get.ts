@@ -17,9 +17,9 @@ interface EvaluationMetadata {
 }
 
 interface Dependency {
+  config?: ConfigWithDependencies
   dependencyType: 'decryptWith' | 'providedBy'
   source: string
-  config?: ConfigWithDependencies
 }
 
 interface ConfigWithDependencies {

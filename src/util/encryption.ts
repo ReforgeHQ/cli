@@ -13,6 +13,9 @@ const TAG_LENGTH = 16 // 16 bytes for GCM tag
 /**
  * Decrypts an encrypted config value
  * Based on @reforge-com/node/src/encryption.ts
+ * @param {string} encryptedString - The encrypted string in format: encryptedData--IV--authTag
+ * @param {string} keyStringHex - The encryption key as a 64-character hex string
+ * @returns {string} The decrypted plaintext value
  */
 export function decrypt(encryptedString: string, keyStringHex: string): string {
   if (keyStringHex.length !== KEY_LENGTH * 2) {
