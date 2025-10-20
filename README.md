@@ -14,7 +14,7 @@ $ npm install -g @reforge-com/cli
 $ reforge COMMAND
 running command...
 $ reforge (--version)
-@reforge-com/cli/0.0.6 darwin-arm64 node-v24.4.1
+@reforge-com/cli/0.0.6 darwin-arm64 node-v24.4.0
 $ reforge --help [COMMAND]
 USAGE
   $ reforge COMMAND
@@ -41,6 +41,7 @@ USAGE
 * [`reforge schema NAME`](#reforge-schema-name)
 * [`reforge serve DATA-FILE`](#reforge-serve-data-file)
 * [`reforge set-default [NAME]`](#reforge-set-default-name)
+* [`reforge whoami`](#reforge-whoami)
 * [`reforge workspace`](#reforge-workspace)
 
 ## `reforge create NAME`
@@ -589,6 +590,29 @@ EXAMPLES
 ```
 
 _See code: [src/commands/set-default.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.6/src/commands/set-default.ts)_
+
+## `reforge whoami`
+
+Display information about the currently logged in user
+
+```
+USAGE
+  $ reforge whoami [--json] [--interactive] [--no-color] [--verbose]
+
+GLOBAL FLAGS
+  --[no-]interactive  Force interactive mode
+  --json              Format output as json.
+  --no-color          Do not colorize output
+  --verbose           Verbose output
+
+DESCRIPTION
+  Display information about the currently logged in user
+
+EXAMPLES
+  $ reforge whoami
+```
+
+_See code: [src/commands/whoami.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.6/src/commands/whoami.ts)_
 
 ## `reforge workspace`
 
