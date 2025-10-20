@@ -30,10 +30,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node_version }}
-      - name: enable corepack
-        run: |
-          corepack enable
-          corepack prepare yarn@4.9.2 --activate
+      - name: Enable Corepack
+        run: corepack enable
+      - name: Install Yarn
+        run: corepack install
       - name: cache yarn dependencies
         uses: actions/cache@v4
         with:
