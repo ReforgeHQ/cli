@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.7 - 2025-10-20
+
+- Adds "whoami" command and optional verbose logging to debug login process [#65]
+- Updated `get` command to support encrypted config values that need a local env var to decrypt [#66]
+
 ## 0.0.6 - 2025-10-13
 
 - fix: Handle enum values that come back as a single string, not an array of strings
