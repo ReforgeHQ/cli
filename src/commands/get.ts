@@ -169,14 +169,11 @@ export default class Get extends APICommand {
           const encryptionKey = process.env[envVarName]
 
           if (!encryptionKey) {
-            return this.err(
-              `Environment variable '${envVarName}' is not set. Cannot decrypt config '${key}'.`,
-              {
-                [key]: value,
-                encrypted: true,
-                missingEnvVar: envVarName,
-              },
-            )
+            return this.err(`Environment variable '${envVarName}' is not set. Cannot decrypt config '${key}'.`, {
+              [key]: value,
+              encrypted: true,
+              missingEnvVar: envVarName,
+            })
           }
 
           // Attempt decryption
