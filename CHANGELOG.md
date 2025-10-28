@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Added support for `ZodRecord` types in code generation mappers
+- Added `-o` / `--output-directory` flag to `generate` command to specify output directory per run
 
 ## 0.0.7 - 2025-10-20
 
