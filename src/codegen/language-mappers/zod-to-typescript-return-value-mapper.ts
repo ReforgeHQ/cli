@@ -81,6 +81,11 @@ export class ZodToTypescriptReturnValueMapper extends ZodBaseMapper {
     return this.union([wrappedType, 'undefined'])
   }
 
+  record() {
+    // Explicitly not supporting navigation into record values, as the keys are not known at compile time
+    return `raw${this.printPath(this.returnTypePropertyPath)}`
+  }
+
   renderField(type: ZodTypeSupported): string {
     if (!this.fieldName) {
       throw new Error('Field name must be set in the resolution context to render a field.')

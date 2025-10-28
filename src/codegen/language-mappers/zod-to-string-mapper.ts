@@ -71,6 +71,10 @@ export class ZodToStringMapper extends ZodBaseMapper {
     return `${wrappedType}.optional()`
   }
 
+  record(keyType: string, valueType: string) {
+    return `z.record(${keyType}, ${valueType})`
+  }
+
   renderField(type: ZodTypeSupported, key?: string): string {
     const resolved = this.resolveType(type)
 

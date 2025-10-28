@@ -132,10 +132,13 @@ Generate type definitions for your Reforge configuration
 
 ```
 USAGE
-  $ reforge generate [--json] [--interactive] [--no-color] [--verbose] [-p <value>] [--targets <value>]
+  $ reforge generate [--json] [--interactive] [--no-color] [--verbose] [-p <value>] [-o <value>] [--targets
+    <value>]
 
 FLAGS
-  --targets=<value>  [default: react-ts] Determines for language/framework to generate code for (node-ts, react-ts)
+  -o, --output-directory=<value>  Override the output directory for generated files
+      --targets=<value>           [default: react-ts] Determines for language/framework to generate code for (node-ts,
+                                  react-ts)
 
 GLOBAL FLAGS
   -p, --profile=<value>   Profile to use (defaults to ENV var REFORGE_PROFILE or "default")
@@ -185,6 +188,10 @@ EXAMPLES
   $ reforge generate --target node-ts # node-ts only
 
   $ reforge generate --target react-ts,node-ts # both node+react-ts
+
+  $ reforge generate -o ./src/generated # specify output directory
+
+  $ reforge generate --targets node-ts -o ./dist # combine with targets
 ```
 
 _See code: [src/commands/generate.ts](https://github.com/ReforgeHQ/cli/blob/v0.0.7/src/commands/generate.ts)_

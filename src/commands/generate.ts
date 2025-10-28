@@ -119,9 +119,15 @@ Example:
     '<%= config.bin %> <%= command.id %> # react-ts only by default',
     '<%= config.bin %> <%= command.id %> --target node-ts # node-ts only',
     '<%= config.bin %> <%= command.id %> --target react-ts,node-ts # both node+react-ts',
+    '<%= config.bin %> <%= command.id %> -o ./src/generated # specify output directory',
+    '<%= config.bin %> <%= command.id %> --targets node-ts -o ./dist # combine with targets',
   ]
 
   static flags = {
+    'output-directory': Flags.string({
+      char: 'o',
+      description: 'Override the output directory for generated files',
+    }),
     targets: Flags.string({
       default: SupportedLanguage.React,
       description: `Determines for language/framework to generate code for (${Object.values(SupportedLanguage).join(', ')})`,
@@ -138,7 +144,7 @@ Example:
 
     try {
       // Look for and read local reforge.config.json file
-      const localConfig = await this.readLocalConfig()
+      const localConfig = await this.readLocalConfig(flags['output-directory'])
 
       // Use tarets flag override, otherwise fall back to local config
       const targets = flags.targets.split(',') || Object.keys(localConfig)
@@ -195,7 +201,10 @@ Example:
     return {success: true}
   }
 
-  private generateParsedConfig(jsonConfig: unknown = {}): z.infer<typeof parsedConfigSchema> {
+  private generateParsedConfig(
+    jsonConfig: unknown = {},
+    outputDirectoryOverride?: string,
+  ): z.infer<typeof parsedConfigSchema> {
     const parsedConfig = inputConfigSchema.parse(jsonConfig)
 
     return Object.values(SupportedLanguage).reduce(
@@ -207,7 +216,10 @@ Example:
           declarationFileName:
             parsedLanguageConfig.declarationFileName || DEFAULT_CONFIG.targets[language].declarationFileName,
           outputDirectory:
-            parsedLanguageConfig.outputDirectory || parsedConfig.outputDirectory || DEFAULT_CONFIG.outputDirectory,
+            outputDirectoryOverride ||
+            parsedLanguageConfig.outputDirectory ||
+            parsedConfig.outputDirectory ||
+            DEFAULT_CONFIG.outputDirectory,
         }
 
         agg[language] = languageConfig
@@ -218,7 +230,7 @@ Example:
     )
   }
 
-  private async readLocalConfig(): Promise<z.infer<typeof parsedConfigSchema>> {
+  private async readLocalConfig(outputDirectoryOverride?: string): Promise<z.infer<typeof parsedConfigSchema>> {
     const configPath = path.join(process.cwd(), CONFIG_NAME)
 
     try {
@@ -234,7 +246,7 @@ Example:
 
       this.verboseLog(`Local config loaded from ${CONFIG_NAME}: ${JSON.stringify(parsedConfig, null, 2)}`)
 
-      return this.generateParsedConfig(parsedConfig)
+      return this.generateParsedConfig(parsedConfig, outputDirectoryOverride)
     } catch (error) {
       // File doesn't exist or can't be read/parsed
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
@@ -243,7 +255,7 @@ Example:
         this.error(`Error reading ${CONFIG_NAME}: ${error}`)
       }
 
-      return this.generateParsedConfig()
+      return this.generateParsedConfig({}, outputDirectoryOverride)
     }
   }
 
