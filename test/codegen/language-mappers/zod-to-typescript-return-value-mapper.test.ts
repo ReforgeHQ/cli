@@ -305,6 +305,20 @@ describe('ZodToTypescriptReturnValueMapper', () => {
       )
     })
 
+    it('Can successfully parse records', () => {
+      const zodAst = secureEvaluateSchema(`z.record(z.string(), z.number())`)
+      const mapper = new ZodToTypescriptReturnValueMapper({fieldName: 'someKey'})
+      const rendered = mapper.renderField(zodAst.schema!)
+      expect(rendered).to.equal('"someKey": raw')
+    })
+
+    it('Can successfully parse records with property paths', () => {
+      const zodAst = secureEvaluateSchema(`z.record(z.string(), z.number())`)
+      const mapper = new ZodToTypescriptReturnValueMapper({fieldName: 'someKey', returnTypePropertyPath})
+      const rendered = mapper.renderField(zodAst.schema!)
+      expect(rendered).to.equal("\"someKey\": raw?.['first']?.['second']?.['third']!")
+    })
+
     it('Can successfully parse an optional wrapped type', () => {
       const zodAst = secureEvaluateSchema(`z.optional(z.string())`)
 

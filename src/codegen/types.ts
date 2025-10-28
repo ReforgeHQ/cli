@@ -49,6 +49,7 @@ export type SupportedZodTypes =
   | z.ZodNumberDef
   | z.ZodObjectDef
   | z.ZodOptionalDef
+  | z.ZodRecordDef
   | z.ZodStringDef
   | z.ZodTupleDef
   | z.ZodUndefinedDef

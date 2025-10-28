@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Added support for `ZodRecord` types in code generation mappers
+
 ## 0.0.7 - 2025-10-20
 
 - Adds "whoami" command and optional verbose logging to debug login process [#65]

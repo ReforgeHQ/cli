@@ -87,6 +87,10 @@ export class ZodToTypescriptMapper extends ZodBaseMapper {
     return this.union([wrappedType, 'undefined'])
   }
 
+  record(keyType: string, valueType: string) {
+    return `Record<${keyType}, ${valueType}>`
+  }
+
   renderField(type: ZodTypeSupported): string {
     if (!this.fieldName) {
       throw new Error('Field name must be set to render a field.')

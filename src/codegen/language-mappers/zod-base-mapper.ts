@@ -47,6 +47,11 @@ export abstract class ZodBaseMapper {
         const internalType = this.resolveType(def.innerType)
         return this.optional(internalType)
       }
+      case 'ZodRecord': {
+        const keyType = this.resolveType(def.keyType)
+        const valueType = this.resolveType(def.valueType)
+        return this.record(keyType, valueType)
+      }
       case 'ZodString':
         return this.string()
       case 'ZodTuple': {
@@ -81,6 +86,7 @@ export abstract class ZodBaseMapper {
   protected abstract number(isInteger: boolean): string
   protected abstract object(properties: [string, z.ZodTypeAny][]): string
   protected abstract optional(wrappedType: string): string
+  protected abstract record(keyType: string, valueType: string): string
   protected abstract string(): string
   protected abstract tuple(wrappedTypes: string[]): string
   protected abstract undefined(): string
