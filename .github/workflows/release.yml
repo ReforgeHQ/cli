@@ -53,8 +53,6 @@ jobs:
       id-token: write
     outputs:
       published-version: ${{ needs.check-version.outputs.current-version }}
-    env:
-      NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -64,9 +62,6 @@ jobs:
         with:
           node-version-file: '.tool-versions'
           registry-url: 'https://registry.npmjs.org'
-      - name: Configure npm authentication
-        run: |
-          echo "npmAuthToken: '\${NPM_AUTH_TOKEN}'" >> .yarnrc.yml
       - name: enable corepack
         run: |
           corepack enable
