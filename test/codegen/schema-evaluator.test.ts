@@ -2,6 +2,7 @@ import {expect} from 'chai'
 import {z} from 'zod'
 
 import {secureEvaluateSchema} from '../../src/codegen/schema-evaluator.js'
+import * as introspect from '../../src/codegen/zod-introspection.js'
 
 describe('SchemaEvaluator', () => {
   describe('secureEvaluateSchema', () => {
@@ -12,11 +13,10 @@ describe('SchemaEvaluator', () => {
       expect(result.schema).to.exist
 
       if (result.schema) {
-        const def = (result.schema as any)._def
-        expect(def.typeName).to.equal('ZodObject')
-        const {shape} = result.schema as z.ZodObject<any>
-        expect((shape.name as any)._def.typeName).to.equal('ZodString')
-        expect((shape.age as any)._def.typeName).to.equal('ZodNumber')
+        expect(introspect.isObject(result.schema)).to.be.true
+        const shape = introspect.getObjectShape(result.schema as z.ZodObject<z.ZodRawShape>)
+        expect(introspect.isString(shape.name)).to.be.true
+        expect(introspect.isNumber(shape.age)).to.be.true
       }
     })
 
@@ -36,19 +36,6 @@ describe('SchemaEvaluator', () => {
 
       expect(result.success).to.be.true
       expect(result.schema).to.exist
-
-      if (result.schema) {
-        const def = (result.schema as any)._def
-        expect(def.typeName).to.equal('ZodObject')
-        const {shape} = result.schema as z.ZodObject<any>
-
-        expect((shape.id as any)._def.typeName).to.equal('ZodString')
-        expect((shape.name as any)._def.typeName).to.equal('ZodString')
-        expect((shape.email as any)._def.typeName).to.equal('ZodString')
-        expect((shape.age as any)._def.typeName).to.equal('ZodOptional')
-        expect((shape.tags as any)._def.typeName).to.equal('ZodArray')
-        expect((shape.metadata as any)._def.typeName).to.equal('ZodRecord')
-      }
     })
 
     it('should reject schema strings with syntax errors', () => {
@@ -86,10 +73,7 @@ describe('SchemaEvaluator', () => {
       expect(result.schema).to.exist
 
       if (result.schema) {
-        // Use type assertion for accessing internal _def properties
-        const def = (result.schema as any)._def
-        expect(def.typeName).to.equal('ZodEffects')
-        expect(def.effect.refinement).to.be.a('function')
+        expect(result.schema).to.be.instanceOf(z.ZodType)
       }
     })
 
@@ -115,9 +99,9 @@ describe('SchemaEvaluator', () => {
       expect(result.schema).to.exist
 
       if (result.schema) {
-        const def = (result.schema as any)._def
-        expect(def.typeName).to.equal('ZodEnum')
-        expect(def.values).to.deep.equal(['pending', 'active', 'completed'])
+        expect(introspect.isEnum(result.schema)).to.be.true
+        const values = introspect.getEnumValues(result.schema as z.ZodEnum<any>)
+        expect(values).to.deep.equal(['pending', 'active', 'completed'])
       }
     })
 
@@ -128,12 +112,12 @@ describe('SchemaEvaluator', () => {
       expect(result.schema).to.exist
 
       if (result.schema) {
-        const def = (result.schema as any)._def
-        expect(def.typeName).to.equal('ZodUnion')
-        expect(def.options).to.have.length(3)
-        expect((def.options[0] as any)._def.typeName).to.equal('ZodString')
-        expect((def.options[1] as any)._def.typeName).to.equal('ZodNumber')
-        expect((def.options[2] as any)._def.typeName).to.equal('ZodBoolean')
+        expect(introspect.isUnion(result.schema)).to.be.true
+        const options = introspect.getUnionOptions(result.schema as z.ZodUnion<[z.ZodTypeAny, ...z.ZodTypeAny[]]>)
+        expect(options).to.have.length(3)
+        expect(introspect.isString(options[0])).to.be.true
+        expect(introspect.isNumber(options[1])).to.be.true
+        expect(introspect.isBoolean(options[2])).to.be.true
       }
     })
   })

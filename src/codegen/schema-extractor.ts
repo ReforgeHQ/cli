@@ -45,29 +45,36 @@ export class SchemaExtractor {
       const schemaResults = Object.values(schemas)
 
       // If the schema is empty (no properties), just return basic string
-      const noSchemasPresent = schemaResults.every((s) => Object.keys(s._def.shape()).length === 0)
+      const noSchemasPresent = schemaResults.every((s) => {
+        if (s instanceof z.ZodObject) {
+          return Object.keys(s.shape).length === 0
+        }
+        return false
+      })
       if (noSchemasPresent) {
         return z.string()
       }
 
       // Return an explicit function if we have only one schema defined
       if (schemaResults.length === 1) {
-        return z.function().args(schemaResults[0]).returns(z.string())
+        return z.function({input: z.tuple([schemaResults[0]]), output: z.string()})
       }
 
       // Return a function with a union of schemas if we have multiple defined
-      // @ts-expect-error It's not clear why the type is not compatible here.... z.ZodTypeAny[] vs. [z.ZodTypeAny, z.ZodTypeAny, ...z.ZodTypeAny[]]
-      return z.function().args(z.union(schemaResults)).returns(z.string())
+      return z.function({
+        input: z.tuple([z.union(schemaResults)]),
+        output: z.string(),
+      })
     }
 
     const schema = MustacheExtractor.extractSchema(strings[0], this.log)
 
     // If the schema is empty (no properties), just return basic string
-    if (Object.keys(schema._def.shape()).length === 0) {
+    if (schema instanceof z.ZodObject && Object.keys(schema.shape).length === 0) {
       return z.string()
     }
 
-    return z.function().args(schema).returns(z.string())
+    return z.function({input: z.tuple([schema]), output: z.string()})
   }
 
   private getAllJsonValues(config: Config): unknown[] {
@@ -202,14 +209,13 @@ export class SchemaExtractor {
             }
 
             // Return a union of schemas if we have multiple defined
-            // @ts-expect-error It's not clear why the type is not compatible here.... z.ZodTypeAny[] vs. [z.ZodTypeAny, z.ZodTypeAny, ...z.ZodTypeAny[]]
             return z.union(schemaResults)
           } catch (error) {
             console.warn(`Error inferring JSON schema for ${key}:`, error)
           }
         }
 
-        return z.union([z.array(z.any()), z.record(z.any())])
+        return z.union([z.array(z.any()), z.record(z.string(), z.any())])
       }
 
       case 'LOG_LEVEL': {
@@ -227,17 +233,17 @@ export class SchemaExtractor {
     config: Config,
     schemaLocation: string[] = [],
   ): z.ZodTypeAny {
-    const {typeName} = schema._def
+    const typeName = schema.def.type
 
     // Handle enums explicitly
-    if (typeName === 'ZodEnum') {
+    if (typeName === 'enum') {
       return schema
     }
 
     // Check for both direct string and optional string
     if (
       schema instanceof z.ZodString ||
-      (schema instanceof z.ZodOptional && schema._def.innerType instanceof z.ZodString)
+      (schema instanceof z.ZodOptional && schema.def.innerType instanceof z.ZodString)
     ) {
       const stringsAtLocation = this.getAllStringsAtLocation(config, schemaLocation)
 
@@ -249,10 +255,9 @@ export class SchemaExtractor {
     }
 
     if (schema instanceof z.ZodObject) {
-      const {shape} = schema
       const newShape: Record<string, z.ZodTypeAny> = {}
 
-      for (const [key, value] of Object.entries(shape)) {
+      for (const [key, value] of Object.entries(schema.shape)) {
         newShape[key] = this.replaceStringsWithMustache(value as z.ZodTypeAny, config, [...schemaLocation, key])
       }
 

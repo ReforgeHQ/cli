@@ -1,4 +1,5 @@
 import {z} from 'zod'
+import {$ZodFunctionArgs, $ZodFunctionOut, util} from 'zod/v4/core'
 
 export enum SupportedLanguage {
   Node = 'node-ts',
@@ -38,22 +39,25 @@ export interface ConfigFile {
   configs: Config[]
 }
 
-export type SupportedZodTypes =
-  | z.ZodAnyDef
-  | z.ZodArrayDef
-  | z.ZodBooleanDef
-  | z.ZodDefaultDef
-  | z.ZodEnumDef
-  | z.ZodFunctionDef
-  | z.ZodNullDef
-  | z.ZodNumberDef
-  | z.ZodObjectDef
-  | z.ZodOptionalDef
-  | z.ZodRecordDef
-  | z.ZodStringDef
-  | z.ZodTupleDef
-  | z.ZodUndefinedDef
-  | z.ZodUnionDef
-  | z.ZodUnknownDef
-
-export type ZodTypeSupported = z.ZodType<unknown, SupportedZodTypes, unknown>
+/**
+ * Supported Zod schema types for codegen
+ */
+export type ZodTypeSupported =
+  | z.ZodAny
+  | z.ZodArray<z.ZodTypeAny>
+  | z.ZodBoolean
+  | z.ZodDefault<z.ZodTypeAny>
+  | z.ZodEnum<util.EnumLike>
+  | z.ZodFunction<$ZodFunctionArgs, $ZodFunctionOut>
+  | z.ZodNull
+  | z.ZodNumber
+  | z.ZodObject<z.ZodRawShape>
+  | z.ZodOptional<z.ZodTypeAny>
+  | z.ZodRecord
+  | z.ZodString
+  | z.ZodTuple
+  | z.ZodUndefined
+  | z.ZodUnion<[z.ZodTypeAny, ...z.ZodTypeAny[]]>
+  | z.ZodUnknown
+  | z.ZodNullable<z.ZodTypeAny>
+  | z.ZodTypeAny

@@ -2,6 +2,7 @@ import {expect} from '@oclif/test'
 import {z} from 'zod'
 
 import {MustacheExtractor} from '../../src/codegen/mustache-extractor.js'
+import * as introspect from '../../src/codegen/zod-introspection.js'
 
 const log = () => {}
 
@@ -9,7 +10,7 @@ describe('MustacheExtractor', () => {
   it('extracts simple placeholders', () => {
     const template = 'Hello {{name}}!'
     const schema = MustacheExtractor.extractSchema(template, log)
-    const shape = schema._def.shape()
+    const shape = introspect.getObjectShape(schema as z.ZodObject<z.ZodRawShape>)
 
     // Instead of deep equality, check that we have the expected property
     expect(Object.keys(shape)).to.deep.equal(['name'])
@@ -21,14 +22,15 @@ describe('MustacheExtractor', () => {
   it('handles section with variables', () => {
     const template = '{{#user}}Name: {{name}}{{/user}}'
     const schema = MustacheExtractor.extractSchema(template, log)
-    const shape = schema._def.shape()
+    const shape = introspect.getObjectShape(schema as z.ZodObject<z.ZodRawShape>)
 
     // Check structure and type of user property
     expect(Object.keys(shape)).to.deep.equal(['user'])
     expect(shape.user instanceof z.ZodArray).to.be.true
 
     // Check the array element type
-    const userShape = shape.user._def.type._def.shape()
+    const element = introspect.getArrayElement(shape.user as z.ZodArray<z.ZodTypeAny>)
+    const userShape = introspect.getObjectShape(element as z.ZodObject<z.ZodRawShape>)
     expect(Object.keys(userShape)).to.deep.equal(['name'])
     expect(userShape.name instanceof z.ZodString).to.be.true
   })
@@ -36,7 +38,7 @@ describe('MustacheExtractor', () => {
   it('handles inverted sections', () => {
     const template = '{{^logged_in}}Please log in{{/logged_in}}'
     const schema = MustacheExtractor.extractSchema(template, log)
-    const shape = schema._def.shape()
+    const shape = introspect.getObjectShape(schema as z.ZodObject<z.ZodRawShape>)
 
     expect(Object.keys(shape)).to.deep.equal(['logged_in'])
     expect(shape.logged_in instanceof z.ZodOptional).to.be.true
@@ -60,7 +62,7 @@ describe('MustacheExtractor', () => {
         `
 
     const schema = MustacheExtractor.extractSchema(template, log)
-    const shape = schema._def.shape()
+    const shape = introspect.getObjectShape(schema as z.ZodObject<z.ZodRawShape>)
 
     // Validate the schema structure and types
     expect(Object.keys(shape).sort()).to.deep.equal(['accent', 'role', 'users'].sort())
@@ -69,7 +71,8 @@ describe('MustacheExtractor', () => {
     expect(shape.users instanceof z.ZodArray).to.be.true
 
     // Check the users array element type
-    const usersShape = shape.users._def.type._def.shape()
+    const usersElement = introspect.getArrayElement(shape.users as z.ZodArray<z.ZodTypeAny>)
+    const usersShape = introspect.getObjectShape(usersElement as z.ZodObject<z.ZodRawShape>)
     expect(Object.keys(usersShape).sort()).to.deep.equal(['language', 'name'].sort())
     expect(usersShape.language instanceof z.ZodString).to.be.true
     expect(usersShape.name instanceof z.ZodString).to.be.true

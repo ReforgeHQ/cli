@@ -188,7 +188,9 @@ describe('ZodToTypescriptMapper', () => {
 
     describe('when the target = "accessor"', () => {
       it('Can successfully parse functions', () => {
-        const zodAst = secureEvaluateSchema(`z.function().args(z.string(), z.number()).returns(z.boolean())`)
+        const zodAst = secureEvaluateSchema(
+          `z.function({input: z.tuple([z.string(), z.number()]), output: z.boolean()})`,
+        )
 
         const mapper = new ZodToTypescriptMapper({fieldName: 'someKey'})
 
@@ -202,11 +204,11 @@ describe('ZodToTypescriptMapper', () => {
           z.object({
             name: z.string(),
             age: z.number().int(),
-            topLevel: z.function().args(z.boolean().optional(), z.any()).returns(z.string()),
+            topLevel: z.function({input: z.tuple([z.boolean().optional(), z.any()]), output: z.string()}),
             more: z.object({
               details: z.string(),
               count: z.number().int(),
-              exec: z.function().args(z.string()).returns(z.boolean().optional()),
+              exec: z.function({input: z.tuple([z.string()]), output: z.boolean().optional()}),
             }),
             tags: z.array(z.string()).optional(),
             isActive: z.boolean().default(true),
@@ -228,7 +230,9 @@ describe('ZodToTypescriptMapper', () => {
 
     describe('when the target = "raw"', () => {
       it('Can successfully parse functions', () => {
-        const zodAst = secureEvaluateSchema(`z.function().args(z.string(), z.number()).returns(z.boolean())`)
+        const zodAst = secureEvaluateSchema(
+          `z.function({input: z.tuple([z.string(), z.number()]), output: z.boolean()})`,
+        )
 
         const mapper = new ZodToTypescriptMapper({fieldName: 'someKey', target: 'raw'})
 
@@ -242,11 +246,11 @@ describe('ZodToTypescriptMapper', () => {
           z.object({
             name: z.string(),
             age: z.number().int(),
-            topLevel: z.function().args(z.boolean().optional(), z.any()).returns(z.string()),
+            topLevel: z.function({input: z.tuple([z.boolean().optional(), z.any()]), output: z.string()}),
             more: z.object({
               details: z.string(),
               count: z.number().int(),
-              exec: z.function().args(z.string()).returns(z.boolean().optional()),
+              exec: z.function({input: z.tuple([z.string()]), output: z.boolean().optional()}),
             }),
             tags: z.array(z.string()).optional(),
             isActive: z.boolean().default(true),

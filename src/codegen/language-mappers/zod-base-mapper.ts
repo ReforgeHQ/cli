@@ -1,87 +1,113 @@
 import {z} from 'zod'
+import {$ZodFunctionArgs, $ZodFunctionOut, $ZodType, util} from 'zod/v4/core'
 
-import {ZodTypeSupported} from '../types.js'
+import * as introspect from '../zod-introspection.js'
 
 export abstract class ZodBaseMapper {
-  resolveType(type: ZodTypeSupported): string {
-    const def = type._def
-
-    switch (def.typeName) {
-      case 'ZodAny':
-        return this.any()
-      case 'ZodArray': {
-        const internalType = this.resolveType(def.type)
-        return this.array(internalType)
-      }
-      case 'ZodBoolean':
-        return this.boolean()
-      case 'ZodDefault': {
-        // Unwrap default to get the inner type
-        const internalType = this.resolveType(def.innerType)
-        return internalType
-      }
-      case 'ZodEnum': {
-        // @ts-expect-error Sometimes, def.values is just an individual enum string value, not an array
-        const enumValues = Array.isArray(def.values) ? def.values : ([def.values] as string[])
-        const values = enumValues.map((v) => v)
-        return this.enum(values)
-      }
-      case 'ZodFunction': {
-        const args = this.functionArguments(def.args)
-        const returns = this.functionReturns(def.returns)
-
-        return this.function(args, returns)
-      }
-      case 'ZodNull':
-        return this.null()
-      case 'ZodNumber': {
-        const isInteger = def.checks.some((check) => check.kind === 'int')
-        return this.number(isInteger)
-      }
-      case 'ZodObject': {
-        const shape = def.shape()
-        const props = Object.entries(shape)
-        return this.object(props)
-      }
-      case 'ZodOptional': {
-        const internalType = this.resolveType(def.innerType)
-        return this.optional(internalType)
-      }
-      case 'ZodRecord': {
-        const keyType = this.resolveType(def.keyType)
-        const valueType = this.resolveType(def.valueType)
-        return this.record(keyType, valueType)
-      }
-      case 'ZodString':
-        return this.string()
-      case 'ZodTuple': {
-        const items = def.items.map((item) => this.resolveType(item))
-
-        return this.tuple(items)
-      }
-      case 'ZodUndefined':
-        return this.undefined()
-      case 'ZodUnion': {
-        const options = def.options.map((option) => this.resolveType(option))
-        return this.union(options)
-      }
-      case 'ZodUnknown':
-        return this.unknown()
-      default:
-        console.warn(`Unknown zod type:`, type)
-
-        // If the type is not recognized, default to 'any'
-        return this.any()
+  resolveType(type: $ZodType): string {
+    if (introspect.isAny(type)) {
+      return this.any()
     }
+
+    if (introspect.isArray(type)) {
+      const element = introspect.getArrayElement(type)
+      const internalType = this.resolveType(element)
+      return this.array(internalType)
+    }
+
+    if (introspect.isBoolean(type)) {
+      return this.boolean()
+    }
+
+    if (introspect.isDefault(type)) {
+      // Unwrap default to get the inner type
+      const {innerType} = introspect.unwrapDefault(type)
+      const internalType = this.resolveType(innerType)
+      return internalType
+    }
+
+    if (introspect.isEnum(type)) {
+      const values = introspect.getEnumValues(type)
+      return this.enum(values)
+    }
+
+    if (introspect.isFunction(type)) {
+      const {args, returns} = introspect.getFunctionSignature(type)
+      const argsStr = this.functionArguments(args)
+      const returnsStr = this.functionReturns(returns)
+      return this.function(argsStr, returnsStr)
+    }
+
+    if (introspect.isNull(type)) {
+      return this.null()
+    }
+
+    if (introspect.isNullable(type)) {
+      // Handle nullable by unwrapping it
+      const innerType = introspect.unwrapNullable(type)
+      return this.union([this.resolveType(innerType), this.null()])
+    }
+
+    if (introspect.isNumber(type)) {
+      const isInteger = introspect.isNumberInteger(type)
+      return this.number(isInteger)
+    }
+
+    if (introspect.isObject(type)) {
+      const shape = introspect.getObjectShape(type)
+      const props = Object.entries(shape) as [string, z.ZodTypeAny][]
+      return this.object(props)
+    }
+
+    if (introspect.isOptional(type)) {
+      const innerType = introspect.unwrapOptional(type)
+      const internalType = this.resolveType(innerType)
+      return this.optional(internalType)
+    }
+
+    if (introspect.isRecord(type)) {
+      const {keyType, valueType} = introspect.getRecordTypes(type)
+      const keyTypeStr = this.resolveType(keyType)
+      const valueTypeStr = this.resolveType(valueType)
+      return this.record(keyTypeStr, valueTypeStr)
+    }
+
+    if (introspect.isString(type)) {
+      return this.string()
+    }
+
+    if (introspect.isTuple(type)) {
+      const items = introspect.getTupleItems(type)
+      const itemsStr = items.map((item) => this.resolveType(item))
+      return this.tuple(itemsStr)
+    }
+
+    if (introspect.isUndefined(type)) {
+      return this.undefined()
+    }
+
+    if (introspect.isUnion(type)) {
+      const options = introspect.getUnionOptions(type)
+      const optionsStr = options.map((option) => this.resolveType(option))
+      return this.union(optionsStr)
+    }
+
+    if (introspect.isUnknown(type)) {
+      return this.unknown()
+    }
+
+    console.warn(`Unknown zod type:`, type)
+    // If the type is not recognized, default to 'any'
+    return this.any()
   }
 
   protected abstract any(): string
   protected abstract array(wrappedType: string): string
   protected abstract boolean(): string
-  protected abstract enum(values: string[]): string
+  protected abstract enum(values: util.EnumValue[]): string
   protected abstract function(args: string, returns: string): string
-  protected abstract functionArguments(value?: z.ZodTuple): string
-  protected abstract functionReturns(value: z.ZodTypeAny): string
+  protected abstract functionArguments(value?: $ZodFunctionArgs): string
+  protected abstract functionReturns(value: $ZodFunctionOut): string
   protected abstract null(): string
   protected abstract number(isInteger: boolean): string
   protected abstract object(properties: [string, z.ZodTypeAny][]): string

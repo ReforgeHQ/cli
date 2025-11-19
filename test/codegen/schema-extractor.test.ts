@@ -216,15 +216,14 @@ describe('SchemaExtractor', () => {
       expectSchemaMatchesString(
         result,
         `
-        z.function()
-          .args(
+        z.function({
+          input: z.tuple([
             z.object({
               name: z.string()
             })
-          )
-          .returns(
-            z.string()
-          )
+          ]),
+          output: z.string()
+        })
         `,
       )
     })
@@ -262,8 +261,8 @@ describe('SchemaExtractor', () => {
       expectSchemaMatchesString(
         result,
         `
-        z.function()
-          .args(
+        z.function({
+          input: z.tuple([
             z.union([
               z.object({
                 name: z.string()
@@ -272,10 +271,9 @@ describe('SchemaExtractor', () => {
                 differentName: z.string()
               })
             ])
-          )
-          .returns(
-            z.string()
-          )
+          ]),
+          output: z.string()
+        })
         `,
       )
     })

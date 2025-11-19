@@ -210,7 +210,7 @@ describe('generate', () => {
       })
       .command(['generate', '--targets', 'node-ts'])
       .catch((error) => {
-        expect(error.message).to.include('Expected string, received number')
+        expect(error.message).to.include('expected string, received number')
       })
       .it('validates config schema and rejects invalid types', () => {
         // Error assertion done in catch block
