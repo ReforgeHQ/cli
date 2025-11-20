@@ -41,6 +41,14 @@ relevant information as possible, and, if possible, a test case.
   corepack prepare yarn@4.9.2 --activate
   ```
 
+- [Direnv](https://direnv.net/)
+
+  ```sh
+  brew install direnv
+
+  # Once installed, add hook into your shell: https://direnv.net/docs/hook.html
+  ```
+
 ## Installing Package Dependencies
 
 ```sh
@@ -56,7 +64,7 @@ yarn build
 ## Running Tests
 
 ```sh
-REFORGE_API_URL=https://api.staging-prefab.cloud REFORGE_SDK_KEY=<prod_key> FAKE_PROD_SECRET=<prod_secret> REFORGE_INTEGRATION_TEST_ENCRYPTION_KEY=<integration_key> yarn test
+yarn test
 ```
 
 ## Sending Pull Requests

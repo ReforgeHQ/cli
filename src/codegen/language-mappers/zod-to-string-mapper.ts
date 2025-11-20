@@ -1,6 +1,6 @@
 import {z} from 'zod'
+import {$ZodTupleDef, $ZodFunctionArgs, $ZodFunctionOut, $ZodType, util} from 'zod/v4/core'
 
-import {ZodTypeSupported} from '../types.js'
 import {ZodBaseMapper} from './zod-base-mapper.js'
 
 export class ZodToStringMapper extends ZodBaseMapper {
@@ -16,20 +16,22 @@ export class ZodToStringMapper extends ZodBaseMapper {
     return 'z.boolean()'
   }
 
-  enum(values: string[]) {
-    return `z.enum([${values.map((v) => `'${v}'`).join(',')}])`
+  enum(values: util.EnumValue[]) {
+    return `z.enum([${values.map((v) => (typeof v === 'string' ? `'${v}'` : String(v))).join(',')}])`
   }
 
-  function(args: string, returns: string) {
-    return `z.function().args(${args}).returns(${returns})`
+  function(input: string, output: string) {
+    return `z.function({input: z.tuple([${input}]), output: ${output}})`
   }
 
-  functionArguments(value?: z.ZodTuple): string {
+  functionArguments(value?: $ZodFunctionArgs): string {
     if (!value) {
       return ''
     }
 
-    const args = value._def.items.map((item) => {
+    const def = (value as z.ZodTypeAny).def as $ZodTupleDef
+    const items = def.items || []
+    const args = items.map((item: $ZodType) => {
       const mapper = new ZodToStringMapper()
       return mapper.resolveType(item)
     })
@@ -37,7 +39,7 @@ export class ZodToStringMapper extends ZodBaseMapper {
     return args.join(', ')
   }
 
-  functionReturns(value: z.ZodTypeAny): string {
+  functionReturns(value: $ZodFunctionOut): string {
     const mapper = new ZodToStringMapper()
     return mapper.resolveType(value)
   }
@@ -75,7 +77,7 @@ export class ZodToStringMapper extends ZodBaseMapper {
     return `z.record(${keyType}, ${valueType})`
   }
 
-  renderField(type: ZodTypeSupported, key?: string): string {
+  renderField(type: z.ZodTypeAny, key?: string): string {
     const resolved = this.resolveType(type)
 
     if (key) {

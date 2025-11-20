@@ -1,6 +1,8 @@
 import {expect} from 'chai'
+import {z} from 'zod'
 
 import {JsonToZodMapper} from '../../../src/codegen/language-mappers/json-to-zod-mapper.js'
+import * as introspect from '../../../src/codegen/zod-introspection.js'
 
 describe('JsonToZodMapper', () => {
   const mapper = new JsonToZodMapper()
@@ -11,8 +13,9 @@ describe('JsonToZodMapper', () => {
 
       const result = mapper.resolve(input)
 
-      expect(result._def.typeName).equal('ZodArray')
-      expect(result._def.type._def.typeName).equal('ZodNumber')
+      expect(introspect.isArray(result)).to.be.true
+      const element = introspect.getArrayElement(result as z.ZodArray<z.ZodTypeAny>)
+      expect(introspect.isNumber(element)).to.be.true
     })
 
     it('should resolve homogeneous array of strings', () => {
@@ -20,8 +23,9 @@ describe('JsonToZodMapper', () => {
 
       const result = mapper.resolve(input)
 
-      expect(result._def.typeName).equal('ZodArray')
-      expect(result._def.type._def.typeName).equal('ZodString')
+      expect(introspect.isArray(result)).to.be.true
+      const element = introspect.getArrayElement(result as z.ZodArray<z.ZodTypeAny>)
+      expect(introspect.isString(element)).to.be.true
     })
 
     it('should resolve homogeneous array of booleans', () => {
@@ -29,8 +33,9 @@ describe('JsonToZodMapper', () => {
 
       const result = mapper.resolve(input)
 
-      expect(result._def.typeName).equal('ZodArray')
-      expect(result._def.type._def.typeName).equal('ZodBoolean')
+      expect(introspect.isArray(result)).to.be.true
+      const element = introspect.getArrayElement(result as z.ZodArray<z.ZodTypeAny>)
+      expect(introspect.isBoolean(element)).to.be.true
     })
 
     it('should resolve heterogeneous array to unknown', () => {
@@ -38,8 +43,9 @@ describe('JsonToZodMapper', () => {
 
       const result = mapper.resolve(input)
 
-      expect(result._def.typeName).equal('ZodArray')
-      expect(result._def.type._def.typeName).equal('ZodUnknown')
+      expect(introspect.isArray(result)).to.be.true
+      const element = introspect.getArrayElement(result as z.ZodArray<z.ZodTypeAny>)
+      expect(introspect.isUnknown(element)).to.be.true
     })
 
     it('should resolve object with primitive types', () => {
@@ -47,11 +53,12 @@ describe('JsonToZodMapper', () => {
 
       const result = mapper.resolve(input)
 
-      expect(result._def.typeName).equal('ZodObject')
-      expect(Object.keys(result._def.shape()).sort()).to.deep.equal(['age', 'isActive', 'name'])
-      expect(result._def.shape().age._def.typeName).equal('ZodNumber')
-      expect(result._def.shape().isActive._def.typeName).equal('ZodBoolean')
-      expect(result._def.shape().name._def.typeName).equal('ZodString')
+      expect(introspect.isObject(result)).to.be.true
+      const shape = introspect.getObjectShape(result as z.ZodObject<z.ZodRawShape>)
+      expect(Object.keys(shape).sort()).to.deep.equal(['age', 'isActive', 'name'])
+      expect(introspect.isNumber(shape.age)).to.be.true
+      expect(introspect.isBoolean(shape.isActive)).to.be.true
+      expect(introspect.isString(shape.name)).to.be.true
     })
 
     it('should resolve deeply nested objects', () => {
@@ -59,13 +66,15 @@ describe('JsonToZodMapper', () => {
 
       const result = mapper.resolve(input)
 
-      expect(result._def.typeName).equal('ZodObject')
-      expect(Object.keys(result._def.shape()).sort()).to.deep.equal(['isActive', 'user'])
-      expect(result._def.shape().isActive._def.typeName).equal('ZodBoolean')
-      expect(result._def.shape().user._def.typeName).equal('ZodObject')
-      expect(Object.keys(result._def.shape().user._def.shape()).sort()).to.deep.equal(['age', 'name'])
-      expect(result._def.shape().user._def.shape().age._def.typeName).equal('ZodNumber')
-      expect(result._def.shape().user._def.shape().name._def.typeName).equal('ZodString')
+      expect(introspect.isObject(result)).to.be.true
+      const shape = introspect.getObjectShape(result as z.ZodObject<z.ZodRawShape>)
+      expect(Object.keys(shape).sort()).to.deep.equal(['isActive', 'user'])
+      expect(introspect.isBoolean(shape.isActive)).to.be.true
+      expect(introspect.isObject(shape.user)).to.be.true
+      const userShape = introspect.getObjectShape(shape.user as z.ZodObject<z.ZodRawShape>)
+      expect(Object.keys(userShape).sort()).to.deep.equal(['age', 'name'])
+      expect(introspect.isNumber(userShape.age)).to.be.true
+      expect(introspect.isString(userShape.name)).to.be.true
     })
 
     it('should resolve array of objects', () => {
@@ -73,10 +82,12 @@ describe('JsonToZodMapper', () => {
 
       const result = mapper.resolve(input)
 
-      expect(result._def.typeName).equal('ZodArray')
-      expect(result._def.type._def.typeName).equal('ZodObject')
-      expect(Object.keys(result._def.type._def.shape())).to.deep.equal(['name'])
-      expect(result._def.type._def.shape().name._def.typeName).equal('ZodString')
+      expect(introspect.isArray(result)).to.be.true
+      const element = introspect.getArrayElement(result as z.ZodArray<z.ZodTypeAny>)
+      expect(introspect.isObject(element)).to.be.true
+      const shape = introspect.getObjectShape(element as z.ZodObject<z.ZodRawShape>)
+      expect(Object.keys(shape)).to.deep.equal(['name'])
+      expect(introspect.isString(shape.name)).to.be.true
     })
 
     it('should resolve null values', () => {
@@ -84,7 +95,7 @@ describe('JsonToZodMapper', () => {
 
       const result = mapper.resolve(input)
 
-      expect(result._def.typeName).to.deep.equal('ZodNull')
+      expect(introspect.isNull(result)).to.be.true
     })
   })
 })

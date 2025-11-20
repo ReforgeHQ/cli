@@ -7,6 +7,7 @@ export type ZodToTypescriptMapperTarget = 'accessor' | 'raw'
 
 export class ZodToTypescriptMapper extends ZodBaseMapper {
   private fieldName: string | undefined
+  private metaDescription: string | undefined = undefined
   private optionalProperty: boolean
   private target: ZodToTypescriptMapperTarget
 
@@ -100,7 +101,27 @@ export class ZodToTypescriptMapper extends ZodBaseMapper {
     // which always guarantees that the optional flag is set correctly.
     const resolved = this.resolveType(type)
 
-    return `"${this.fieldName}"${this.optionalProperty ? '?' : ''}: ${resolved}`
+    // If there's a meta description, add it as a comment before the field
+    let result = ''
+    if (this.metaDescription) {
+      // Check if the description contains newlines (multi-line JSON)
+      if (this.metaDescription.includes('\n')) {
+        // Format as a multi-line block comment
+        const lines = this.metaDescription.split('\n')
+        result += '/**\n'
+        for (const line of lines) {
+          result += ` * ${line}\n`
+        }
+        result += ' */ '
+      } else {
+        // Single line comment
+        result += `/** ${this.metaDescription} */ `
+      }
+    }
+
+    result += `"${this.fieldName}"${this.optionalProperty ? '?' : ''}: ${resolved}`
+
+    return result
   }
 
   string() {
@@ -130,5 +151,11 @@ export class ZodToTypescriptMapper extends ZodBaseMapper {
 
   unknown() {
     return 'unknown'
+  }
+
+  protected withMeta(description: string, resolveType: () => string): string {
+    // Store the description to be used when rendering the field
+    this.metaDescription = description
+    return resolveType()
   }
 }
