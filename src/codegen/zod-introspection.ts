@@ -200,3 +200,30 @@ export function isNumberInteger(schema: z.ZodNumber): boolean {
     return false
   })
 }
+
+/**
+ * Gets metadata from a schema if it has been set with .meta()
+ */
+export function getMeta(schema: $ZodType): Record<string, unknown> | undefined {
+  if (!schema) {
+    return undefined
+  }
+  // Call .meta() without arguments to retrieve metadata
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (typeof (schema as any).meta === 'function') {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (schema as any).meta() as Record<string, unknown> | undefined
+  }
+  return undefined
+}
+
+/**
+ * Gets the description from metadata if it exists
+ */
+export function getMetaDescription(schema: $ZodType): string | undefined {
+  const meta = getMeta(schema)
+  if (meta && typeof meta.description === 'string') {
+    return meta.description
+  }
+  return undefined
+}

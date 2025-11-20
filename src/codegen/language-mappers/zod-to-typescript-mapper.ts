@@ -9,6 +9,7 @@ export class ZodToTypescriptMapper extends ZodBaseMapper {
   private fieldName: string | undefined
   private optionalProperty: boolean
   private target: ZodToTypescriptMapperTarget
+  private metaDescription: string | undefined
 
   constructor({fieldName, target}: {fieldName?: string; target?: ZodToTypescriptMapperTarget} = {}) {
     super()
@@ -100,7 +101,15 @@ export class ZodToTypescriptMapper extends ZodBaseMapper {
     // which always guarantees that the optional flag is set correctly.
     const resolved = this.resolveType(type)
 
-    return `"${this.fieldName}"${this.optionalProperty ? '?' : ''}: ${resolved}`
+    // If there's a meta description, add it as a comment before the field
+    let result = ''
+    if (this.metaDescription) {
+      result += `/** ${this.metaDescription} */ `
+    }
+
+    result += `"${this.fieldName}"${this.optionalProperty ? '?' : ''}: ${resolved}`
+
+    return result
   }
 
   string() {
@@ -130,5 +139,11 @@ export class ZodToTypescriptMapper extends ZodBaseMapper {
 
   unknown() {
     return 'unknown'
+  }
+
+  protected withMeta(description: string, resolveType: () => string): string {
+    // Store the description to be used when rendering the field
+    this.metaDescription = description
+    return resolveType()
   }
 }

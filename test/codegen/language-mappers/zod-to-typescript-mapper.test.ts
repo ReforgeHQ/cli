@@ -269,5 +269,112 @@ describe('ZodToTypescriptMapper', () => {
         )
       })
     })
+
+    describe('meta support', () => {
+      it('Can successfully parse a string with meta description', () => {
+        const zodAst = secureEvaluateSchema(`z.string().meta({ description: "User's email address" })`)
+
+        const mapper = new ZodToTypescriptMapper({fieldName: 'email'})
+
+        const rendered = mapper.renderField(zodAst.schema!)
+
+        expect(rendered).to.equal('/** User\'s email address */ "email": string')
+      })
+
+      it('Can successfully parse a number with meta description', () => {
+        const zodAst = secureEvaluateSchema(`z.number().meta({ description: "User's age in years" })`)
+
+        const mapper = new ZodToTypescriptMapper({fieldName: 'age'})
+
+        const rendered = mapper.renderField(zodAst.schema!)
+
+        expect(rendered).to.equal('/** User\'s age in years */ "age": number')
+      })
+
+      it('Can successfully parse objects with mixed meta and non-meta fields', () => {
+        const zodAst = secureEvaluateSchema(`z.object({
+          email: z.string().meta({ description: "User's email address" }),
+          age: z.number().meta({ description: "User's age in years" }),
+          name: z.string()
+        })`)
+
+        const mapper = new ZodToTypescriptMapper({fieldName: 'user'})
+
+        const rendered = mapper.renderField(zodAst.schema!)
+
+        expect(rendered).to.equal(
+          '"user": { /** User\'s email address */ "email": string; /** User\'s age in years */ "age": number; "name": string }',
+        )
+      })
+
+      it('Can successfully parse nested objects with meta descriptions', () => {
+        const zodAst = secureEvaluateSchema(`z.object({
+          user: z.object({
+            profile: z.object({
+              bio: z.string().meta({ description: "User biography" })
+            })
+          })
+        })`)
+
+        const mapper = new ZodToTypescriptMapper({fieldName: 'data'})
+
+        const rendered = mapper.renderField(zodAst.schema!)
+
+        expect(rendered).to.equal('"data": { "user": { "profile": { /** User biography */ "bio": string } } }')
+      })
+
+      it('Can successfully parse optional fields with meta descriptions', () => {
+        const zodAst = secureEvaluateSchema(`z.string().optional().meta({ description: "Optional user nickname" })`)
+
+        const mapper = new ZodToTypescriptMapper({fieldName: 'nickname'})
+
+        const rendered = mapper.renderField(zodAst.schema!)
+
+        expect(rendered).to.equal('/** Optional user nickname */ "nickname"?: string')
+      })
+
+      it('Can successfully parse arrays with meta descriptions', () => {
+        const zodAst = secureEvaluateSchema(`z.array(z.string()).meta({ description: "List of user tags" })`)
+
+        const mapper = new ZodToTypescriptMapper({fieldName: 'tags'})
+
+        const rendered = mapper.renderField(zodAst.schema!)
+
+        expect(rendered).to.equal('/** List of user tags */ "tags": Array<string>')
+      })
+
+      it('Handles meta without description field gracefully', () => {
+        const zodAst = secureEvaluateSchema(`z.string().meta({ id: "some-id", title: "Some Title" })`)
+
+        const mapper = new ZodToTypescriptMapper({fieldName: 'someKey'})
+
+        const rendered = mapper.renderField(zodAst.schema!)
+
+        expect(rendered).to.equal('"someKey": string')
+      })
+
+      it('Can successfully parse complex types with meta descriptions', () => {
+        const zodString = `
+          z.object({
+            userId: z.string().meta({ description: "Unique user identifier" }),
+            settings: z.object({
+              theme: z.enum(["light", "dark"]).meta({ description: "UI theme preference" }),
+              notifications: z.boolean().meta({ description: "Enable notifications" })
+            }),
+            metadata: z.record(z.string(), z.any()).optional()
+          })
+        `
+
+        const zodAst = secureEvaluateSchema(zodString)
+
+        const mapper = new ZodToTypescriptMapper({fieldName: 'userData'})
+
+        const rendered = mapper.renderField(zodAst.schema!)
+
+        expect(rendered).to.equal(
+          '"userData": { /** Unique user identifier */ "userId": string; "settings": { /** UI theme preference */ "theme": \'light\' | \'dark\'; /** Enable notifications */ "notifications": boolean }; "metadata"?: Record<string, any> }',
+        )
+      })
+    })
   })
 })

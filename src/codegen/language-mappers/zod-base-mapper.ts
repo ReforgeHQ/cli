@@ -5,6 +5,31 @@ import * as introspect from '../zod-introspection.js'
 
 export abstract class ZodBaseMapper {
   resolveType(type: $ZodType): string {
+    // Check for meta description first and allow implementers to handle it
+    const metaDescription = introspect.getMetaDescription(type)
+    if (metaDescription) {
+      const result = this.withMeta(metaDescription, () => this.resolveTypeInternal(type))
+      return result
+    }
+
+    return this.resolveTypeInternal(type)
+  }
+
+  /**
+   * Hook for handling meta descriptions on schemas.
+   * By default, this just returns the resolved type without any modification.
+   * Subclasses can override this to add comments or other metadata handling.
+   *
+   * @param description The description from .meta({ description: "..." })
+   * @param resolveType A function that resolves the inner type
+   * @returns The type string, potentially with description metadata
+   */
+  protected withMeta(description: string, resolveType: () => string): string {
+    // Default implementation: just return the resolved type
+    return resolveType()
+  }
+
+  private resolveTypeInternal(type: $ZodType): string {
     if (introspect.isAny(type)) {
       return this.any()
     }

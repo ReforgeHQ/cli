@@ -7,11 +7,18 @@ export class ZodToTypescriptReturnValueMapper extends ZodBaseMapper {
   private fieldName: string | undefined
   private FUNCTION_ARGUMENTS_NAME = 'params'
   private returnTypePropertyPath: string[]
+  private metaDescription: string | undefined
 
   constructor({fieldName, returnTypePropertyPath}: {fieldName?: string; returnTypePropertyPath?: string[]} = {}) {
     super()
     this.fieldName = fieldName
     this.returnTypePropertyPath = returnTypePropertyPath ?? []
+  }
+
+  protected withMeta(description: string, resolveType: () => string): string {
+    // Store the description to be used when rendering the field
+    this.metaDescription = description
+    return resolveType()
   }
 
   any() {
@@ -95,7 +102,15 @@ export class ZodToTypescriptReturnValueMapper extends ZodBaseMapper {
     // which always guarantees that the optional flag is set correctly.
     const resolved = this.resolveType(type)
 
-    return `"${this.fieldName}": ${resolved}`
+    // If there's a meta description, add it as a comment before the field
+    let result = ''
+    if (this.metaDescription) {
+      result += `/** ${this.metaDescription} */ `
+    }
+
+    result += `"${this.fieldName}": ${resolved}`
+
+    return result
   }
 
   string() {
