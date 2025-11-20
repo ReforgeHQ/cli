@@ -2,6 +2,8 @@ name: Release Package
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 jobs:
   check-version:
     runs-on: ubuntu-latest
@@ -79,7 +81,10 @@ jobs:
       - run: yarn install --immutable
       - run: yarn build
       - name: Upgrade npm for OIDC trusted publishing
-        run: npm install -g npm@latest
+        run: |
+          npm install -g npm@latest
+          # Ensure corepack is enabled for npm lifecycle scripts that call yarn
+          corepack enable
       - name: Publish to npm
         run: |
           # Use npm CLI directly - requires npm >= 11.5.1 for OIDC trusted publishing
