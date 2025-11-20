@@ -78,6 +78,12 @@ jobs:
             ${{ runner.os }}-yarn-
       - run: yarn install --immutable
       - run: yarn build
+      - name: Debug OIDC environment
+        run: |
+          echo "Checking OIDC environment variables..."
+          echo "ACTIONS_ID_TOKEN_REQUEST_URL is set: $([[ -n "$ACTIONS_ID_TOKEN_REQUEST_URL" ]] && echo "yes" || echo "no")"
+          echo "ACTIONS_ID_TOKEN_REQUEST_TOKEN is set: $([[ -n "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]] && echo "yes" || echo "no")"
+          echo "Yarn version: $(yarn --version)"
       - name: Publish to npm
         run: |
           # Yarn 4.10.3+ supports OIDC trusted publishing
