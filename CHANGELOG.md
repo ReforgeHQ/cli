@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+## 0.0.9 - 2025-11-20
+
+- feat: upgrade to zod v4 + support for `meta`
+- docs: encourage use of direnv when contributing
+
 ## 0.0.8 - 2025-10-29
 
 - Added support for `ZodRecord` types in code generation mappers

@@ -1,7 +1,7 @@
 {
   "packageManager": "yarn@4.9.2",
   "name": "@reforge-com/cli",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "author": "Jeffrey Chupp @semanticart",
   "bugs": {
     "url": "https://github.com/ReforgeHQ/cli/issues"
