@@ -82,6 +82,7 @@ jobs:
       - run: yarn build
       - name: Publish to npm
         run: |
+          echo "Yarn version: $(yarn --version)"
           # Yarn 4.11.0 with OIDC trusted publishing
           if [ "${{ needs.check-version.outputs.is-prerelease }}" == "true" ]; then
             yarn npm publish --provenance --access public --tag ${{ needs.check-version.outputs.npm-tag }}
