@@ -80,13 +80,14 @@ jobs:
             ${{ runner.os }}-yarn-
       - run: yarn install --immutable
       - run: yarn build
+      - name: Prepare package for publishing
+        run: yarn readme
       - name: Upgrade npm for OIDC trusted publishing
-        run: |
-          npm install -g npm@latest
-          # Re-enable corepack after npm upgrade (npm install -g disables it)
-          corepack enable
-          corepack prepare yarn@4.10.3 --activate
+        run: npm install -g npm@latest
       - name: Publish to npm
+        env:
+          # Skip prepack script since we already ran yarn readme
+          NPM_CONFIG_IGNORE_SCRIPTS: true
         run: |
           # Use npm CLI directly - requires npm >= 11.5.1 for OIDC trusted publishing
           # Yarn 4.10.3 OIDC support appears broken despite all env vars being set correctly
