@@ -68,7 +68,7 @@ jobs:
       - name: enable corepack
         run: |
           corepack enable
-          corepack prepare yarn@4.10.3 --activate
+          corepack prepare yarn@4.11.0 --activate
       - name: cache yarn dependencies
         uses: actions/cache@v4
         with:
@@ -78,16 +78,13 @@ jobs:
             ${{ runner.os }}-yarn-
       - run: yarn install --immutable
       - run: yarn build
-      - name: Upgrade npm for OIDC trusted publishing
-        run: npm install -g npm@latest
       - name: Publish to npm
         run: |
-          # Use npm CLI directly - requires npm >= 11.5.1 for OIDC trusted publishing
-          # Yarn 4.10.3 OIDC support appears broken despite all env vars being set correctly
+          # Yarn 4.11.0 with OIDC trusted publishing
           if [ "${{ needs.check-version.outputs.is-prerelease }}" == "true" ]; then
-            npm publish --provenance --access public --tag ${{ needs.check-version.outputs.npm-tag }}
+            yarn npm publish --access public --tag ${{ needs.check-version.outputs.npm-tag }}
           else
-            npm publish --provenance --access public
+            yarn npm publish --access public
           fi
 
   create-release:
