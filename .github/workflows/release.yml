@@ -79,7 +79,11 @@ jobs:
       - run: yarn install --immutable
       - run: yarn build
       - name: Upgrade npm for OIDC trusted publishing
-        run: npm install -g npm@latest
+        run: |
+          npm install -g npm@latest
+          # Re-enable corepack after npm upgrade (npm install -g disables it)
+          corepack enable
+          corepack prepare yarn@4.10.3 --activate
       - name: Publish to npm
         run: |
           # Use npm CLI directly - requires npm >= 11.5.1 for OIDC trusted publishing
