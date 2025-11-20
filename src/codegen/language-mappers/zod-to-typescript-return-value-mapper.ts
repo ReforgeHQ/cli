@@ -6,19 +6,13 @@ import {ZodBaseMapper} from './zod-base-mapper.js'
 export class ZodToTypescriptReturnValueMapper extends ZodBaseMapper {
   private fieldName: string | undefined
   private FUNCTION_ARGUMENTS_NAME = 'params'
+  private metaDescription: string | undefined = undefined
   private returnTypePropertyPath: string[]
-  private metaDescription: string | undefined
 
   constructor({fieldName, returnTypePropertyPath}: {fieldName?: string; returnTypePropertyPath?: string[]} = {}) {
     super()
     this.fieldName = fieldName
     this.returnTypePropertyPath = returnTypePropertyPath ?? []
-  }
-
-  protected withMeta(description: string, resolveType: () => string): string {
-    // Store the description to be used when rendering the field
-    this.metaDescription = description
-    return resolveType()
   }
 
   any() {
@@ -105,10 +99,25 @@ export class ZodToTypescriptReturnValueMapper extends ZodBaseMapper {
     // If there's a meta description, add it as a comment before the field
     let result = ''
     if (this.metaDescription) {
-      result += `/** ${this.metaDescription} */ `
+      // Check if the description contains newlines (multi-line JSON)
+      if (this.metaDescription.includes('\n')) {
+        // Format as a multi-line block comment
+        const lines = this.metaDescription.split('\n')
+        result += '/**\n'
+        for (const line of lines) {
+          result += ` * ${line}\n`
+        }
+        result += ' */ '
+      } else {
+        // Single line comment
+        result += `/** ${this.metaDescription} */ `
+      }
     }
 
     result += `"${this.fieldName}": ${resolved}`
+
+    // Clear metaDescription to prevent it from leaking into subsequent renderField calls
+    this.metaDescription = undefined
 
     return result
   }
@@ -148,6 +157,12 @@ export class ZodToTypescriptReturnValueMapper extends ZodBaseMapper {
 
   unknown() {
     return `raw${this.printPropertyPath()}`
+  }
+
+  protected withMeta(description: string, resolveType: () => string): string {
+    // Store the description to be used when rendering the field
+    this.metaDescription = description
+    return resolveType()
   }
 
   private printPath(paths: string[]): string {

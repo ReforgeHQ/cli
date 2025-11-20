@@ -7,9 +7,9 @@ export type ZodToTypescriptMapperTarget = 'accessor' | 'raw'
 
 export class ZodToTypescriptMapper extends ZodBaseMapper {
   private fieldName: string | undefined
+  private metaDescription: string | undefined = undefined
   private optionalProperty: boolean
   private target: ZodToTypescriptMapperTarget
-  private metaDescription: string | undefined
 
   constructor({fieldName, target}: {fieldName?: string; target?: ZodToTypescriptMapperTarget} = {}) {
     super()
@@ -104,7 +104,19 @@ export class ZodToTypescriptMapper extends ZodBaseMapper {
     // If there's a meta description, add it as a comment before the field
     let result = ''
     if (this.metaDescription) {
-      result += `/** ${this.metaDescription} */ `
+      // Check if the description contains newlines (multi-line JSON)
+      if (this.metaDescription.includes('\n')) {
+        // Format as a multi-line block comment
+        const lines = this.metaDescription.split('\n')
+        result += '/**\n'
+        for (const line of lines) {
+          result += ` * ${line}\n`
+        }
+        result += ' */ '
+      } else {
+        // Single line comment
+        result += `/** ${this.metaDescription} */ `
+      }
     }
 
     result += `"${this.fieldName}"${this.optionalProperty ? '?' : ''}: ${resolved}`

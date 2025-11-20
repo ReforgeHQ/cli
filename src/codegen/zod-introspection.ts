@@ -218,12 +218,27 @@ export function getMeta(schema: $ZodType): Record<string, unknown> | undefined {
 }
 
 /**
- * Gets the description from metadata if it exists
+ * Gets a comment string from metadata.
+ * If meta only contains a description key, returns the description string.
+ * Otherwise, returns a JSON representation of the entire meta object.
  */
 export function getMetaDescription(schema: $ZodType): string | undefined {
   const meta = getMeta(schema)
-  if (meta && typeof meta.description === 'string') {
+  if (!meta || Object.keys(meta).length === 0) {
+    return undefined
+  }
+
+  // If meta only has a description key, return just the description
+  const keys = Object.keys(meta)
+  if (keys.length === 1 && keys[0] === 'description' && typeof meta.description === 'string') {
     return meta.description
   }
-  return undefined
+
+  // Otherwise, return JSON representation of the entire meta object
+  try {
+    return JSON.stringify(meta, null, 2)
+  } catch {
+    // If JSON serialization fails, return undefined
+    return undefined
+  }
 }

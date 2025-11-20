@@ -484,14 +484,51 @@ describe('ZodToTypescriptReturnValueMapper', () => {
         expect(rendered).to.equal('/** List of user tags */ "tags": raw')
       })
 
-      it('Handles meta without description field gracefully', () => {
-        const zodAst = secureEvaluateSchema(`z.string().meta({ id: "some-id", title: "Some Title" })`)
+      it('Renders JSON for meta with non-description fields', () => {
+        // IMPORTANT: meta.id values MUST BE UNIQUE across the test suite because of how zod manages the schema registry
+        const zodAst = secureEvaluateSchema(`z.string().meta({ id: "return-value-some-id", title: "Some Title" })`)
 
         const mapper = new ZodToTypescriptReturnValueMapper({fieldName: 'someKey'})
 
         const rendered = mapper.renderField(zodAst.schema!)
 
-        expect(rendered).to.equal('"someKey": raw')
+        expect(rendered).to.include('/**')
+        expect(rendered).to.include('"id": "return-value-some-id"')
+        expect(rendered).to.include('"title": "Some Title"')
+        expect(rendered).to.include('"someKey": raw')
+      })
+
+      it('Renders JSON for meta with description and other fields', () => {
+        const zodAst = secureEvaluateSchema(
+          // IMPORTANT: meta.id values MUST BE UNIQUE across the test suite because of how zod manages the schema registry
+          `z.string().meta({ description: "User email", id: "return-value-email-field", required: true })`,
+        )
+
+        const mapper = new ZodToTypescriptReturnValueMapper({fieldName: 'email'})
+
+        const rendered = mapper.renderField(zodAst.schema!)
+
+        expect(rendered).to.include('/**')
+        expect(rendered).to.include('"description": "User email"')
+        expect(rendered).to.include('"id": "return-value-email-field"')
+        expect(rendered).to.include('"required": true')
+        expect(rendered).to.include('"email": raw')
+      })
+
+      it('Renders multi-line block comment for JSON meta', () => {
+        const zodAst = secureEvaluateSchema(
+          // IMPORTANT: meta.id values MUST BE UNIQUE across the test suite because of how zod manages the schema registry
+          `z.string().meta({ id: "return-value-field-1", deprecated: true, replacement: "newField" })`,
+        )
+
+        const mapper = new ZodToTypescriptReturnValueMapper({fieldName: 'oldField'})
+
+        const rendered = mapper.renderField(zodAst.schema!)
+
+        // Should contain multi-line block comment format
+        expect(rendered).to.include('/**\n')
+        expect(rendered).to.include(' * ')
+        expect(rendered).to.match(/\*\/\s+"oldField": raw/)
       })
 
       it('Can successfully parse complex types with meta descriptions and property paths', () => {

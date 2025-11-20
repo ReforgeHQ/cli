@@ -343,14 +343,51 @@ describe('ZodToTypescriptMapper', () => {
         expect(rendered).to.equal('/** List of user tags */ "tags": Array<string>')
       })
 
-      it('Handles meta without description field gracefully', () => {
+      it('Renders JSON for meta with non-description fields', () => {
+        // IMPORTANT: meta.id values MUST BE UNIQUE across the test suite because of how zod manages the schema registry
         const zodAst = secureEvaluateSchema(`z.string().meta({ id: "some-id", title: "Some Title" })`)
 
         const mapper = new ZodToTypescriptMapper({fieldName: 'someKey'})
 
         const rendered = mapper.renderField(zodAst.schema!)
 
-        expect(rendered).to.equal('"someKey": string')
+        expect(rendered).to.include('/**')
+        expect(rendered).to.include('"id": "some-id"')
+        expect(rendered).to.include('"title": "Some Title"')
+        expect(rendered).to.include('"someKey": string')
+      })
+
+      it('Renders JSON for meta with description and other fields', () => {
+        const zodAst = secureEvaluateSchema(
+          // IMPORTANT: meta.id values MUST BE UNIQUE across the test suite because of how zod manages the schema registry
+          `z.string().meta({ description: "User email", id: "email-field", required: true })`,
+        )
+
+        const mapper = new ZodToTypescriptMapper({fieldName: 'email'})
+
+        const rendered = mapper.renderField(zodAst.schema!)
+
+        expect(rendered).to.include('/**')
+        expect(rendered).to.include('"description": "User email"')
+        expect(rendered).to.include('"id": "email-field"')
+        expect(rendered).to.include('"required": true')
+        expect(rendered).to.include('"email": string')
+      })
+
+      it('Renders multi-line block comment for JSON meta', () => {
+        const zodAst = secureEvaluateSchema(
+          // IMPORTANT: meta.id values MUST BE UNIQUE across the test suite because of how zod manages the schema registry
+          `z.string().meta({ id: "field-1", deprecated: true, replacement: "newField" })`,
+        )
+
+        const mapper = new ZodToTypescriptMapper({fieldName: 'oldField'})
+
+        const rendered = mapper.renderField(zodAst.schema!)
+
+        // Should contain multi-line block comment format
+        expect(rendered).to.include('/**\n')
+        expect(rendered).to.include(' * ')
+        expect(rendered).to.match(/\*\/\s+"oldField": string/)
       })
 
       it('Can successfully parse complex types with meta descriptions', () => {
