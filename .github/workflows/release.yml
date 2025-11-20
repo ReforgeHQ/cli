@@ -113,23 +113,37 @@ jobs:
 
                 echo ""
                 echo "=== Testing OIDC Token Exchange (Step 2: Exchange for NPM token) ==="
-                PACKAGE_NAME=$(jq -r '.name' package.json | sed 's/^@/%40/')
-                EXCHANGE_URL="https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/${PACKAGE_NAME}"
-                echo "Exchange URL: $EXCHANGE_URL"
+                RAW_NAME=$(jq -r '.name' package.json)
+                echo "Testing with Yarn's URL encoding (@reforge-com -> %40reforge-com)"
+                YARN_ENCODED=$(echo "$RAW_NAME" | sed 's/^@/%40/')
+                EXCHANGE_URL_YARN="https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/${YARN_ENCODED}"
+                echo "Yarn URL: $EXCHANGE_URL_YARN"
 
                 EXCHANGE_RESPONSE=$(curl -sSL -w "\nHTTP_STATUS:%{http_code}" \
                   -H "Authorization: Bearer $ID_TOKEN" \
-                  -X POST "$EXCHANGE_URL" 2>&1)
+                  -X POST "$EXCHANGE_URL_YARN" 2>&1)
                 HTTP_STATUS=$(echo "$EXCHANGE_RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
                 BODY=$(echo "$EXCHANGE_RESPONSE" | sed '/HTTP_STATUS:/d')
-
-                echo "HTTP Status: $HTTP_STATUS"
-                if [[ "$HTTP_STATUS" == "200" ]]; then
-                  echo "✓ Token exchange successful!"
-                  echo "Response has 'token' field: $(echo "$BODY" | jq -r 'has("token")')"
-                else
-                  echo "✗ Token exchange FAILED!"
+                echo "Yarn encoding - HTTP Status: $HTTP_STATUS"
+                if [[ "$HTTP_STATUS" != "200" ]]; then
                   echo "Response: $BODY"
+                fi
+
+                echo ""
+                echo "Testing with alternate encoding (@reforge-com/cli as-is)"
+                EXCHANGE_URL_ALT="https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/${RAW_NAME}"
+                echo "Alternate URL: $EXCHANGE_URL_ALT"
+
+                EXCHANGE_RESPONSE2=$(curl -sSL -w "\nHTTP_STATUS:%{http_code}" \
+                  -H "Authorization: Bearer $ID_TOKEN" \
+                  -X POST "$EXCHANGE_URL_ALT" 2>&1)
+                HTTP_STATUS2=$(echo "$EXCHANGE_RESPONSE2" | grep "HTTP_STATUS:" | cut -d: -f2)
+                BODY2=$(echo "$EXCHANGE_RESPONSE2" | sed '/HTTP_STATUS:/d')
+                echo "Alternate encoding - HTTP Status: $HTTP_STATUS2"
+                if [[ "$HTTP_STATUS2" == "200" ]]; then
+                  echo "✓ Token exchange successful with alternate encoding!"
+                else
+                  echo "Response: $BODY2"
                 fi
               else
                 echo "✗ No ID token in response!"
