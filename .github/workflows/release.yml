@@ -65,7 +65,7 @@ jobs:
       - name: enable corepack
         run: |
           corepack enable
-          corepack prepare yarn@4.9.2 --activate
+          corepack prepare yarn@4.10.3 --activate
       - name: cache yarn dependencies
         uses: actions/cache@v4
         with:
@@ -77,6 +77,7 @@ jobs:
       - run: yarn build
       - name: Publish to npm
         run: |
+          # Yarn 4.10.3+ supports OIDC trusted publishing
           if [ "${{ needs.check-version.outputs.is-prerelease }}" == "true" ]; then
             yarn npm publish --provenance --access public --tag ${{ needs.check-version.outputs.npm-tag }}
           else
