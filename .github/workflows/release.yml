@@ -99,6 +99,22 @@ jobs:
           echo ""
           echo "Yarn registry config:"
           cat .yarnrc.yml
+          echo ""
+          echo "=== Testing OIDC Token Fetch ==="
+          if [[ -n "$ACTIONS_ID_TOKEN_REQUEST_URL" && -n "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]]; then
+            echo "Attempting to fetch OIDC token for audience: npm:registry.npmjs.org"
+            RESPONSE=$(curl -sSL -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+              "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=npm:registry.npmjs.org" 2>&1)
+            if [[ $? -eq 0 ]]; then
+              echo "Token fetch successful!"
+              echo "Response contains 'value' field: $(echo "$RESPONSE" | jq -r 'has("value")')"
+            else
+              echo "Token fetch FAILED!"
+              echo "Error: $RESPONSE"
+            fi
+          else
+            echo "Cannot test token fetch - required env vars not set"
+          fi
       - name: Publish to npm
         run: |
           # Yarn 4.11.0 with OIDC trusted publishing
