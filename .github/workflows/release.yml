@@ -13,24 +13,27 @@ jobs:
       npm-tag: ${{ steps.check.outputs.npm-tag }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-      - name: Check if version changed
+      - name: Check if version needs publishing
         id: check
         run: |
           current_version=$(jq -r '.version' package.json)
-          previous_version=$(git show HEAD~1:package.json | jq -r '.version')
+          package_name=$(jq -r '.name' package.json)
 
           echo "current-version=$current_version" >> $GITHUB_OUTPUT
-          echo "previous-version=$previous_version" >> $GITHUB_OUTPUT
 
-          if [ "$current_version" != "$previous_version" ]; then
-            echo "Version changed from $previous_version to $current_version"
-            echo "changed=true" >> $GITHUB_OUTPUT
-          else
-            echo "Version unchanged: $current_version"
+          # Check if this version exists on npm
+          if npm view "${package_name}@${current_version}" version 2>/dev/null; then
+            echo "Version $current_version already published to npm"
             echo "changed=false" >> $GITHUB_OUTPUT
+            previous_version="$current_version"
+          else
+            echo "Version $current_version not found on npm, will publish"
+            echo "changed=true" >> $GITHUB_OUTPUT
+            # Get the latest published version for reference
+            previous_version=$(npm view "${package_name}" version 2>/dev/null || echo "none")
           fi
+
+          echo "previous-version=$previous_version" >> $GITHUB_OUTPUT
 
           # Check if this is a pre-release version
           if [[ "$current_version" =~ -(alpha|beta|rc|dev|pre|canary|next) ]]; then
