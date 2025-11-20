@@ -100,16 +100,42 @@ jobs:
           echo "Yarn registry config:"
           cat .yarnrc.yml
           echo ""
-          echo "=== Testing OIDC Token Fetch ==="
+          echo "=== Testing OIDC Token Fetch (Step 1: Get ID Token) ==="
           if [[ -n "$ACTIONS_ID_TOKEN_REQUEST_URL" && -n "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]]; then
-            echo "Attempting to fetch OIDC token for audience: npm:registry.npmjs.org"
+            echo "Attempting to fetch OIDC ID token for audience: npm:registry.npmjs.org"
             RESPONSE=$(curl -sSL -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
               "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=npm:registry.npmjs.org" 2>&1)
             if [[ $? -eq 0 ]]; then
-              echo "Token fetch successful!"
-              echo "Response contains 'value' field: $(echo "$RESPONSE" | jq -r 'has("value")')"
+              echo "✓ ID token fetch successful!"
+              ID_TOKEN=$(echo "$RESPONSE" | jq -r '.value')
+              if [[ "$ID_TOKEN" != "null" && -n "$ID_TOKEN" ]]; then
+                echo "✓ ID token extracted (length: ${#ID_TOKEN})"
+
+                echo ""
+                echo "=== Testing OIDC Token Exchange (Step 2: Exchange for NPM token) ==="
+                PACKAGE_NAME=$(jq -r '.name' package.json | sed 's/^@/%40/')
+                EXCHANGE_URL="https://registry.npmjs.org/-/npm/v1/oidc/token/exchange/package/${PACKAGE_NAME}"
+                echo "Exchange URL: $EXCHANGE_URL"
+
+                EXCHANGE_RESPONSE=$(curl -sSL -w "\nHTTP_STATUS:%{http_code}" \
+                  -H "Authorization: Bearer $ID_TOKEN" \
+                  -X POST "$EXCHANGE_URL" 2>&1)
+                HTTP_STATUS=$(echo "$EXCHANGE_RESPONSE" | grep "HTTP_STATUS:" | cut -d: -f2)
+                BODY=$(echo "$EXCHANGE_RESPONSE" | sed '/HTTP_STATUS:/d')
+
+                echo "HTTP Status: $HTTP_STATUS"
+                if [[ "$HTTP_STATUS" == "200" ]]; then
+                  echo "✓ Token exchange successful!"
+                  echo "Response has 'token' field: $(echo "$BODY" | jq -r 'has("token")')"
+                else
+                  echo "✗ Token exchange FAILED!"
+                  echo "Response: $BODY"
+                fi
+              else
+                echo "✗ No ID token in response!"
+              fi
             else
-              echo "Token fetch FAILED!"
+              echo "✗ ID token fetch FAILED!"
               echo "Error: $RESPONSE"
             fi
           else
