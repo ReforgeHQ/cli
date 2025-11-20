@@ -81,16 +81,21 @@ jobs:
       - name: Debug OIDC environment
         run: |
           echo "Checking OIDC environment variables..."
+          echo "CI is set: $([[ -n "$CI" ]] && echo "yes ($CI)" || echo "no")"
+          echo "GITHUB_ACTIONS is set: $([[ -n "$GITHUB_ACTIONS" ]] && echo "yes ($GITHUB_ACTIONS)" || echo "no")"
           echo "ACTIONS_ID_TOKEN_REQUEST_URL is set: $([[ -n "$ACTIONS_ID_TOKEN_REQUEST_URL" ]] && echo "yes" || echo "no")"
           echo "ACTIONS_ID_TOKEN_REQUEST_TOKEN is set: $([[ -n "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]] && echo "yes" || echo "no")"
           echo "Yarn version: $(yarn --version)"
+          echo "Package name: $(jq -r '.name' package.json)"
+      - name: Upgrade npm for trusted publishing
+        run: npm install -g npm@latest
       - name: Publish to npm
         run: |
-          # Yarn 4.10.3+ supports OIDC trusted publishing
+          # Use npm CLI directly - it has better OIDC trusted publishing support than Yarn 4.10.3
           if [ "${{ needs.check-version.outputs.is-prerelease }}" == "true" ]; then
-            yarn npm publish --provenance --access public --tag ${{ needs.check-version.outputs.npm-tag }}
+            npm publish --provenance --access public --tag ${{ needs.check-version.outputs.npm-tag }}
           else
-            yarn npm publish --provenance --access public
+            npm publish --provenance --access public
           fi
 
   create-release:
