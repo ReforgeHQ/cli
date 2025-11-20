@@ -78,19 +78,16 @@ jobs:
             ${{ runner.os }}-yarn-
       - run: yarn install --immutable
       - run: yarn build
-      - name: Debug OIDC environment
-        run: |
-          echo "Checking OIDC environment variables..."
-          echo "ACTIONS_ID_TOKEN_REQUEST_URL is set: $([[ -n "$ACTIONS_ID_TOKEN_REQUEST_URL" ]] && echo "yes" || echo "no")"
-          echo "ACTIONS_ID_TOKEN_REQUEST_TOKEN is set: $([[ -n "$ACTIONS_ID_TOKEN_REQUEST_TOKEN" ]] && echo "yes" || echo "no")"
-          echo "Yarn version: $(yarn --version)"
+      - name: Upgrade npm for OIDC trusted publishing
+        run: npm install -g npm@latest
       - name: Publish to npm
         run: |
-          # Yarn 4.10.3+ supports OIDC trusted publishing
+          # Use npm CLI directly - requires npm >= 11.5.1 for OIDC trusted publishing
+          # Yarn 4.10.3 OIDC support appears broken despite all env vars being set correctly
           if [ "${{ needs.check-version.outputs.is-prerelease }}" == "true" ]; then
-            yarn npm publish --provenance --access public --tag ${{ needs.check-version.outputs.npm-tag }}
+            npm publish --provenance --access public --tag ${{ needs.check-version.outputs.npm-tag }}
           else
-            yarn npm publish --provenance --access public
+            npm publish --provenance --access public
           fi
 
   create-release:
