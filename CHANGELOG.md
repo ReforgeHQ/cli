@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.0.10 - 2025-11-24
+
+- fix: ignore Zod.describe method to not interfere with type generation
+
 ## 0.0.9 - 2025-11-20
 
 - feat: upgrade to zod v4 + support for `meta`
