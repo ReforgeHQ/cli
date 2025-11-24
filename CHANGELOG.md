@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.0.11 - 2025-11-24
+
+- fix: typos in 'reforge generate --help'
+
 ## 0.0.10 - 2025-11-24
 
 - fix: ignore Zod.describe method to not interfere with type generation
