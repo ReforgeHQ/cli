@@ -120,5 +120,39 @@ describe('SchemaEvaluator', () => {
         expect(introspect.isBoolean(options[2])).to.be.true
       }
     })
+
+    it('should strip .describe() calls from schema', () => {
+      const result = secureEvaluateSchema('z.string().describe("A string field")')
+
+      expect(result.success).to.be.true
+      expect(result.schema).to.exist
+
+      // Verify the schema is a plain string schema without description
+      if (result.schema) {
+        expect(introspect.isString(result.schema)).to.be.true
+      }
+    })
+
+    it('should strip .describe() and keep .meta()', () => {
+      const result = secureEvaluateSchema('z.string().describe("desc").meta({ description: "A string field" })')
+
+      expect(result.success).to.be.true
+      expect(result.schema).to.exist
+
+      // Verify meta is still accessible
+      if (result.schema) {
+        expect(introspect.isString(result.schema)).to.be.true
+        const meta = introspect.getMeta(result.schema)
+        expect(meta).to.exist
+        expect(meta?.description).to.equal('A string field')
+      }
+    })
+
+    it('should allow .meta() with description', () => {
+      const result = secureEvaluateSchema('z.string().meta({ description: "A string field" })')
+
+      expect(result.success).to.be.true
+      expect(result.schema).to.exist
+    })
   })
 })

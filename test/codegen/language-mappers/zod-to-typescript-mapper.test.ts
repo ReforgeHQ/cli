@@ -413,5 +413,29 @@ describe('ZodToTypescriptMapper', () => {
         )
       })
     })
+
+    describe('ignores describe', () => {
+      it('Can successfully parse a string with describe (value is ignored)', () => {
+        const zodAst = secureEvaluateSchema(`z.string().describe("User's email address")`)
+
+        const mapper = new ZodToTypescriptMapper({fieldName: 'email'})
+
+        const rendered = mapper.renderField(zodAst.schema!)
+
+        expect(rendered).to.equal('"email": string')
+      })
+
+      it('Can successfully parse a string with meta + describe (value is ignored)', () => {
+        const zodAst = secureEvaluateSchema(
+          `z.string().meta({description: "Meta description"}).describe("Description description")`,
+        )
+
+        const mapper = new ZodToTypescriptMapper({fieldName: 'email'})
+
+        const rendered = mapper.renderField(zodAst.schema!)
+
+        expect(rendered).to.equal('/** Meta description */ "email": string')
+      })
+    })
   })
 })
