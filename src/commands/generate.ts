@@ -117,8 +117,8 @@ Example:
 
   static examples = [
     '<%= config.bin %> <%= command.id %> # react-ts only by default',
-    '<%= config.bin %> <%= command.id %> --target node-ts # node-ts only',
-    '<%= config.bin %> <%= command.id %> --target react-ts,node-ts # both node+react-ts',
+    '<%= config.bin %> <%= command.id %> --targets node-ts # node-ts only',
+    '<%= config.bin %> <%= command.id %> --targets react-ts,node-ts # both node + react-ts',
     '<%= config.bin %> <%= command.id %> -o ./src/generated # specify output directory',
     '<%= config.bin %> <%= command.id %> --targets node-ts -o ./dist # combine with targets',
   ]
