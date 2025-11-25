@@ -150,7 +150,7 @@ GLOBAL FLAGS
 DESCRIPTION
   Generate type definitions for your Reforge configuration
 
-  You can use the default type-generation configuration, or by provide your own:
+  You can use the default type-generation configuration, or by provide your own via a reforge.config.json file:
 
   Format:
   {
@@ -163,7 +163,7 @@ DESCRIPTION
   ​  }
   };
 
-  Example:
+  Example reforge.config.json:
   ```json
   {
   ​  "outputDirectory": "path/to/your/directory",

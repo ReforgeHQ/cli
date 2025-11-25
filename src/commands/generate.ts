@@ -82,7 +82,7 @@ const DEFAULT_CONFIG: {
 
 export default class Generate extends APICommand {
   /* eslint-disable no-irregular-whitespace */
-  static description = `You can use the default type-generation configuration, or by provide your own:
+  static description = `You can use the default type-generation configuration, or by provide your own via a reforge.config.json file:
 
 Format:
 {
@@ -95,7 +95,7 @@ Format:
 ​  }
 };
 
-Example:
+Example reforge.config.json:
 \`\`\`json
 {
 ​  "outputDirectory": "path/to/your/directory",
