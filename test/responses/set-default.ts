@@ -254,6 +254,17 @@ const setDefaultHandler = http.post('https://api.*/internal/ops/v1/set-default',
     return HttpResponse.json({error: `Invalid default value for int: ${body.value.value}`}, {status: 400})
   }
 
+  // Validate encrypted values have correct structure
+  if (body.value?.confidential && body.value?.decryptWith) {
+    // Encrypted values must have type and value fields
+    if (!body.value.type) {
+      return HttpResponse.json({error: 'Encrypted values must have a type field'}, {status: 400})
+    }
+    if (body.value.value === undefined) {
+      return HttpResponse.json({error: 'Encrypted values must have a value field'}, {status: 400})
+    }
+  }
+
   // Success response
   return HttpResponse.json({
     success: true,

@@ -206,6 +206,6 @@ export async function makeConfidentialValue(
   return success({
     confidential: true,
     decryptWith: secret.keyName,
-    string: encryption.encrypt(value, secretKey),
+    value: encryption.encrypt(value, secretKey),
   })
 }
