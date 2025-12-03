@@ -252,7 +252,10 @@ export default class SetDefault extends APICommand {
           return this.err(encryptedValueResult.message || 'Failed to encrypt value')
         }
 
-        configValue = encryptedValueResult.value
+        configValue = {
+          type: 'string',
+          ...encryptedValueResult.value,
+        }
         successMessage += ' (encrypted)'
       } else {
         // Parse the value based on type and build value object
