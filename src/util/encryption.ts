@@ -133,9 +133,7 @@ export async function makeConfidentialValue(
   // Check environment-specific config first
   if (keyConfig.environments && environmentId) {
     /* eslint-disable @typescript-eslint/no-explicit-any */
-    const envConfig = (keyConfig.environments as any[]).find(
-      (env: any) => env.id === Number.parseInt(environmentId, 10),
-    )
+    const envConfig = (keyConfig.environments as any[]).find((env: any) => String(env.id) === String(environmentId))
     /* eslint-enable @typescript-eslint/no-explicit-any */
     const ruleValue = envConfig?.rules?.[0]?.value
 
@@ -174,7 +172,7 @@ export async function makeConfidentialValue(
   // If we have an env var, resolve it
   if (envVar && !secretKey) {
     secretKey = process.env[envVar]
-    command.verboseLog(`Using env var ${envVar} to encrypt secret`)
+    command.log(`Encrypting with key from env var: ${envVar}`)
 
     if (typeof secretKey !== 'string') {
       return failure(`Failed to create secret: env var ${envVar} is not present`, {

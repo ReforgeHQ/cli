@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## 0.0.13 - 2025-12-08
+
+- fix: string/number comparison issue
+
 ## 0.0.11 - 2025-11-24
 
 - fix: typos in 'reforge generate --help'
