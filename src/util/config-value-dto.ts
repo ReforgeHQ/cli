@@ -7,10 +7,7 @@ import {ConfigValue, ConfigValueType} from '../reforge-common/src/types.js'
  * @param valueType - The type of the config value
  * @returns The DTO representation of the config value
  */
-export function mapConfigValueToDto(
-  configValue: ConfigValue,
-  valueType: ConfigValueType,
-): Record<string, unknown> {
+export function mapConfigValueToDto(configValue: ConfigValue, valueType: ConfigValueType): Record<string, unknown> {
   const dto: Record<string, unknown> = {
     type: mapValueTypeToString(valueType),
   }
