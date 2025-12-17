@@ -71,6 +71,13 @@ commands.push(
     implicitFlags: ['env-var'],
   },
   {
+    command: SetDefault,
+    description: 'Set/update the default value for an environment with --secret',
+    displayCommandName: 'set-default --secret',
+    id: 'set-default',
+    implicitFlags: ['secret'],
+  },
+  {
     command: Create,
     description: 'Create a new item in Reforge with --secret',
     displayCommandName: 'create --secret',
