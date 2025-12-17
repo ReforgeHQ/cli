@@ -271,6 +271,18 @@ const configsV1Handler = http.post('https://api.goatsofreforge.com/configs/v1', 
     return new Response(JSON.stringify(conflictResponse), {status: 409})
   }
 
+  // Validate encrypted values have correct structure
+  const defaultValue = body.default?.rules?.[0]?.value
+  if (defaultValue?.confidential && defaultValue?.decryptWith) {
+    // Encrypted values must have type and value fields
+    if (!defaultValue.type) {
+      return new Response(JSON.stringify({error: 'Encrypted values must have a type field'}), {status: 400})
+    }
+    if (defaultValue.value === undefined) {
+      return new Response(JSON.stringify({error: 'Encrypted values must have a value field'}), {status: 400})
+    }
+  }
+
   return new Response(JSON.stringify(successResponse), {status: 200})
 })
 
@@ -279,6 +291,18 @@ const configsV1HandlerProd = http.post('https://api.reforge.com/configs/v1', asy
 
   if (body.key === 'already.in.use') {
     return new Response(JSON.stringify(conflictResponse), {status: 409})
+  }
+
+  // Validate encrypted values have correct structure
+  const defaultValue = body.default?.rules?.[0]?.value
+  if (defaultValue?.confidential && defaultValue?.decryptWith) {
+    // Encrypted values must have type and value fields
+    if (!defaultValue.type) {
+      return new Response(JSON.stringify({error: 'Encrypted values must have a type field'}), {status: 400})
+    }
+    if (defaultValue.value === undefined) {
+      return new Response(JSON.stringify({error: 'Encrypted values must have a value field'}), {status: 400})
+    }
   }
 
   return new Response(JSON.stringify(successResponse), {status: 200})

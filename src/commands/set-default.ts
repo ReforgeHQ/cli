@@ -2,12 +2,14 @@ import {Flags} from '@oclif/core'
 import {ProvidedSource} from '@reforge-com/node'
 
 import {APICommand} from '../index.js'
+import {ConfigValueType} from '../reforge-common/src/types.js'
 import {JsonObj} from '../result.js'
 import getConfirmation, {confirmFlag} from '../ui/get-confirmation.js'
 import getEnvironment from '../ui/get-environment.js'
 import getString from '../ui/get-string.js'
 import autocomplete from '../util/autocomplete.js'
 import {checkmark} from '../util/color.js'
+import {mapConfigValueToDto} from '../util/config-value-dto.js'
 import {makeConfidentialValue} from '../util/encryption.js'
 import isInteractive from '../util/is-interactive.js'
 import nameArg from '../util/name-arg.js'
@@ -246,16 +248,13 @@ export default class SetDefault extends APICommand {
       successMessage = `Successfully changed default to \`${value}\``
 
       if (secret.selected) {
-        // Handle encrypted values
+        // Handle encrypted values using shared utility
         const encryptedValueResult = await makeConfidentialValue(this, value, secret, environmentId)
         if (!encryptedValueResult.ok) {
           return this.err(encryptedValueResult.message || 'Failed to encrypt value')
         }
 
-        configValue = {
-          type: 'string',
-          ...encryptedValueResult.value,
-        }
+        configValue = mapConfigValueToDto(encryptedValueResult.value, ConfigValueType.String)
         successMessage += ' (encrypted)'
       } else {
         // Parse the value based on type and build value object

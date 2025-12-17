@@ -7,6 +7,7 @@ import {JsonObj} from '../result.js'
 import getValue from '../ui/get-value.js'
 import {TYPE_MAPPING, coerceBool, coerceIntoType} from '../util/coerce.js'
 import {checkmark} from '../util/color.js'
+import {mapConfigValueToDto, mapValueTypeToString} from '../util/config-value-dto.js'
 import {makeConfidentialValue} from '../util/encryption.js'
 import secretFlags, {parsedSecretFlags} from '../util/secret-flags.js'
 
@@ -117,13 +118,13 @@ export default class Create extends APICommand {
     const createConfigRequest = {
       key: args.name,
       type: 'config',
-      valueType: this.mapValueTypeToString(valueType),
+      valueType: mapValueTypeToString(valueType),
       sendToClientSdk: false,
       default: {
         rules: [
           {
             criteria: [],
-            value: this.mapConfigValueToDto(configValue, valueType),
+            value: mapConfigValueToDto(configValue, valueType),
           },
         ],
       },
@@ -207,71 +208,5 @@ export default class Create extends APICommand {
     const response = request.json
 
     return this.ok(`${checkmark} Created boolean flag: ${key}`, {key, ...response})
-  }
-
-  private mapConfigValueToDto(configValue: ConfigValue, valueType: ConfigValueType): Record<string, unknown> {
-    const dto: Record<string, unknown> = {
-      type: this.mapValueTypeToString(valueType),
-    }
-
-    // Handle provided (env-var) values
-    if (configValue.provided) {
-      return {
-        ...dto,
-        provided: {
-          source: configValue.provided.source,
-          lookup: configValue.provided.lookup,
-        },
-      }
-    }
-
-    // Extract the actual value based on type
-    let value: unknown
-    if (configValue.bool !== undefined) {
-      value = configValue.bool
-    } else if (configValue.string !== undefined) {
-      value = configValue.string
-    } else if (configValue.int !== undefined) {
-      value = configValue.int
-    } else if (configValue.double !== undefined) {
-      value = configValue.double
-    } else if (configValue.stringList !== undefined) {
-      value = configValue.stringList.values
-    } else if (configValue.json !== undefined) {
-      value = configValue.json
-    } else if (configValue.duration !== undefined) {
-      value = configValue.duration
-    } else if (configValue.intRange !== undefined) {
-      value = configValue.intRange
-    }
-
-    dto.value = value
-
-    if (configValue.confidential) {
-      dto.confidential = true
-    }
-
-    if (configValue.decryptWith) {
-      dto.decryptWith = configValue.decryptWith
-    }
-
-    return dto
-  }
-
-  private mapValueTypeToString(valueType: ConfigValueType): string {
-    const mapping: Partial<Record<ConfigValueType, string>> = {
-      [ConfigValueType.Bool]: 'bool',
-      [ConfigValueType.String]: 'string',
-      [ConfigValueType.Int]: 'int',
-      [ConfigValueType.Double]: 'double',
-      [ConfigValueType.StringList]: 'string_list',
-      [ConfigValueType.Json]: 'json',
-      [ConfigValueType.LimitDefinition]: 'limit_definition',
-      [ConfigValueType.Duration]: 'duration',
-      [ConfigValueType.IntRange]: 'int_range',
-      [ConfigValueType.Bytes]: 'bytes',
-      [ConfigValueType.LogLevel]: 'log_level',
-    }
-    return mapping[valueType] || 'string'
   }
 }
