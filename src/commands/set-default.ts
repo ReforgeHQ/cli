@@ -141,6 +141,7 @@ export default class SetDefault extends APICommand {
 
     // Get the environment
     const environment = await getEnvironment({
+      allowDefaultEnvironment: true,
       command: this,
       flags,
       message: 'Which environment would you like to change the default for?',
